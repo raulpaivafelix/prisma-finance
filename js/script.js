@@ -1,21 +1,30 @@
-/* 1. FUNÇÃO DO MENU DE OPÇÕES (CABEÇALHO) */
+/* 1. MÁQUINA DE ESCREVER (TYPEWRITER) */
+const texto = "Terceirize o financeiro da sua empresa e compre o seu tempo de volta.";
+const elementoTexto = document.getElementById("maquina-escrever");
+let i = 0;
+
+function escreverTexto() {
+    if (i < texto.length) {
+        elementoTexto.innerHTML += texto.charAt(i);
+        i++;
+        setTimeout(escreverTexto, 40); // 40 milissegundos por letra (velocidade)
+    }
+}
+// Inicia quando a página carrega
+window.onload = escreverTexto;
+
+/* 2. MENU INTERATIVO */
 function alternarOpcoes() {
     const caixa = document.getElementById("caixa-opcoes");
     caixa.classList.toggle("mostrar-menu");
 }
 
-/* 2. LÓGICA DO ACORDEÃO DE SOLUÇÕES */
+/* 3. ACORDEÃO (SOLUÇÕES) */
 const accordions = document.querySelectorAll(".accordion-header");
-
 accordions.forEach(acc => {
     acc.addEventListener("click", function() {
-        // Alterna a classe 'active' no botão clicado (muda cor e roda o ícone)
         this.classList.toggle("active");
-        
-        // Seleciona a caixa de texto (div) imediatamente abaixo do botão
         const content = this.nextElementSibling;
-        
-        // Se estiver aberta, fecha; se estiver fechada, calcula a altura necessária e abre
         if (content.style.maxHeight) {
             content.style.maxHeight = null;
         } else {
@@ -24,18 +33,42 @@ accordions.forEach(acc => {
     });
 });
 
-/* 3. ANIMAÇÕES DE SCROLL (FADE-IN DEDICADO) */
-// Cria um observador para detetar quando os elementos entram no ecrã
-const observer = new IntersectionObserver((entries) => {
+/* 4. ANIMAÇÕES FADE-IN NO SCROLL */
+const fadeObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if(entry.isIntersecting) {
             entry.target.classList.add('animar');
         }
     });
-}, {
-    threshold: 0.1 // O efeito dispara quando 10% do elemento fica visível
-});
+}, { threshold: 0.1 });
 
-// Aplica o observador a todos os elementos com data-anime="scroll"
-const elementosAnimados = document.querySelectorAll('[data-anime="scroll"]');
-elementosAnimados.forEach(el => observer.observe(el));
+document.querySelectorAll('[data-anime="scroll"]').forEach(el => fadeObserver.observe(el));
+
+/* 5. CONTADORES ANIMADOS (NÚMEROS A SUBIR) */
+const counters = document.querySelectorAll('.counter');
+const counterObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const target = +entry.target.getAttribute('data-target');
+            let current = 0;
+            // Velocidade e saltos (ajustado para ser rápido e fluído)
+            const increment = target / 60; 
+
+            const updateCounter = () => {
+                current += increment;
+                if (current < target) {
+                    entry.target.innerText = Math.ceil(current);
+                    setTimeout(updateCounter, 25);
+                } else {
+                    // Quando atinge o alvo exato (ex: 10000 -> 10.000)
+                    entry.target.innerText = target.toLocaleString('pt-BR');
+                }
+            };
+            updateCounter();
+            // Pára de observar depois de animar a primeira vez
+            observer.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.5 }); // Dispara quando metade da secção estiver visível
+
+counters.forEach(counter => counterObserver.observe(counter));
