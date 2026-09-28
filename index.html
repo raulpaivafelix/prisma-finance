@@ -5,52 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prisma Finance | BPO Financeiro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- Ligação ao ficheiro CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- Cabeçalho (Topo) -->
+    <!-- Cabeçalho -->
     <header>
         <div class="logo">
-            <!-- Brasão do topo 100% corrigido -->
             <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Brasão da Prisma Finance">
             <span>Prisma Finance</span>
         </div>
         
-        <!-- O Botão Interativo -->
         <div class="menu-interativo">
             <button onclick="alternarOpcoes()" class="botao-opcoes">Ver Opções</button>
-            
             <div id="caixa-opcoes" class="opcoes-ocultas">
                 <a href="#inicio">Início</a>
-                <a href="#meio">Meio</a>
-                <a href="#fim">Fim</a>
+                <a href="#problemas">Os Problemas</a>
+                <a href="#fim">Contactos</a>
             </div>
         </div>
     </header>
 
     <!-- Corpo do Site -->
     <main>
+        <!-- Dobra 1: A Promessa e o CTA -->
         <section id="inicio" class="hero">
             <h1>Terceirize o financeiro da sua empresa e compre o seu tempo de volta.</h1>
-            <p>A Prisma Finance organiza o seu fluxo de caixa, elimina a mistura de contas e entrega clareza diária.</p>
+            <p>A Prisma Finance organiza o seu fluxo de caixa, elimina a mistura de contas e entrega clareza diária por uma fração do custo de um funcionário CLT.</p>
+            <a href="#contato" class="cta-button">Fazer Diagnóstico Gratuito</a>
         </section>
         
-        <section id="meio" class="pain-section">
+        <!-- Dobra 2: Gatilhos Mentais (Cartões) -->
+        <section id="problemas" class="pain-section">
             <h2>O seu negócio vende todo dia, mas o seu caixa está cego?</h2>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <span class="icon">❌</span>
+                    <p>Não sabe o lucro real líquido no fim do mês.</p>
+                </div>
+                <div class="card">
+                    <span class="icon">💸</span>
+                    <p>Paga juros por esquecer ou atrasar o vencimento de boletos.</p>
+                </div>
+                <div class="card">
+                    <span class="icon">⚠️</span>
+                    <p>Mistura despesas pessoais (CPF) com as contas da empresa (CNPJ).</p>
+                </div>
+            </div>
         </section>
     </main>
 
-    <!-- Rodapé (Fundo) -->
+    <!-- Rodapé -->
     <footer id="fim">
-        <!-- Brasão do fundo 100% corrigido -->
         <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Brasão da Prisma Finance">
         <h3>Prisma Finance</h3>
         <p>Prisma Finance &copy; 2026. Todos os direitos reservados. BPO Financeiro e Gestão Estratégica.</p>
     </footer>
 
-    <!-- Ligação ao ficheiro JavaScript (Sempre no fim antes de fechar o body) -->
     <script src="js/script.js"></script>
 </body>
 </html>
