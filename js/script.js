@@ -1,19 +1,9 @@
 // ==========================================
-// 1. SISTEMA À PROVA DE FALHAS DO PRELOADER
+// 1. SISTEMA DE INICIALIZAÇÃO
 // ==========================================
 window.addEventListener('load', () => {
-    const preloader = document.getElementById('preloader');
-    if(preloader) {
-        // Reduzi o tempo de espera para evitar bloqueios
-        setTimeout(() => {
-            preloader.style.opacity = '0';
-            setTimeout(() => { 
-                preloader.style.display = 'none'; 
-                if(typeof window.animateCharts === 'function') {
-                    window.animateCharts(); 
-                }
-            }, 500);
-        }, 800); 
+    if(typeof window.animateCharts === 'function') {
+        window.animateCharts(); 
     }
 });
 
@@ -31,11 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
         
-        // Verifica se a biblioteca do Supabase carregou corretamente
         if (window.supabase) {
             supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
         } else {
-            console.warn("Aviso: Supabase não detectado. O site funcionará no modo visual sem login ativo.");
+            console.warn("Aviso: Supabase não detectado.");
         }
     } catch (e) {
         console.error("Erro ao configurar o Supabase:", e);
@@ -138,7 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LIGAÇÃO SEGURA AO FORMULÁRIO DE LOGIN ---
+    // ==========================================
+    // 3. LIGAÇÃO SEGURA AO FORMULÁRIO DE LOGIN
+    // ==========================================
     const loginForm = document.getElementById('login-form');
     if(loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -164,14 +155,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (error) throw error;
 
-                // SUCESSO
+                // SUCESSO: O CEO entrou!
                 btnSubmit.innerText = "✓ Acesso Autorizado";
                 btnSubmit.style.background = "#059669";
                 window.playTickSound();
                 
+                // REDIRECIONAMENTO REAL PARA O COFRE!
                 setTimeout(() => {
-                    alert(`Bem-vindo, ${data.user.email}! A redirecionar para o Workspace...`);
-                }, 1000);
+                    window.location.href = "dashboard.html";
+                }, 800);
 
             } catch (err) {
                 // ERRO
