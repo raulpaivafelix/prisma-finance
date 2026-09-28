@@ -12,7 +12,7 @@
 </head>
 <body>
 
-    <!-- 1. PRELOADER CINEMATOGRÁFICO -->
+    <!-- PRELOADER -->
     <div id="preloader">
         <div class="preloader-content">
             <img src="assets/prisma-brasao.svg" alt="Prisma Finance" class="preloader-logo">
@@ -21,14 +21,14 @@
         </div>
     </div>
 
-    <!-- BARRA DE PROGRESSO DE LEITURA -->
+    <!-- BARRA DE LEITURA -->
     <div class="scroll-progress" id="scroll-progress"></div>
 
     <!-- CURSOR MAGNÉTICO -->
     <div class="cursor-dot" id="cursor-dot"></div>
     <div class="cursor-outline" id="cursor-outline"></div>
 
-    <!-- NOTIFICAÇÕES SOCIAIS AO VIVO (FOMO) -->
+    <!-- TOAST (FOMO) -->
     <div class="live-toast" id="live-toast">
         <div class="toast-icon">✨</div>
         <div class="toast-text" id="toast-text">Nova empresa conectada via Open Finance.</div>
@@ -46,7 +46,6 @@
             <a href="#planos" class="magnetic">Planos</a>
         </nav>
         <div class="header-actions">
-            <!-- Hint do Command Palette (Apenas Desktop) -->
             <button class="cmd-hint magnetic" onclick="abrirCommandPalette()"><span>⌘</span> + K</button>
             <button onclick="abrirLogin()" class="btn-login magnetic">Acesso Cliente</button>
             <button onclick="abrirDiagnostico()" class="btn-nav magnetic aura-glow-btn">Fazer Diagnóstico</button>
@@ -54,7 +53,7 @@
     </header>
 
     <main>
-        <!-- HERO & SAUDAÇÃO DINÂMICA -->
+        <!-- HERO -->
         <section class="hero mesh-bg" data-anime="fade">
             <div class="orb orb-1"></div><div class="orb orb-2"></div>
             
@@ -62,13 +61,13 @@
                 <div class="hero-content">
                     <div class="hero-badge" id="dynamic-greeting">Bem-vindo(a) à autogestão financeira</div>
                     <h1 class="gradient-text">O seu financeiro no piloto automático. O seu foco no crescimento.</h1>
-                    <p>Conectamos os seus bancos, automatizamos rotinas e entregamos a visão de um CFO em tempo real. Teste o nosso sistema ao lado.</p>
+                    <p>Conectamos os seus bancos, automatizamos rotinas e entregamos a visão de um CFO em tempo real.</p>
                     <div class="hero-buttons">
                         <button onclick="abrirDiagnostico()" class="btn-primary magnetic">Começar Gratuitamente <span class="arrow">→</span></button>
                     </div>
                 </div>
 
-                <!-- LIVE SANDBOX (Gráficos Vivos) -->
+                <!-- LIVE SANDBOX -->
                 <div class="sandbox-window tilt-card magnetic-container">
                     <div class="sandbox-header">
                         <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
@@ -102,7 +101,7 @@
             </div>
         </section>
 
-        <!-- CARROSSEL DE PARCEIROS -->
+        <!-- CARROSSEL -->
         <div class="trust-carousel">
             <div class="carousel-track integration-track">
                 <span>✦ Integração Nubank</span><span>✦ Banco do Brasil</span><span>✦ Itaú</span><span>✦ Bradesco</span><span>✦ Omie ERP</span><span>✦ ContaAzul</span><span>✦ Bling</span>
@@ -110,24 +109,22 @@
             </div>
         </div>
 
-        <!-- PRISMA BLACK CARD (CARTÃO HOLOGRÁFICO) -->
+        <!-- HOLOGRÁFICO -->
         <section id="app" class="section-padding bg-alt">
             <div class="section-header" data-anime="fade">
                 <h2>Tecnologia que se toca</h2>
                 <p>A experiência Prisma vai além do ecrã. Tenha o controle absoluto nas mãos.</p>
             </div>
-            
             <div class="deep-feature" data-anime="fade">
                 <div class="feature-text">
                     <div class="icon-box highlight">💳</div>
                     <h3>Cartão Corporativo Inteligente</h3>
-                    <p>O Prisma Black Card sincroniza todas as despesas da sua equipa em tempo real. Chega de pedir recibos pelo WhatsApp. Tudo cai categorizado no seu DRE.</p>
+                    <p>O Prisma Black Card sincroniza todas as despesas em tempo real direto para o seu DRE.</p>
                     <ul class="check-list">
                         <li>✔ Conciliação em milissegundos</li>
                         <li>✔ Limites personalizados por funcionário</li>
                     </ul>
                 </div>
-                
                 <div class="hologram-wrapper">
                     <div class="prisma-card tilt-card" id="prisma-card">
                         <div class="glare" id="card-glare"></div>
@@ -143,7 +140,7 @@
             </div>
         </section>
 
-        <!-- CALCULADORA DE ROI -->
+        <!-- CALCULADORA ROI -->
         <section id="roi" class="section-padding">
             <div class="section-header" data-anime="fade"><h2>Calcule o seu Retorno (ROI)</h2><p>Ligue o som, deslize a barra e veja a matemática trabalhar por si.</p></div>
             <div class="roi-container tilt-card aura-glow" data-anime="fade">
@@ -166,7 +163,7 @@
                 <h2>O investimento que gera lucro</h2>
                 <div class="pricing-toggle">
                     <span id="label-mensal" class="active">Mensal</span>
-                    <label class="switch magnetic" aria-label="Alternar Mensal Anual"><input type="checkbox" id="billing-toggle" onchange="togglePricing()"><span class="slider round"></span></label>
+                    <label class="switch magnetic"><input type="checkbox" id="billing-toggle" onchange="togglePricing()"><span class="slider round"></span></label>
                     <span id="label-anual">Anual <span class="discount-badge">-20%</span></span>
                 </div>
             </div>
@@ -196,7 +193,7 @@
         </section>
     </main>
 
-    <!-- RODAPÉ E STATUS -->
+    <!-- RODAPÉ -->
     <footer>
         <div class="footer-content">
             <div class="footer-brand">
@@ -211,17 +208,17 @@
         </div>
     </footer>
 
-    <!-- WIDGET DE CHAT (IA) -->
+    <!-- CHATBOT -->
     <div class="chat-wrapper">
         <div class="chat-box" id="chat-box">
             <div class="chat-header"><div class="chat-avatar">P</div><div><h4>Prisma AI</h4><p>Online</p></div><button class="chat-close magnetic" onclick="fecharChat()">&times;</button></div>
             <div class="chat-body" id="chat-body"><div class="chat-msg bot">Sou a IA da Prisma. Quer automatizar a sua empresa hoje?</div></div>
             <div class="chat-options" id="chat-options"><button onclick="chatResponder('Quero saber os planos')">Ver planos</button><button onclick="abrirDiagnostico(); fecharChat()">Diagnóstico</button></div>
         </div>
-        <button class="chat-toggle magnetic" onclick="abrirChat()" aria-label="Abrir Chat">💬</button>
+        <button class="chat-toggle magnetic" onclick="abrirChat()">💬</button>
     </div>
 
-    <!-- SMART FLOATING CTA -->
+    <!-- FLOATING CTA -->
     <div class="floating-cta" id="floating-cta">
         <div class="f-cta-content">
             <img src="assets/prisma-brasao.svg" alt="Prisma" width="20">
@@ -230,7 +227,7 @@
         </div>
     </div>
 
-    <!-- COMMAND PALETTE (CTRL + K) -->
+    <!-- COMMAND PALETTE (CTRL+K) -->
     <div class="cmd-palette-overlay" id="cmd-palette">
         <div class="cmd-box">
             <div class="cmd-input-area">
@@ -248,7 +245,7 @@
         </div>
     </div>
 
-    <!-- MODAL DIAGNÓSTICO E AGENDAMENTO -->
+    <!-- MODAL DIAGNÓSTICO -->
     <div id="diagModal" class="modal-overlay">
         <div class="modal-box diag-box aura-glow">
             <div class="diag-inner-content">
@@ -282,7 +279,7 @@
         </div>
     </div>
 
-    <!-- LOGIN BIOMÉTRICO -->
+    <!-- MODAL DE LOGIN REAL COM SUPABASE -->
     <div id="loginModal" class="modal-overlay">
         <div class="modal-box aura-glow">
             <div class="diag-inner-content" style="text-align: center;">
@@ -297,16 +294,25 @@
                     <p style="color: var(--primary); font-size: 0.85rem;" id="scan-text">Aguardando leitura...</p>
                 </div>
 
+                <!-- Formulário com a tag <form> real -->
                 <form id="login-form" class="login-form" style="display: none; text-align: left;">
                     <h2 style="margin-bottom: 20px; text-align: center;">Prisma Workspace</h2>
-                    <div class="input-group"><label>E-mail</label><input type="email" placeholder="ceo@empresa.com"></div>
-                    <div class="input-group"><label>Senha Privada</label><input type="password" placeholder="••••••••"></div>
-                    <button type="button" class="btn-primary magnetic" style="width: 100%; justify-content:center;" onclick="alert('Conexão bloqueada para novos IPs. Peça liberação ao gestor Prisma.')">Acessar Cofre Digital</button>
+                    <div class="input-group">
+                        <label>E-mail Corporativo</label>
+                        <input type="email" placeholder="ceo@empresa.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Senha Privada</label>
+                        <input type="password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-primary magnetic" style="width: 100%; justify-content:center;">Acessar Cofre Digital</button>
                 </form>
             </div>
         </div>
     </div>
 
+    <!-- BIBLIOTECA DO SUPABASE (O Motor do Banco de Dados) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
