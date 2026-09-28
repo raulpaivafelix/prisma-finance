@@ -21,103 +21,54 @@
         </div>
     </div>
 
-    <!-- INDICADORES VISUAIS -->
-    <div class="scroll-progress" id="scroll-progress"></div>
-    <div class="cursor-dot" id="cursor-dot"></div>
-    <div class="cursor-outline" id="cursor-outline"></div>
-
-    <div class="live-toast" id="live-toast">
-        <div class="toast-icon">✨</div>
-        <div class="toast-text" id="toast-text">Nova empresa conectada via Open Finance.</div>
-    </div>
-
     <!-- CABEÇALHO -->
     <header>
-        <div class="logo magnetic">
+        <div class="logo">
             <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Prisma Finance">
             <span>PRISMA FINANCE</span>
         </div>
         <nav class="nav-links">
-            <a href="#app" class="magnetic">Tecnologia</a>
-            <a href="#roi" class="magnetic">Calculadora</a>
-            <a href="#planos" class="magnetic">Planos</a>
+            <a href="#roi">Calculadora ROI</a>
         </nav>
         <div class="header-actions">
-            <button class="cmd-hint magnetic" onclick="window.abrirCommandPalette()"><span>⌘</span> + K</button>
-            <button class="btn-login magnetic" onclick="window.abrirLogin()">Acesso Cliente</button>
-            <button class="btn-nav magnetic aura-glow-btn" onclick="window.abrirDiagnostico()">Fazer Diagnóstico</button>
+            <button class="btn-login" onclick="window.abrirLogin()">Acesso Cliente</button>
+            <button class="btn-nav aura-glow-btn">Fazer Diagnóstico</button>
         </div>
     </header>
 
     <main>
         <!-- HERO -->
-        <section class="hero mesh-bg" data-anime="fade">
-            <div class="orb orb-1"></div><div class="orb orb-2"></div>
-            
-            <div class="hero-grid">
-                <div class="hero-content">
-                    <div class="hero-badge" id="dynamic-greeting">Bem-vindo(a) à autogestão financeira</div>
-                    <h1 class="gradient-text">O seu financeiro no piloto automático. O seu foco no crescimento.</h1>
-                    <p>Conectamos os seus bancos, automatizamos rotinas e entregamos a visão de um CFO em tempo real.</p>
-                    <div class="hero-buttons">
-                        <button onclick="window.abrirDiagnostico()" class="btn-primary magnetic">Começar Gratuitamente <span class="arrow">→</span></button>
-                    </div>
-                </div>
-
-                <!-- LIVE SANDBOX -->
-                <div class="sandbox-window tilt-card magnetic-container">
-                    <div class="sandbox-header">
-                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        <span class="sandbox-title">app.prisma.finance/dashboard</span>
-                    </div>
-                    <div class="sandbox-tabs">
-                        <button class="s-tab active" onclick="window.switchTab('caixa')">Fluxo Real</button>
-                        <button class="s-tab" onclick="window.switchTab('aprovacoes')">Boletos <span class="badge" id="badge-boletos">3</span></button>
-                    </div>
-                    <div class="sandbox-body">
-                        <div id="tab-caixa" class="s-content active">
-                            <p class="s-label">Caixa Hoje</p>
-                            <h2 class="s-balance" id="s-balance">R$ 145.200,00</h2>
-                            <div class="s-chart" id="dynamic-chart">
-                                <div class="s-bar" style="height: 0%;" data-target="60%"></div>
-                                <div class="s-bar" style="height: 0%;" data-target="80%"></div>
-                                <div class="s-bar" style="height: 0%; background: #ef4444;" data-target="40%"></div>
-                                <div class="s-bar" style="height: 0%;" data-target="100%"></div>
-                            </div>
-                        </div>
-                        <div id="tab-aprovacoes" class="s-content">
-                            <p class="s-label">Pendentes na IA</p>
-                            <div class="s-list" id="s-list">
-                                <div class="s-item"><span>Fornecedor Cloud</span><strong>R$ 2.400</strong></div>
-                                <div class="s-item"><span>Impostos DAS</span><strong>R$ 1.850</strong></div>
-                            </div>
-                            <button class="s-btn-aprovar magnetic" id="btn-aprovar" onclick="window.aprovarLote()">Aprovar Lote via App</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <section class="hero mesh-bg">
+            <div class="hero-badge">Automação financeira BPO</div>
+            <h1 class="gradient-text">O seu financeiro no piloto automático. O seu foco no crescimento.</h1>
+            <p style="color: #9ca3af; font-size: 1.1rem; margin-bottom: 40px; max-width: 600px;">Conectamos os seus bancos e entregamos a visão de um CFO em tempo real, para que possa focar-se no que realmente importa.</p>
+            <button onclick="window.abrirLogin()" class="btn-primary">Aceder ao Cofre Digital →</button>
         </section>
-
-        <!-- CARROSSEL -->
-        <div class="trust-carousel">
-            <div class="carousel-track integration-track">
-                <span>✦ Integração Nubank</span><span>✦ Banco do Brasil</span><span>✦ Itaú</span><span>✦ Bradesco</span><span>✦ Omie ERP</span><span>✦ ContaAzul</span><span>✦ Bling</span>
-                <span>✦ Integração Nubank</span><span>✦ Banco do Brasil</span><span>✦ Itaú</span><span>✦ Bradesco</span><span>✦ Omie ERP</span><span>✦ ContaAzul</span><span>✦ Bling</span>
-            </div>
-        </div>
 
         <!-- CALCULADORA ROI -->
         <section id="roi" class="section-padding">
-            <div class="section-header" data-anime="fade"><h2>Calcule o seu Retorno (ROI)</h2></div>
-            <div class="roi-container tilt-card aura-glow" data-anime="fade">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h2 style="font-size: 2.5rem;">Calcule o seu Retorno (ROI)</h2>
+                <p style="color: #9ca3af;">Descubra quanto tempo e dinheiro a Prisma poupa à sua empresa.</p>
+            </div>
+            <div class="roi-container aura-glow">
                 <div class="roi-content">
-                    <div class="roi-input-area">
-                        <label>Faturamento Mensal: <span id="faturamento-val" class="gradient-text">R$ 50.000</span></label>
-                        <input type="range" id="faturamento" min="10000" max="1000000" step="5000" value="50000" class="magnetic">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <label style="font-weight: 600;">Faturamento Mensal Estimado:</label>
+                            <span id="faturamento-val" class="gradient-text" style="font-weight: 800; font-size: 1.2rem;">R$ 50.000</span>
+                        </div>
+                        <input type="range" id="faturamento" min="10000" max="1000000" step="5000" value="50000">
                     </div>
                     <div class="roi-results">
-                        <div class="roi-box"><h4>Tempo Poupado</h4><h3 id="tempo-poupado">25h / mês</h3></div>
-                        <div class="roi-box highlight"><h4>Economia Estimada</h4><h3 id="dinheiro-poupado">R$ 2.250</h3></div>
+                        <div class="roi-box">
+                            <h4 style="color: #9ca3af; font-size: 0.9rem;">Tempo Poupado</h4>
+                            <h3 id="tempo-poupado" style="font-size: 2.2rem;">25h / mês</h3>
+                        </div>
+                        <div class="roi-box highlight">
+                            <h4 style="color: #9ca3af; font-size: 0.9rem;">Economia Estimada</h4>
+                            <h3 id="dinheiro-poupado" style="font-size: 2.2rem;">R$ 2.250</h3>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -127,49 +78,42 @@
     <!-- RODAPÉ -->
     <footer>
         <div class="footer-content">
-            <div class="footer-brand">
-                <img src="assets/prisma-brasao.svg" class="brand-crest grayscale" alt="Prisma Finance">
-                <p>Tecnologia e Gestão Financeira de Ponta.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Prisma Finance. All rights reserved.</p>
-            <div class="system-status magnetic"><span class="status-dot"></span><span>AES-256 Encrypted | Latency 12ms</span></div>
+            <p>&copy; 2026 Prisma Finance. Todos os direitos reservados. Sistema AES-256 Encrypted.</p>
         </div>
     </footer>
 
-    <!-- MODAL DE LOGIN REAL COM SUPABASE -->
+    <!-- MODAL DE LOGIN (PORTA DO COFRE) -->
     <div id="loginModal" class="modal-overlay">
         <div class="modal-box aura-glow">
-            <div class="diag-inner-content" style="text-align: center;">
-                <button onclick="window.fecharLogin()" class="btn-fechar magnetic">&times;</button>
+            <div class="diag-inner-content">
+                <button onclick="window.fecharLogin()" class="btn-fechar">&times;</button>
                 
                 <div id="login-scanner" class="scanner-screen active">
                     <div class="fingerprint-icon">
                         <div class="laser-line"></div>
-                        <img src="assets/prisma-brasao.svg" width="60" alt="Scanner" style="opacity: 0.5;">
+                        <img src="assets/prisma-brasao.svg" width="50" style="opacity: 0.5;">
                     </div>
-                    <h3 style="margin-top: 20px; font-size: 1.2rem;">Autenticação Biométrica</h3>
+                    <h3 style="margin-top: 20px;">Autenticação Biométrica</h3>
                     <p style="color: var(--primary); font-size: 0.85rem;" id="scan-text">Aguardando leitura...</p>
                 </div>
 
-                <form id="login-form" class="login-form" style="display: none; text-align: left;">
-                    <h2 style="margin-bottom: 20px; text-align: center;">Prisma Workspace</h2>
+                <form id="login-form" class="login-form" style="display: none;">
+                    <h2 style="margin-bottom: 25px; text-align: center;">Cofre Digital</h2>
                     <div class="input-group">
                         <label>E-mail Corporativo</label>
-                        <input type="email" placeholder="O seu e-mail" required>
+                        <input type="email" placeholder="ceo@empresa.com" required>
                     </div>
                     <div class="input-group">
                         <label>Senha Privada</label>
                         <input type="password" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" class="btn-primary magnetic" style="width: 100%; justify-content:center;">Acessar Cofre Digital</button>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Entrar no Sistema</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- BIBLIOTECAS E SCRIPTS -->
+    <!-- BIBLIOTECAS E MOTOR -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/script.js"></script>
 </body>
