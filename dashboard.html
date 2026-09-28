@@ -119,53 +119,71 @@
         </section>
     </main>
 
-    <script>
-        const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+<script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 1. Verifica se a biblioteca foi bloqueada pelo navegador
+                if (!window.supabase) {
+                    throw new Error("O navegador bloqueou a ligação ao servidor (Supabase).");
+                }
 
-        async function verificarSessao() {
-            const { data: { session } } = await supabase.auth.getSession();
-            
-            if (!session) {
-                // Se não tem login, volta para a página inicial
+                const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
+                const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+                // 2. Tenta ler o token de acesso do cofre
+                const { data, error } = await supabase.auth.getSession();
+                
+                if (error) throw error;
+                const session = data.session;
+
+                // 3. Se não tem a chave, expulsa de volta para a Home
+                if (!session) {
+                    window.location.replace('index.html');
+                    return;
+                }
+
+                // 4. SUCESSO! Destranca a tela preta
+                document.getElementById('auth-loader').style.display = 'none';
+                
+                // 5. Personaliza o nome e avatar
+                const email = session.user.email;
+                document.getElementById('user-name').innerText = email;
+                document.getElementById('user-avatar').innerText = email.charAt(0).toUpperCase();
+                
+                // 6. Desenha os Gráficos
+                if(typeof Chart !== 'undefined') {
+                    const ctx = document.getElementById('cashflowChart').getContext('2d');
+                    let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                    gradient.addColorStop(0, 'rgba(5, 150, 105, 0.5)'); 
+                    gradient.addColorStop(1, 'rgba(5, 150, 105, 0.0)'); 
+
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+                            datasets: [{
+                                label: 'Saldo Projetado (R$)',
+                                data: [145250, 142000, 148500, 146000, 160000, 158000, 158000],
+                                borderColor: '#059669', backgroundColor: gradient, borderWidth: 3, fill: true, tension: 0.4
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                    });
+                }
+
+                // Função do botão Sair
+                window.fazerLogout = async () => {
+                    await supabase.auth.signOut();
+                    window.location.replace('index.html');
+                };
+
+            } catch (err) {
+                // SE ALGO FALHAR, AVISA O UTILIZADOR E EXPULSA
+                alert("⚠️ Erro de Segurança:\n" + err.message + "\n\nO seu navegador pode estar a bloquear o acesso à base de dados.");
                 window.location.replace('index.html');
-                return;
             }
-
-            document.getElementById('auth-loader').style.display = 'none';
-            const email = session.user.email;
-            document.getElementById('user-name').innerText = email;
-            document.getElementById('user-avatar').innerText = email.charAt(0).toUpperCase();
-            
-            renderizarGrafico();
-        }
-
-        async function fazerLogout() {
-            await supabase.auth.signOut();
-            window.location.replace('index.html');
-        }
-
-        function renderizarGrafico() {
-            const ctx = document.getElementById('cashflowChart').getContext('2d');
-            let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(5, 150, 105, 0.5)'); 
-            gradient.addColorStop(1, 'rgba(5, 150, 105, 0.0)'); 
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-                    datasets: [{
-                        label: 'Saldo (R$)',
-                        data: [145250, 142000, 148500, 146000, 160000, 158000, 158000],
-                        borderColor: '#059669', backgroundColor: gradient, borderWidth: 3, fill: true, tension: 0.4
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        }
-        verificarSessao();
+        });
     </script>
 </body>
 </html>
