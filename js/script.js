@@ -1,12 +1,22 @@
 // ==========================================
-// 1. CONFIGURAÇÃO SUPABASE
+// 1. O CRONÓMETRO IMPARÁVEL DO PRELOADER
 // ==========================================
-const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+document.addEventListener('DOMContentLoaded', () => {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        // Exibe o brasão por 1.5 segundos e apaga de forma segura!
+        setTimeout(() => {
+            preloader.style.opacity = '0';
+            setTimeout(() => {
+                preloader.style.display = 'none';
+                if(typeof window.animateCharts === 'function') window.animateCharts();
+            }, 500);
+        }, 1500);
+    }
+});
 
 // ==========================================
-// 2. FUNÇÕES DA INTERFACE
+// 2. FUNÇÕES GLOBAIS DA INTERFACE (BOTÕES)
 // ==========================================
 window.abrirLogin = () => {
     document.getElementById('loginModal').classList.add('ativo');
@@ -22,7 +32,7 @@ window.abrirLogin = () => {
     setTimeout(() => {
         document.getElementById('login-scanner').classList.remove('active');
         document.getElementById('login-form').style.display = 'block';
-    }, 2000);
+    }, 2500);
 };
 
 window.fecharLogin = () => {
@@ -58,17 +68,22 @@ window.aprovarLote = () => {
 };
 
 // ==========================================
-// 3. EVENTOS PRINCIPAIS
+// 3. CONFIGURAÇÃO SUPABASE E FORMULÁRIO
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicia os gráficos visuais da simulação
-    setTimeout(window.animateCharts, 500);
+    const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
+    let supabase = null;
+    
+    if (window.supabase) {
+        supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    }
 
-    // Sistema de Login Real
+    // Login Real e Redirecionamento
     const loginForm = document.getElementById('login-form');
     if(loginForm) {
         loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Impede refresh da página
+            e.preventDefault(); 
 
             const email = loginForm.querySelector('input[type="email"]').value;
             const password = loginForm.querySelector('input[type="password"]').value;
@@ -76,6 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             btnSubmit.innerText = "A encriptar...";
             btnSubmit.style.opacity = "0.7";
+
+            if(!supabase) {
+                alert("Falha de ligação ao servidor.");
+                return;
+            }
 
             try {
                 const { data, error } = await supabase.auth.signInWithPassword({
@@ -85,17 +105,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (error) throw error;
 
-                // SUCESSO!
                 btnSubmit.innerText = "✓ Acesso Autorizado";
                 btnSubmit.style.background = "#059669";
                 
-                // REDIRECIONAR PARA O COFRE
+                // Leva o utilizador para a Sala do Trono
                 setTimeout(() => {
                     window.location.href = "dashboard.html";
                 }, 1000);
 
             } catch (err) {
-                // ERRO (Senha errada)
                 btnSubmit.innerText = "✖ Acesso Negado";
                 btnSubmit.style.background = "#ef4444";
                 
@@ -108,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Calculadora ROI
+    // Calculadora ROI Matemática
     const range = document.getElementById('faturamento');
     if(range) {
         range.addEventListener('input', (e) => {
