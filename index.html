@@ -12,19 +12,8 @@
 </head>
 <body>
 
-    <!-- PRELOADER -->
-    <div id="preloader">
-        <div class="preloader-content">
-            <img src="assets/prisma-brasao.svg" alt="Prisma Finance" class="preloader-logo">
-            <div class="loading-bar"><div class="loading-progress"></div></div>
-            <p>Carregando Workspace Prisma OS...</p>
-        </div>
-    </div>
-
-    <!-- BARRA DE PROGRESSO DE LEITURA -->
+    <!-- BARRA DE LEITURA E CURSOR -->
     <div class="scroll-progress" id="scroll-progress"></div>
-
-    <!-- CURSOR MAGNÉTICO -->
     <div class="cursor-dot" id="cursor-dot"></div>
     <div class="cursor-outline" id="cursor-outline"></div>
 
@@ -109,40 +98,9 @@
             </div>
         </div>
 
-        <!-- HOLOGRÁFICO -->
-        <section id="app" class="section-padding bg-alt">
-            <div class="section-header" data-anime="fade">
-                <h2>Tecnologia que se toca</h2>
-                <p>A experiência Prisma vai além do ecrã. Tenha o controle absoluto nas mãos.</p>
-            </div>
-            <div class="deep-feature" data-anime="fade">
-                <div class="feature-text">
-                    <div class="icon-box highlight">💳</div>
-                    <h3>Cartão Corporativo Inteligente</h3>
-                    <p>O Prisma Black Card sincroniza todas as despesas em tempo real direto para o seu DRE.</p>
-                    <ul class="check-list">
-                        <li>✔ Conciliação em milissegundos</li>
-                        <li>✔ Limites personalizados por funcionário</li>
-                    </ul>
-                </div>
-                <div class="hologram-wrapper">
-                    <div class="prisma-card tilt-card" id="prisma-card">
-                        <div class="glare" id="card-glare"></div>
-                        <div class="card-logo">PRISMA</div>
-                        <div class="card-chip"></div>
-                        <div class="card-number">•••• •••• •••• 2026</div>
-                        <div class="card-bottom">
-                            <span>RAUL PAIVA</span>
-                            <span class="card-type">CORPORATE</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- CALCULADORA ROI -->
         <section id="roi" class="section-padding">
-            <div class="section-header" data-anime="fade"><h2>Calcule o seu Retorno (ROI)</h2><p>Ligue o som, deslize a barra e veja a matemática trabalhar por si.</p></div>
+            <div class="section-header" data-anime="fade"><h2>Calcule o seu Retorno (ROI)</h2></div>
             <div class="roi-container tilt-card aura-glow" data-anime="fade">
                 <div class="roi-content">
                     <div class="roi-input-area">
@@ -156,41 +114,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- PLANOS -->
-        <section id="planos" class="section-padding bg-alt">
-            <div class="section-header" data-anime="fade">
-                <h2>O investimento que gera lucro</h2>
-                <div class="pricing-toggle">
-                    <span id="label-mensal" class="active">Mensal</span>
-                    <label class="switch magnetic"><input type="checkbox" id="billing-toggle" onchange="togglePricing()"><span class="slider round"></span></label>
-                    <span id="label-anual">Anual <span class="discount-badge">-20%</span></span>
-                </div>
-            </div>
-            <div class="pricing-grid">
-                <div class="pricing-card tilt-card" data-anime="fade">
-                    <h3>Essential</h3>
-                    <div class="price">R$ <span class="price-val" data-mensal="597" data-anual="477">597</span><span class="period">/mês</span></div>
-                    <ul class="features-list"><li>✔ Prisma App</li><li>✔ IA Bancária</li><li>✔ Dashboards</li></ul>
-                    <button onclick="abrirDiagnostico()" class="btn-secondary magnetic" style="width: 100%;">Assinar</button>
-                </div>
-                <div class="pricing-card featured aura-glow tilt-card" data-anime="fade" style="transition-delay: 0.1s;">
-                    <div class="popular-badge">Recomendado</div>
-                    <div class="pricing-content-inner">
-                        <h3>Advanced</h3>
-                        <div class="price">R$ <span class="price-val" data-mensal="997" data-anual="797">997</span><span class="period">/mês</span></div>
-                        <ul class="features-list"><li>✔ Emissão NFs</li><li>✔ DRE Real</li><li>✔ Reunião C-Level</li></ul>
-                        <button onclick="abrirDiagnostico()" class="btn-primary magnetic" style="width: 100%; justify-content: center;">Quero Automatizar <span class="arrow">→</span></button>
-                    </div>
-                </div>
-                <div class="pricing-card tilt-card" data-anime="fade" style="transition-delay: 0.2s;">
-                    <h3>Virtual CFO</h3>
-                    <div class="price" style="font-size: 1.5rem; padding: 10px 0;">Sob Consulta</div>
-                    <ul class="features-list"><li>✔ Multi-CNPJ</li><li>✔ Tributário</li><li>✔ Prisma Black Card</li></ul>
-                    <button onclick="abrirDiagnostico()" class="btn-secondary magnetic" style="width: 100%;">Falar com Raul</button>
-                </div>
-            </div>
-        </section>
     </main>
 
     <!-- RODAPÉ -->
@@ -200,84 +123,8 @@
                 <img src="assets/prisma-brasao.svg" class="brand-crest grayscale" alt="Prisma Finance">
                 <p>Ciências Contábeis e Tecnologia de Ponta.</p>
             </div>
-            <div class="footer-contact"><h4>Sede</h4><p>📍 Ponta Negra, Natal - RN</p><p>📱 (84) 99999-9999</p></div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Prisma Finance. All rights reserved.</p>
-            <div class="system-status magnetic"><span class="status-dot"></span><span>AES-256 Encrypted | Latency 12ms</span></div>
         </div>
     </footer>
-
-    <!-- CHATBOT -->
-    <div class="chat-wrapper">
-        <div class="chat-box" id="chat-box">
-            <div class="chat-header"><div class="chat-avatar">P</div><div><h4>Prisma AI</h4><p>Online</p></div><button class="chat-close magnetic" onclick="fecharChat()">&times;</button></div>
-            <div class="chat-body" id="chat-body"><div class="chat-msg bot">Sou a IA da Prisma. Quer automatizar a sua empresa hoje?</div></div>
-            <div class="chat-options" id="chat-options"><button onclick="chatResponder('Quero saber os planos')">Ver planos</button><button onclick="abrirDiagnostico(); fecharChat()">Diagnóstico</button></div>
-        </div>
-        <button class="chat-toggle magnetic" onclick="abrirChat()">💬</button>
-    </div>
-
-    <!-- FLOATING CTA -->
-    <div class="floating-cta" id="floating-cta">
-        <div class="f-cta-content">
-            <img src="assets/prisma-brasao.svg" alt="Prisma" width="20">
-            <span>Pronto para focar no que importa?</span>
-            <button onclick="abrirDiagnostico()" class="btn-primary magnetic" style="padding: 8px 20px; font-size: 0.9rem;">Diagnóstico Grátis</button>
-        </div>
-    </div>
-
-    <!-- COMMAND PALETTE (CTRL+K) -->
-    <div class="cmd-palette-overlay" id="cmd-palette">
-        <div class="cmd-box">
-            <div class="cmd-input-area">
-                <span>🔍</span>
-                <input type="text" id="cmd-input" placeholder="Pesquise por 'Planos', 'ROI', 'Contato'..." autocomplete="off">
-                <button onclick="fecharCommandPalette()" class="cmd-esc">ESC</button>
-            </div>
-            <div class="cmd-results" id="cmd-results">
-                <a href="#roi" onclick="fecharCommandPalette()">🧮 Simular Economia (Calculadora ROI)</a>
-                <a href="#planos" onclick="fecharCommandPalette()">💳 Ver Tabela de Planos e Preços</a>
-                <a href="#app" onclick="fecharCommandPalette()">⚙️ Descobrir a Tecnologia Prisma App</a>
-                <a href="#" onclick="fecharCommandPalette(); abrirDiagnostico()">🚀 Iniciar Diagnóstico Gratuito</a>
-                <a href="#" onclick="fecharCommandPalette(); enviarWhatsAppDireto()">📱 Falar com Consultor (WhatsApp)</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DIAGNÓSTICO -->
-    <div id="diagModal" class="modal-overlay">
-        <div class="modal-box diag-box aura-glow">
-            <div class="diag-inner-content">
-                <button onclick="fecharDiagnostico()" class="btn-fechar magnetic">&times;</button>
-                <div id="step-1" class="diag-step ativo">
-                    <h2>Qual é o segmento da empresa?</h2>
-                    <div class="diag-options">
-                        <button onclick="nextStep(2, 'Segmento', 'Serviços/Clínica')">Clínica / Serviços</button>
-                        <button onclick="nextStep(2, 'Segmento', 'Comércio')">Comércio / Loja</button>
-                        <button onclick="nextStep(2, 'Segmento', 'Digital')">Digital / E-commerce</button>
-                    </div>
-                </div>
-                <div id="step-2" class="diag-step">
-                    <h2>Quando quer agendar a call VIP?</h2>
-                    <div class="diag-options">
-                        <button onclick="nextStep(3, 'Horario', 'Hoje Manhã')">Hoje (Manhã)</button>
-                        <button onclick="nextStep(3, 'Horario', 'Hoje Tarde')">Hoje (Tarde)</button>
-                        <button onclick="nextStep(3, 'Horario', 'Amanhã')">Amanhã</button>
-                    </div>
-                </div>
-                <div id="step-3" class="diag-step">
-                    <div class="loading-spinner"></div>
-                    <h2>Analisando Perfil...</h2>
-                </div>
-                <div id="step-4" class="diag-step">
-                    <h2>Pronto! 🎉</h2>
-                    <p>O seu plano de automação está pré-aprovado.</p>
-                    <button onclick="enviarWhatsAppInteligente()" class="btn-primary magnetic" style="width:100%; margin-top:20px; justify-content:center;">Concluir no WhatsApp <span class="arrow">→</span></button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- MODAL DE LOGIN REAL COM SUPABASE -->
     <div id="loginModal" class="modal-overlay">
@@ -298,7 +145,7 @@
                     <h2 style="margin-bottom: 20px; text-align: center;">Prisma Workspace</h2>
                     <div class="input-group">
                         <label>E-mail Corporativo</label>
-                        <input type="email" placeholder="ceo@prismafinance.com.br" required>
+                        <input type="email" placeholder="O seu e-mail" required>
                     </div>
                     <div class="input-group">
                         <label>Senha Privada</label>
@@ -310,7 +157,7 @@
         </div>
     </div>
 
-    <!-- BIBLIOTECA DO SUPABASE NO FINAL DO ARQUIVO -->
+    <!-- BIBLIOTECAS E SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/script.js"></script>
 </body>
