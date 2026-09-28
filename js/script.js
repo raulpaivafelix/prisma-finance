@@ -1,74 +1,49 @@
-/* 1. MÁQUINA DE ESCREVER (TYPEWRITER) */
-const texto = "Terceirize o financeiro da sua empresa e compre o seu tempo de volta.";
-const elementoTexto = document.getElementById("maquina-escrever");
-let i = 0;
-
-function escreverTexto() {
-    if (i < texto.length) {
-        elementoTexto.innerHTML += texto.charAt(i);
-        i++;
-        setTimeout(escreverTexto, 40); // 40 milissegundos por letra (velocidade)
-    }
-}
-// Inicia quando a página carrega
-window.onload = escreverTexto;
-
-/* 2. MENU INTERATIVO */
-function alternarOpcoes() {
-    const caixa = document.getElementById("caixa-opcoes");
-    caixa.classList.toggle("mostrar-menu");
-}
-
-/* 3. ACORDEÃO (SOLUÇÕES) */
-const accordions = document.querySelectorAll(".accordion-header");
-accordions.forEach(acc => {
-    acc.addEventListener("click", function() {
-        this.classList.toggle("active");
-        const content = this.nextElementSibling;
-        if (content.style.maxHeight) {
-            content.style.maxHeight = null;
-        } else {
-            content.style.maxHeight = content.scrollHeight + "px";
-        }
-    });
-});
-
-/* 4. ANIMAÇÕES FADE-IN NO SCROLL */
-const fadeObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if(entry.isIntersecting) {
-            entry.target.classList.add('animar');
-        }
-    });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('[data-anime="scroll"]').forEach(el => fadeObserver.observe(el));
-
-/* 5. CONTADORES ANIMADOS (NÚMEROS A SUBIR) */
-const counters = document.querySelectorAll('.counter');
-const counterObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const target = +entry.target.getAttribute('data-target');
-            let current = 0;
-            // Velocidade e saltos (ajustado para ser rápido e fluído)
-            const increment = target / 60; 
-
-            const updateCounter = () => {
-                current += increment;
-                if (current < target) {
-                    entry.target.innerText = Math.ceil(current);
-                    setTimeout(updateCounter, 25);
-                } else {
-                    // Quando atinge o alvo exato (ex: 10000 -> 10.000)
-                    entry.target.innerText = target.toLocaleString('pt-BR');
-                }
-            };
-            updateCounter();
-            // Pára de observar depois de animar a primeira vez
-            observer.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.5 }); // Dispara quando metade da secção estiver visível
-
-counters.forEach(counter => counterObserver.observe(counter));
+/* 1. EFEITO DE LUZ (GLOW) NOS CARTÕES DA GRELHA BENTO */
+// Este código faz com que uma luz brilhante siga o cursor do rato por cima dos cartões
+document.getElementById("cards").onmousemove = e => {
+    for(const card of document.getElementsByClassName("card")) {
+      const rect = card.getBoundingClientRect(),
+            x = e.clientX - rect.left,
+            y = e.clientY - rect.top;
+  
+      card.style.setProperty("--mouse-x", `${x}px`);
+      card.style.setProperty("--mouse-y", `${y}px`);
+    };
+  }
+  
+  /* 2. ANIMAÇÃO DE APARECIMENTO (FADE UP) NO SCROLL */
+  const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+          if (entry.isIntersecting) {
+              entry.target.classList.add('show');
+          }
+      });
+  }, { threshold: 0.1 });
+  
+  document.querySelectorAll('[data-anime="fade"]').forEach(el => observer.observe(el));
+  
+  /* 3. CONTADORES DE ALTA PERFORMANCE (NÚMEROS A ROLAR) */
+  const counters = document.querySelectorAll('.counter');
+  const counterObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+          if (entry.isIntersecting) {
+              const target = +entry.target.getAttribute('data-target');
+              let current = 0;
+              const increment = target / 50; 
+  
+              const updateCounter = () => {
+                  current += increment;
+                  if (current < target) {
+                      entry.target.innerText = Math.ceil(current);
+                      requestAnimationFrame(updateCounter); // Mais suave que o setTimeout
+                  } else {
+                      entry.target.innerText = target.toLocaleString('pt-BR');
+                  }
+              };
+              updateCounter();
+              obs.unobserve(entry.target);
+          }
+      });
+  }, { threshold: 0.8 });
+  
+  counters.forEach(counter => counterObserver.observe(counter));
