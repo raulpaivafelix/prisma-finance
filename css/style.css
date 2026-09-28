@@ -323,7 +323,50 @@
             .contact-buttons { flex-direction: column; align-items: stretch; }
         }
 
-        .brand-crest {
-  width: 50px; /* Limita a largura */
-  height: auto; /* Mantém a proporção correta */
+        /* --- CORREÇÃO DO TAMANHO DOS BRASÕES --- */
+.brand-crest {
+    width: 44px; /* Trava o tamanho do brasão */
+    height: auto;
+}
+
+/* --- ESTILOS DO MENU INTERATIVO --- */
+.menu-interativo {
+    position: relative; /* Mantém as opções coladas ao botão */
+}
+
+.botao-opcoes {
+    padding: 10px 15px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.opcoes-ocultas {
+    display: none; /* Começa escondido */
+    flex-direction: column;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 150px;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    border-radius: 4px;
+}
+
+.opcoes-ocultas a {
+    text-decoration: none;
+    color: #333;
+    padding: 8px;
+}
+
+.opcoes-ocultas a:hover {
+    background-color: #e0e0e0;
+}
+
+/* Classe ativada pelo JavaScript */
+.mostrar-menu {
+    display: flex; 
 }
