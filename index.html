@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <!-- CABEÇALHO -->
+    <!-- CABEÇALHO COM BOTÃO DE LOGIN -->
     <header>
         <div class="logo">
             <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Prisma Finance">
@@ -21,7 +21,11 @@
             <a href="#sobre">A Empresa</a>
             <a href="#metodo">Como Funciona</a>
         </nav>
-        <a href="https://wa.me/5584999999999?text=Ol%C3%A1%2C%20desejo%20uma%20an%C3%A1lise%20financeira%20da%20minha%20empresa." target="_blank" class="btn-nav">Falar com Consultor</a>
+        <div class="header-actions">
+            <!-- Botão que abre a janela de acesso -->
+            <button onclick="abrirLogin()" class="btn-login">Login Cliente</button>
+            <a href="https://wa.me/5584999999999?text=Ol%C3%A1%2C%20desejo%20uma%20an%C3%A1lise%20financeira." target="_blank" class="btn-nav">Falar com Consultor</a>
+        </div>
     </header>
 
     <main>
@@ -85,7 +89,7 @@
                     <div class="card-content">
                         <div class="icon-box info">📊</div>
                         <h3>Contas a Pagar e Receber</h3>
-                        <p>Agendamos todos os seus pagamentos diretamente no seu banco (apenas aguardando a sua aprovação final) e monitorizamos todas as entradas para reduzir a inadimplência.</p>
+                        <p>Agendamos todos os seus pagamentos diretamente no seu banco e monitorizamos todas as entradas para reduzir a inadimplência.</p>
                     </div>
                 </div>
                 <div class="card" data-anime="fade">
@@ -98,7 +102,7 @@
                 <div class="card" data-anime="fade">
                     <div class="card-content">
                         <div class="icon-box info">📄</div>
-                        <h3>Emissão de Notas Fiscais e Boletos</h3>
+                        <h3>Emissão de Notas Fiscais</h3>
                         <p>Tiramos a burocracia das suas mãos. Faturamos as suas vendas ou serviços de forma automática e enviamos diretamente para os seus clientes.</p>
                     </div>
                 </div>
@@ -121,12 +125,11 @@
                     <h2>Muito mais do que assessoria.<br><span class="gradient-text" style="font-size: 2.5rem;">O seu braço direito estratégico.</span></h2>
                     <p>Sediada em Natal/RN, a <strong>Prisma Finance</strong> nasceu com um propósito claro: resgatar o bem-estar e o tempo livre dos empresários.</p>
                     <p>Muitos empreendedores trabalham 14 horas por dia e, quando chegam a casa, ainda têm de organizar papéis, conciliar extratos e preocupar-se com pagamentos. Nós existimos para que possa focar-se exclusivamente naquilo que faz o seu negócio crescer: o seu produto, o seu serviço e as suas vendas.</p>
-                    <p>A nossa equipa traz práticas de grandes corporações, adaptadas para a realidade das micro e pequenas empresas, garantindo sigilo total, tecnologia de ponta e um atendimento próximo.</p>
                 </div>
             </div>
         </section>
 
-        <!-- O MÉTODO (COMO FUNCIONA) -->
+        <!-- O MÉTODO -->
         <section id="metodo" class="section-padding bg-alt">
             <div class="section-header" data-anime="fade">
                 <h2>Como funciona a nossa parceria?</h2>
@@ -135,28 +138,28 @@
             <div class="timeline">
                 <div class="timeline-step" data-anime="fade">
                     <div class="step-number">1</div>
-                    <h3>Diagnóstico e Alinhamento</h3>
-                    <p>Uma reunião gratuita para entendermos as dores do seu financeiro atual e mapearmos os seus processos de vendas e despesas.</p>
+                    <h3>Diagnóstico</h3>
+                    <p>Uma reunião gratuita para entendermos as dores do seu financeiro atual.</p>
                 </div>
                 <div class="timeline-step" data-anime="fade" style="transition-delay: 0.1s;">
                     <div class="step-number">2</div>
-                    <h3>Setup e Integração</h3>
-                    <p>Implementamos o sistema de gestão (ERP) ideal para si e integramos o nosso acesso restrito aos seus bancos e sistemas de notas.</p>
+                    <h3>Integração</h3>
+                    <p>Implementamos o sistema de gestão e integramos o nosso acesso restrito aos seus bancos.</p>
                 </div>
                 <div class="timeline-step" data-anime="fade" style="transition-delay: 0.2s;">
                     <div class="step-number">3</div>
-                    <h3>Operação Diária (BPO)</h3>
-                    <p>Passamos a gerir o seu dia a dia. Você apenas envia os comprovantes pelo WhatsApp ou pasta partilhada, e nós tratamos do resto.</p>
+                    <h3>Operação Diária</h3>
+                    <p>Passamos a gerir o seu dia a dia. Você apenas envia os comprovantes, e nós tratamos do resto.</p>
                 </div>
                 <div class="timeline-step" data-anime="fade" style="transition-delay: 0.3s;">
                     <div class="step-number">4</div>
-                    <h3>Análise de Resultados</h3>
-                    <p>Até ao 5º dia útil do mês seguinte, entregamos os relatórios fechados e reunimos para discutir métricas e planeamento estratégico.</p>
+                    <h3>Análise</h3>
+                    <p>Entregamos os relatórios fechados e reunimos para discutir planeamento estratégico.</p>
                 </div>
             </div>
         </section>
 
-        <!-- FAQ (PERGUNTAS FREQUENTES) -->
+        <!-- FAQ -->
         <section class="section-padding">
             <div class="section-header" data-anime="fade">
                 <h2>Perguntas Frequentes</h2>
@@ -164,23 +167,14 @@
             <div class="faq-container" data-anime="fade">
                 <details class="faq-item">
                     <summary>Vou perder o controlo do meu dinheiro?</summary>
-                    <div class="faq-content">De forma alguma. A Prisma Finance não tem poder para movimentar o seu dinheiro. Nós preparamos os pagamentos no banco, mas <strong>apenas você</strong> (com a sua senha ou token) pode autorizar e efetivar as transações.</div>
+                    <div class="faq-content">De forma alguma. Nós preparamos os pagamentos no banco, mas <strong>apenas você</strong> (com a sua senha ou token) pode autorizar as transações.</div>
                 </details>
                 <details class="faq-item">
                     <summary>A Prisma substitui o meu contabilista?</summary>
-                    <div class="faq-content">Não. Nós fazemos a gestão financeira (o dia a dia, fluxo de caixa, pagamentos). O seu contabilista trata da parte tributária, impostos e folha de pagamento. Na verdade, nós facilitamos muito a vida dele, enviando toda a documentação já organizada mensalmente.</div>
-                </details>
-                <details class="faq-item">
-                    <summary>Qualquer empresa pode contratar o BPO Financeiro?</summary>
-                    <div class="faq-content">Sim! Atendemos prestadores de serviços, clínicas, agências, e-commerces e comércios locais. Se a sua empresa processa recebimentos e tem contas a pagar, nós podemos profissionalizar o seu setor financeiro.</div>
-                </details>
-                <details class="faq-item">
-                    <summary>Os meus dados estarão seguros?</summary>
-                    <div class="faq-content">Absolutamente. Trabalhamos com sistemas encriptados, em conformidade com a LGPD, e assinamos um rigoroso acordo de confidencialidade (NDA) com todos os nossos clientes.</div>
+                    <div class="faq-content">Não. Nós fazemos a gestão financeira diária. O seu contabilista trata da parte tributária. Facilitamos a vida dele enviando tudo organizado.</div>
                 </details>
             </div>
         </section>
-
     </main>
 
     <!-- RODAPÉ -->
@@ -199,6 +193,35 @@
         </div>
     </footer>
 
+    <!-- JANELA DE LOGIN (MODAL) OCULTA POR PADRÃO -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-box">
+            <button onclick="fecharLogin()" class="btn-fechar">&times;</button>
+            <div class="modal-header">
+                <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Prisma Finance">
+                <h2>Prisma App</h2>
+                <p>O seu portal de autogestão financeira.</p>
+            </div>
+            <form class="login-form">
+                <div class="input-group">
+                    <label>E-mail Corporativo</label>
+                    <input type="email" placeholder="ceo@suaempresa.com.br" required>
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" placeholder="••••••••" required>
+                </div>
+                <!-- O alerta que comunica ao cliente que a plataforma está em desenvolvimento -->
+                <button type="button" class="btn-primary" style="width: 100%; margin-top: 10px;" onclick="alert('O Sistema Web Prisma está em fase final de atualizações. Por favor, contacte o seu consultor pelo WhatsApp para acesso aos seus relatórios.')">Acessar Sistema</button>
+                <div class="login-links">
+                    <a href="#">Esqueci a minha senha</a>
+                    <a href="#">Quero criar uma conta</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
     <script src="js/script.js"></script>
 </body>
 </html>
