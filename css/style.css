@@ -9,17 +9,20 @@ body {
     line-height: 1.6;
 }
 
-/* --- CABEÇALHO --- */
+/* --- CABEÇALHO (GLASSMORPHISM) --- */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 5%;
-    background-color: #ffffff;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 15px 5%;
+    /* Fundo semi-transparente e desfoque */
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
 }
 
 .logo {
@@ -47,12 +50,8 @@ header {
     transition: all 0.3s ease;
 }
 
-.botao-opcoes:hover { 
-    background-color: #1c2a54; 
-    transform: translateY(-2px); 
-}
+.botao-opcoes:hover { background-color: #1c2a54; transform: translateY(-2px); }
 
-/* Estado inicial da caixa (Escondida com suavidade) */
 .opcoes-ocultas {
     opacity: 0;
     visibility: hidden;
@@ -71,7 +70,6 @@ header {
     transition: all 0.3s ease;
 }
 
-/* Classe ativada pelo clique no JavaScript */
 .mostrar-menu {
     opacity: 1;
     visibility: visible;
@@ -86,35 +84,35 @@ header {
     transition: background-color 0.2s;
 }
 
-.opcoes-ocultas a:hover { 
-    background-color: #f4f6f8; 
-    color: #0056b3; 
-}
+.opcoes-ocultas a:hover { background-color: #f4f6f8; color: #0b132b; font-weight: 600;}
 
-/* --- SEÇÃO INÍCIO (HERO) E CTA --- */
+/* --- SEÇÃO INÍCIO (GRADIENTE ANIMADO) --- */
 .hero {
+    /* Gradiente em movimento */
+    background: linear-gradient(-45deg, #f4f6f8, #e0e7ff, #ffffff, #dbe4ff);
+    background-size: 400% 400%;
+    animation: gradientBG 12s ease infinite;
     text-align: center;
-    padding: 80px 5%;
-    max-width: 800px;
-    margin: 0 auto;
+    padding: 100px 5%;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.hero h1 { 
-    font-size: 2.5rem; 
-    color: #0b132b; 
-    margin-bottom: 20px; 
-    line-height: 1.2; 
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-.hero p { 
-    font-size: 1.1rem; 
-    color: #666; 
-    margin-bottom: 40px; 
-}
+.hero-content { max-width: 800px; }
+.hero h1 { font-size: 2.8rem; color: #0b132b; margin-bottom: 20px; line-height: 1.2; }
+.hero p { font-size: 1.15rem; color: #555; margin-bottom: 40px; }
 
 .cta-button {
     display: inline-block;
-    padding: 16px 32px;
+    padding: 18px 36px;
     background-color: #f7931e;
     color: white;
     text-decoration: none;
@@ -127,65 +125,117 @@ header {
 
 .cta-button:hover {
     background-color: #e68010;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(247, 147, 30, 0.4);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(247, 147, 30, 0.5);
 }
 
 /* --- SEÇÃO PROBLEMAS (CARTÕES) --- */
 .pain-section {
-    background-color: #f4f6f8;
-    padding: 80px 5%;
+    background-color: #ffffff;
+    padding: 100px 5%;
     text-align: center;
 }
 
-.pain-section h2 { 
-    font-size: 2rem; 
-    color: #0b132b; 
-    margin-bottom: 50px; 
-}
+.pain-section h2 { font-size: 2.2rem; color: #0b132b; margin-bottom: 60px; }
 
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 30px;
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 0 auto;
 }
 
 .card {
-    background-color: #ffffff;
-    padding: 30px;
+    background-color: #fcfcfc;
+    padding: 40px 30px;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    text-align: left;
+    border: 1px solid #eaeaea;
     border-top: 4px solid #e03131;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: left;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+.card:hover { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
+.card .icon { font-size: 2.5rem; display: block; margin-bottom: 20px; }
+.card p { font-size: 1.1rem; color: #444; margin: 0; font-weight: 600; }
+
+/* --- SEÇÃO SOLUÇÕES (ACORDEÃO) --- */
+.solutions-section {
+    background-color: #f4f6f8;
+    padding: 100px 5%;
+    text-align: center;
 }
 
-.card .icon { font-size: 2rem; display: block; margin-bottom: 15px; }
-.card p { font-size: 1.05rem; color: #444; margin: 0; font-weight: 600; }
+.solutions-section h2 { font-size: 2.2rem; color: #0b132b; margin-bottom: 50px; }
+
+.accordion-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.accordion-item {
+    background-color: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    overflow: hidden;
+}
+
+.accordion-header {
+    width: 100%;
+    padding: 20px 25px;
+    background-color: #ffffff;
+    border: none;
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0b132b;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.accordion-header:hover { background-color: #f9f9ff; }
+.accordion-header.active { color: #0056b3; }
+.accordion-header .icon { font-size: 1.5rem; transition: transform 0.3s ease; }
+.accordion-header.active .icon { transform: rotate(45deg); /* Transforma o + num x */ }
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    background-color: #fafafa;
+}
+
+.accordion-content p { padding: 0 25px 25px 25px; margin: 0; color: #555; }
+
+/* --- ANIMAÇÕES DE SCROLL --- */
+[data-anime="scroll"] {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+[data-anime="scroll"].animar {
+    opacity: 1;
+    transform: translateY(0);
+}
 
 /* --- RODAPÉ --- */
-footer {
-    background-color: #0b132b;
-    color: white;
-    text-align: center;
-    padding: 60px 20px;
-}
+footer { background-color: #0b132b; color: white; text-align: center; padding: 60px 20px; }
 footer h3 { margin: 15px 0 5px 0; }
 .contactos-info { margin: 20px 0; line-height: 1.8; }
 .contactos-info p { color: #ffffff; font-size: 1rem; margin: 5px 0; }
 .direitos { color: #8a94b5; font-size: 0.9rem; margin-top: 30px; }
 
-/* --- RESPONSIVIDADE (MOBILE) --- */
+/* --- RESPONSIVIDADE --- */
 @media (max-width: 768px) {
-    header { flex-direction: column; gap: 15px; padding: 15px 5%; }
-    .hero h1 { font-size: 2rem; }
+    header { padding: 15px 5%; }
+    .hero h1 { font-size: 2.2rem; }
     .cta-button { width: 100%; text-align: center; }
     .cards-grid { grid-template-columns: 1fr; }
 }
