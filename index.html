@@ -9,184 +9,188 @@
 </head>
 <body>
 
-    <!-- CABEÇALHO -->
     <header>
         <div class="logo">
             <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Prisma Finance">
             <span>PRISMA FINANCE</span>
         </div>
         <nav class="nav-links">
-            <a href="#app">A Plataforma</a>
-            <a href="#funcionalidades">Automação</a>
-            <a href="#metodo">Onboarding</a>
+            <a href="#app">Plataforma</a>
+            <a href="#roi">Calculadora ROI</a>
+            <a href="#planos">Planos</a>
         </nav>
         <div class="header-actions">
-            <button onclick="abrirLogin()" class="btn-login">Acessar Plataforma</button>
-            <a href="https://wa.me/5584999999999?text=Ol%C3%A1%2C%20quero%20automatizar%20o%20financeiro%20da%20minha%20empresa." target="_blank" class="btn-nav">Agendar Demonstração</a>
+            <button onclick="abrirLogin()" class="btn-login">Login Cliente</button>
+            <a href="https://wa.me/5584999999999" target="_blank" class="btn-nav">Agendar Demo</a>
         </div>
     </header>
 
     <main>
-        <!-- HERO: FOCO EM SOFTWARE E AUTONOMIA -->
+        <!-- HERO -->
         <section class="hero" data-anime="fade">
             <div class="hero-badge">A revolução da Autogestão Financeira</div>
             <h1 class="gradient-text">Automação inteligente. O controlo da sua empresa nas suas mãos.</h1>
-            <p>Esqueça as planilhas manuais e a dependência de terceiros. Com o <strong>Prisma App</strong>, você conecta os seus bancos, automatiza rotinas e tem a visão de um CFO em tempo real, fazendo tudo sozinho com apenas alguns cliques.</p>
+            <p>O <strong>Prisma App</strong> conecta os seus bancos, automatiza rotinas e dá-lhe a visão de um CFO em tempo real. Faça tudo sozinho com apenas alguns cliques.</p>
             <div class="hero-buttons">
-                <a href="#app" class="btn-primary">Conhecer a Plataforma</a>
+                <a href="#planos" class="btn-primary">Ver Planos e Preços</a>
                 <button onclick="abrirLogin()" class="btn-secondary">Testar Sistema ↓</button>
             </div>
         </section>
 
-        <!-- MÉTRICAS DA PLATAFORMA -->
-        <section class="metrics" data-anime="fade">
-            <div class="metric"><h2 class="counter" data-target="98">0</h2><span>%</span><p>Processos Automatizados</p></div>
-            <div class="metric"><h2 class="counter" data-target="15">0</h2><span>h</span><p>Poupadas por Semana</p></div>
-            <div class="metric"><h2 class="counter" data-target="100">0</h2><span>%</span><p>Integração Bancária</p></div>
+        <!-- CARROSSEL DE PROVA SOCIAL INFINITO (MARQUEE) -->
+        <div class="trust-carousel">
+            <div class="carousel-track">
+                <span>✦ Mais de R$ 2M Geridos</span>
+                <span>✦ Segurança Bank-Grade</span>
+                <span>✦ Conciliação por IA</span>
+                <span>✦ Zero Burocracia</span>
+                <span>✦ Integração via Open Finance</span>
+                <!-- Repetição para o efeito infinito -->
+                <span>✦ Mais de R$ 2M Geridos</span>
+                <span>✦ Segurança Bank-Grade</span>
+                <span>✦ Conciliação por IA</span>
+                <span>✦ Zero Burocracia</span>
+                <span>✦ Integração via Open Finance</span>
+            </div>
+        </div>
+
+        <!-- CALCULADORA DE ROI (RETORNO SOBRE INVESTIMENTO) -->
+        <section id="roi" class="section-padding">
+            <div class="section-header" data-anime="fade">
+                <h2>O custo do caos financeiro</h2>
+                <p>Simule abaixo o impacto imediato da nossa plataforma na sua empresa.</p>
+            </div>
+            <div class="roi-container tilt-card" data-anime="fade">
+                <div class="roi-input-area">
+                    <label>Faturamento Mensal Estimado: <span id="faturamento-val">R$ 50.000</span></label>
+                    <input type="range" id="faturamento" min="10000" max="500000" step="5000" value="50000">
+                    <p class="roi-hint">Deslize para ajustar o valor</p>
+                </div>
+                <div class="roi-results">
+                    <div class="roi-box">
+                        <h4>Tempo Poupado</h4>
+                        <h3 id="tempo-poupado">30h / mês</h3>
+                    </div>
+                    <div class="roi-box highlight">
+                        <h4>Economia Estimada (vs CLT)</h4>
+                        <h3 id="dinheiro-poupado">R$ 2.500</h3>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <!-- APRESENTAÇÃO DO SOFTWARE (NOVA SECÇÃO SAAS) -->
+        <!-- A PLATAFORMA (BENTO GRID 3D) -->
         <section id="app" class="section-padding bg-alt">
             <div class="section-header" data-anime="fade">
-                <h2>Não é apenas BPO. É tecnologia de ponta.</h2>
-                <p>Desenvolvemos um ecossistema onde o trabalho pesado é feito por algoritmos, dando-lhe total autonomia e poder de decisão.</p>
+                <h2>Faça tudo sozinho. Com a força de um robô.</h2>
             </div>
-            
-            <div class="software-showcase" data-anime="fade">
-                <!-- Representação visual abstrata do sistema -->
-                <div class="mockup-window">
-                    <div class="mockup-header">
-                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        <div class="mockup-title">app.prismafinance.com.br</div>
-                    </div>
-                    <div class="mockup-body">
-                        <div class="mockup-sidebar"></div>
-                        <div class="mockup-content">
-                            <div class="mockup-chart"></div>
-                            <div class="mockup-cards">
-                                <div class="m-card"></div><div class="m-card"></div><div class="m-card"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- FUNCIONALIDADES DE AUTOMAÇÃO -->
-        <section id="funcionalidades" class="section-padding">
-            <div class="section-header" data-anime="fade">
-                <h2>Faça tudo sozinho. Mas com a força de um robô.</h2>
-                <p>As ferramentas que o Prisma App coloca à sua disposição para assumir o comando:</p>
-            </div>
-            <div class="bento-grid">
-                <div class="card span-2" data-anime="fade">
+            <div class="bento-grid" id="cards">
+                <div class="card tilt-card span-2" data-anime="fade">
                     <div class="card-content">
                         <div class="icon-box highlight">🔗</div>
-                        <h3>Open Finance (Integração Direta)</h3>
-                        <p>Ligue as contas do Nubank, Itaú, Bradesco e Banco do Brasil diretamente na nossa plataforma. Os seus extratos são puxados automaticamente em tempo real, sem precisar de exportar arquivos OFX chatos.</p>
+                        <h3>Integração Direta (Open Finance)</h3>
+                        <p>Ligue Nubank, Itaú ou Banco do Brasil. Os extratos são puxados automaticamente em tempo real.</p>
                     </div>
                 </div>
-                <div class="card" data-anime="fade" style="transition-delay: 0.2s;">
+                <div class="card tilt-card" data-anime="fade" style="transition-delay: 0.1s;">
                     <div class="card-content">
                         <div class="icon-box info">🤖</div>
-                        <h3>Conciliação por Inteligência</h3>
-                        <p>O sistema lê o nome das suas despesas no extrato e categoriza-as sozinho. Aquele Pix para a concessionária de energia vai direto para "Custos Fixos".</p>
+                        <h3>Conciliação por IA</h3>
+                        <p>O sistema lê o nome das despesas e categoriza-as sozinho com alta precisão.</p>
                     </div>
                 </div>
-                <div class="card" data-anime="fade" style="transition-delay: 0.1s;">
+                <div class="card tilt-card" data-anime="fade" style="transition-delay: 0.2s;">
                     <div class="card-content">
                         <div class="icon-box info">✅</div>
                         <h3>Aprovação em Lote</h3>
-                        <p>Cadastre os seus boletos uma vez e o Prisma App envia tudo para a sua aplicação bancária. O seu único trabalho? Clicar em "Aprovar tudo" no telemóvel.</p>
+                        <p>O sistema envia para o banco, você só clica em "Aprovar tudo" no telemóvel.</p>
                     </div>
                 </div>
-                <div class="card span-2" data-anime="fade" style="transition-delay: 0.2s;">
+                <div class="card tilt-card span-2" data-anime="fade" style="transition-delay: 0.3s;">
                     <div class="card-content">
                         <div class="icon-box highlight">📊</div>
-                        <h3>Dashboards e DRE em Tempo Real</h3>
-                        <p>Abra a plataforma no telemóvel e veja gráficos interativos. Saiba exatamente qual é o seu ponto de equilíbrio e o lucro líquido do mês, atualizados a cada transação.</p>
+                        <h3>DRE em Tempo Real</h3>
+                        <p>Gráficos interativos para saber o seu ponto de equilíbrio e lucro líquido do mês.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SOBRE A MUDANÇA PARA TECNOLOGIA -->
-        <section id="sobre" class="section-padding bg-alt">
-            <div class="about-container" data-anime="fade">
-                <div class="about-text">
-                    <h2>Mais autonomia.<br><span class="gradient-text" style="font-size: 2.5rem;">Menos dependência.</span></h2>
-                    <p>O mercado de BPO tradicional obriga-o a enviar papéis e a esperar por respostas. Nós na <strong>Prisma Finance</strong> decidimos quebrar esse modelo.</p>
-                    <p>Ao transformar o nosso *know-how* financeiro numa plataforma tecnológica, devolvemos-lhe o controlo. Você acede, clica e os processos acontecem. Claro que, se precisar de apoio estratégico para interpretar um DRE ou planear cortes de custos, a nossa equipa de consultores humanos estará sempre a um clique de distância.</p>
+        <!-- TABELA DE PREÇOS SAAS -->
+        <section id="planos" class="section-padding">
+            <div class="section-header" data-anime="fade">
+                <h2>Escolha o seu plano de voo</h2>
+                <p>Planos justos para empresas de todos os tamanhos.</p>
+            </div>
+            <div class="pricing-grid">
+                <!-- Plano 1 -->
+                <div class="pricing-card tilt-card" data-anime="fade">
+                    <h3>Essential</h3>
+                    <div class="price">Sob Consulta</div>
+                    <ul class="features-list">
+                        <li>✔ Conciliação Bancária IA</li>
+                        <li>✔ Contas a Pagar e Receber</li>
+                        <li>✔ Dashboard Básico</li>
+                        <li>✔ Acesso a 1 Utilizador</li>
+                    </ul>
+                    <a href="https://wa.me/5584999999999" class="btn-secondary" style="width: 100%; text-align: center;">Falar com Consultor</a>
+                </div>
+                <!-- Plano 2 (Destaque) -->
+                <div class="pricing-card featured tilt-card" data-anime="fade" style="transition-delay: 0.1s;">
+                    <div class="popular-badge">Mais Escolhido</div>
+                    <h3>Advanced</h3>
+                    <div class="price">Sob Consulta</div>
+                    <ul class="features-list">
+                        <li>✔ Tudo do Essential</li>
+                        <li>✔ Emissão de NFs Automática</li>
+                        <li>✔ DRE e Fluxo de Caixa Real</li>
+                        <li>✔ Reunião Mensal Estratégica</li>
+                    </ul>
+                    <a href="https://wa.me/5584999999999" class="btn-primary" style="width: 100%; text-align: center;">Quero Automatizar</a>
+                </div>
+                <!-- Plano 3 -->
+                <div class="pricing-card tilt-card" data-anime="fade" style="transition-delay: 0.2s;">
+                    <h3>Virtual CFO</h3>
+                    <div class="price">Sob Consulta</div>
+                    <ul class="features-list">
+                        <li>✔ Tudo do Advanced</li>
+                        <li>✔ Planeamento Tributário</li>
+                        <li>✔ Gestão de Múltiplos CNPJs</li>
+                        <li>✔ Reuniões Semanais</li>
+                    </ul>
+                    <a href="https://wa.me/5584999999999" class="btn-secondary" style="width: 100%; text-align: center;">Serviço Exclusivo</a>
                 </div>
             </div>
         </section>
 
-        <!-- FAQ COM FOCO NO SOFTWARE -->
-        <section class="section-padding">
-            <div class="section-header" data-anime="fade">
-                <h2>Perguntas Frequentes</h2>
-            </div>
-            <div class="faq-container" data-anime="fade">
-                <details class="faq-item">
-                    <summary>É difícil aprender a usar o Prisma App?</summary>
-                    <div class="faq-content">Pelo contrário! O nosso sistema foi desenhado com o conceito de "Zero Curva de Aprendizagem". Se sabe usar uma rede social, saberá gerir o seu financeiro connosco. O Onboarding inicial dura apenas 40 minutos.</div>
-                </details>
-                <details class="faq-item">
-                    <summary>Preciso de enviar comprovantes pelo WhatsApp?</summary>
-                    <div class="faq-content">Não! Com a automação do Prisma App, basta tirar uma foto do boleto na própria plataforma ou arrastar o PDF, e o nosso sistema extrai a data de vencimento e o valor utilizando OCR (leitura ótica inteligente).</div>
-                </details>
-                <details class="faq-item">
-                    <summary>A plataforma faz os pagamentos por mim?</summary>
-                    <div class="faq-content">Para garantir a sua segurança total, o Prisma App agenda os pagamentos no seu banco via integração segura. O dinheiro só sai da conta quando você entra na aplicação do seu banco e insere a sua senha. O controlo final é sempre seu.</div>
-                </details>
-            </div>
-        </section>
     </main>
 
-    <!-- RODAPÉ -->
+    <!-- RODAPÉ E MODAL (INALTERADOS) -->
     <footer>
         <div class="footer-content">
             <img src="assets/prisma-brasao.svg" class="brand-crest grayscale" alt="Prisma Finance">
             <p>O Futuro da Autogestão Financeira para Empresas.</p>
-            <div class="contactos">
-                <span>📍 Ponta Negra, Natal/RN</span> | 
-                <span>📱 (84) 99999-9999</span> | 
-                <span>✉️ suporte@prismafinance.com.br</span>
-            </div>
+            <div class="contactos"><span>📍 Natal/RN</span> | <span>📱 (84) 99999-9999</span></div>
         </div>
-        <div class="footer-bottom">
-            &copy; 2026 Prisma Finance Tecnologia. Todos os direitos reservados.
-        </div>
+        <div class="footer-bottom">&copy; 2026 Prisma Finance Tecnologia.</div>
     </footer>
 
-    <!-- JANELA DE LOGIN (O "Portal" do Cliente) -->
     <div id="loginModal" class="modal-overlay">
         <div class="modal-box">
             <button onclick="fecharLogin()" class="btn-fechar">&times;</button>
             <div class="modal-header">
                 <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Prisma Finance">
-                <h2>Prisma App Workspace</h2>
+                <h2>Prisma App</h2>
                 <p>Acesse a sua central de autogestão.</p>
             </div>
             <form class="login-form">
-                <div class="input-group">
-                    <label>E-mail Corporativo</label>
-                    <input type="email" placeholder="ceo@suaempresa.com.br" required>
-                </div>
-                <div class="input-group">
-                    <label>Senha de Acesso</label>
-                    <input type="password" placeholder="••••••••" required>
-                </div>
-                <button type="button" class="btn-primary" style="width: 100%; margin-top: 10px;" onclick="alert('Bem-vindo ao Prisma App V2.0! O servidor de dados está atualmente em manutenção programada. Por favor, acesse novamente em breve.')">Entrar no Sistema</button>
-                <div class="login-links">
-                    <a href="#">Esqueci a minha senha</a>
-                    <a href="#">Solicitar uma demonstração</a>
-                </div>
+                <div class="input-group"><label>E-mail</label><input type="email" placeholder="ceo@empresa.com" required></div>
+                <div class="input-group"><label>Senha</label><input type="password" placeholder="••••••••" required></div>
+                <button type="button" class="btn-primary" style="width: 100%; margin-top: 10px;" onclick="alert('Sistema Prisma em manutenção programada. Contacte o suporte.')">Entrar no Sistema</button>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT -->
     <script src="js/script.js"></script>
 </body>
 </html>
