@@ -1,26 +1,49 @@
 // ==========================================
-// 0. SUPABASE CONFIGURATION (O Seu Cofre)
+// 1. SISTEMA À PROVA DE FALHAS DO PRELOADER
 // ==========================================
-const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    if(preloader) {
+        // Reduzi o tempo de espera para evitar bloqueios
+        setTimeout(() => {
+            preloader.style.opacity = '0';
+            setTimeout(() => { 
+                preloader.style.display = 'none'; 
+                if(typeof window.animateCharts === 'function') {
+                    window.animateCharts(); 
+                }
+            }, 500);
+        }, 800); 
+    }
+});
 
 // Variáveis Globais de Vendas
 window.currentFat = "50.000";
 window.currentPoupa = "2.250";
 
 document.addEventListener('DOMContentLoaded', () => {
-    const isDesktop = window.matchMedia("(pointer: fine)").matches;
-
-    /* --- 1. PRELOADER & SAUDAÇÃO --- */
-    const preloader = document.getElementById('preloader');
-    if(preloader) {
-        setTimeout(() => {
-            preloader.style.opacity = '0';
-            setTimeout(() => { preloader.style.display = 'none'; window.animateCharts(); }, 800);
-        }, 1200);
+    
+    // ==========================================
+    // 2. CONEXÃO SEGURA AO SUPABASE
+    // ==========================================
+    let supabase = null;
+    try {
+        const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
+        
+        // Verifica se a biblioteca do Supabase carregou corretamente
+        if (window.supabase) {
+            supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        } else {
+            console.warn("Aviso: Supabase não detectado. O site funcionará no modo visual sem login ativo.");
+        }
+    } catch (e) {
+        console.error("Erro ao configurar o Supabase:", e);
     }
 
+    const isDesktop = window.matchMedia("(pointer: fine)").matches;
+
+    // --- SAUDAÇÃO DINÂMICA ---
     const hora = new Date().getHours();
     const greetEl = document.getElementById('dynamic-greeting');
     if(greetEl) {
@@ -29,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else greetEl.innerText = "Boa noite. Nós cuidamos do financeiro enquanto descansa.";
     }
 
-    /* --- 2. PROGRESSO & CTA FLUTUANTE --- */
+    // --- PROGRESSO & CTA FLUTUANTE ---
     window.addEventListener('scroll', () => {
         const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
         const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -41,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    /* --- 3. CURSOR & TILT 3D --- */
+    // --- CURSOR & TILT 3D ---
     const cursorDot = document.getElementById("cursor-dot");
     const cursorOutline = document.getElementById("cursor-outline");
     
@@ -76,14 +99,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* --- 4. COMMAND PALETTE --- */
+    // --- COMMAND PALETTE ---
     window.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
             e.preventDefault(); window.abrirCommandPalette();
         }
     });
 
-    /* --- 5. AUDIO E CALCULADORA ROI --- */
+    // --- AUDIO E CALCULADORA ROI ---
     let audioCtx = null;
     window.playTickSound = () => {
         try {
@@ -115,22 +138,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* --- 6. INTEGRAÇÃO REAL DO LOGIN (SUPABASE) --- */
+    // --- LIGAÇÃO SEGURA AO FORMULÁRIO DE LOGIN ---
     const loginForm = document.getElementById('login-form');
     if(loginForm) {
         loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Impede que a página recarregue
+            e.preventDefault();
 
             const email = loginForm.querySelector('input[type="email"]').value;
             const password = loginForm.querySelector('input[type="password"]').value;
             const btnSubmit = loginForm.querySelector('button[type="submit"]');
 
-            // Feedback visual no botão
+            if (!supabase) {
+                alert("Falha ao ligar ao servidor Prisma. Tente novamente mais tarde.");
+                return;
+            }
+
             btnSubmit.innerText = "A encriptar credenciais...";
             btnSubmit.style.opacity = "0.7";
 
             try {
-                // Comunicação segura com o Banco de Dados
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password,
@@ -145,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 setTimeout(() => {
                     alert(`Bem-vindo, ${data.user.email}! A redirecionar para o Workspace...`);
-                    // window.location.href = "/dashboard.html"; // Redirecionamento futuro
                 }, 1000);
 
             } catch (err) {
@@ -167,10 +192,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* --- 7. ANIMAÇÕES SCROLL E MODAIS --- */
+    // --- ANIMAÇÕES SCROLL ---
     const obsFade = new IntersectionObserver(e => e.forEach(i => { if(i.isIntersecting) i.target.classList.add('show'); }), { threshold: 0.1 }); 
     document.querySelectorAll('[data-anime="fade"]').forEach(el => obsFade.observe(el));
 
+    // FECHAR MODAIS
     document.querySelectorAll('.modal-overlay, .cmd-palette-overlay').forEach(modal => {
         modal.addEventListener('click', function(e) { if(e.target === this) this.classList.remove('ativo'); });
     });
@@ -179,11 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
 /* =========================================
    FUNÇÕES GLOBAIS DA INTERFACE (WINDOW)
 ========================================= */
-// Paleta de Comandos
 window.abrirCommandPalette = () => { document.getElementById('cmd-palette').classList.add('ativo'); setTimeout(() => document.getElementById('cmd-input').focus(), 100); };
 window.fecharCommandPalette = () => { document.getElementById('cmd-palette').classList.remove('ativo'); };
 
-// Login UI
 window.abrirLogin = () => {
     document.getElementById('loginModal').classList.add('ativo');
     document.getElementById('login-scanner').classList.add('active');
@@ -198,7 +222,6 @@ window.abrirLogin = () => {
 };
 window.fecharLogin = () => document.getElementById('loginModal').classList.remove('ativo');
 
-// Sandbox Vivos
 window.animateCharts = () => document.querySelectorAll('.s-bar').forEach(bar => bar.style.height = bar.getAttribute('data-target'));
 window.switchTab = (tab) => {
     document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
@@ -224,7 +247,6 @@ window.togglePricing = () => {
     document.querySelectorAll('.price-val').forEach(p => p.innerText = isAnual ? p.getAttribute('data-anual') : p.getAttribute('data-mensal'));
 };
 
-// Chatbot
 window.abrirChat = () => document.getElementById('chat-box').classList.toggle('open');
 window.fecharChat = () => document.getElementById('chat-box').classList.remove('open');
 window.chatResponder = (txt) => {
@@ -236,7 +258,6 @@ window.chatResponder = (txt) => {
     }, 800);
 };
 
-// Diagnóstico Typeform
 let diagData = {};
 window.abrirDiagnostico = () => {
     document.getElementById('diagModal').classList.add('ativo');
@@ -256,7 +277,6 @@ window.nextStep = (num, chave, valor) => {
     }
 };
 
-// WhatsApp Tracking
 window.enviarWhatsAppInteligente = () => {
     const txt = `*Diagnóstico Prisma Finance*\nSegmento: ${diagData['Segmento']}\nTempo perdido: ${diagData['Horas']}\nAgendamento VIP: *${diagData['Horario']}*\n\n💰 *Dados da Empresa:*\nFaturamento aproximado: R$ ${window.currentFat}\nVi que posso poupar cerca de R$ ${window.currentPoupa} com a automação.\n\nOlá Raul, quero começar a minha jornada com o Prisma App!`;
     window.open(`https://wa.me/5584999999999?text=${encodeURIComponent(txt)}`, '_blank');
