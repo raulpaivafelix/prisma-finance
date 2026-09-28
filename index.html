@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prisma Finance | BPO Financeiro</title>
+    <title>Prisma Finance | BPO Financeiro e Gestão</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- Cabeçalho (Efeito Glassmorphism) -->
+    <!-- Cabeçalho Glassmorphism -->
     <header>
         <div class="logo">
             <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Brasão da Prisma Finance">
@@ -21,6 +21,7 @@
             <div id="caixa-opcoes" class="opcoes-ocultas">
                 <a href="#inicio">Início</a>
                 <a href="#problemas">Os Problemas</a>
+                <a href="#numeros">Impacto</a>
                 <a href="#solucoes">Soluções</a>
                 <a href="#fim">Contactos</a>
             </div>
@@ -28,66 +29,79 @@
     </header>
 
     <main>
-        <!-- Dobra 1: Hero com Fundo Gradiente Animado -->
+        <!-- HERO (Com Gradiente Animado e Typewriter) -->
         <section id="inicio" class="hero">
             <div class="hero-content" data-anime="scroll">
-                <h1>Terceirize o financeiro da sua empresa e compre o seu tempo de volta.</h1>
+                <!-- O texto aqui vai ser gerado pelo JavaScript letra a letra -->
+                <h1 id="maquina-escrever"></h1>
                 <p>A Prisma Finance organiza o seu fluxo de caixa, elimina a mistura de contas e entrega clareza diária por uma fração do custo de um funcionário CLT.</p>
                 <a href="https://wa.me/5584999999999?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20o%20meu%20diagn%C3%B3stico%20financeiro%20gratuito!" target="_blank" class="cta-button">Fazer Diagnóstico Gratuito</a>
             </div>
         </section>
         
-        <!-- Dobra 2: Gatilhos Mentais (Fade-in no Scroll) -->
+        <!-- SECÇÃO: CONTADORES ANIMADOS -->
+        <section id="numeros" class="stats-section">
+            <div class="stat-box" data-anime="scroll">
+                <span class="counter" data-target="50">0</span><span class="plus">+</span>
+                <p>Empresas Atendidas</p>
+            </div>
+            <div class="stat-box" data-anime="scroll" style="transition-delay: 0.2s;">
+                <span class="counter" data-target="10000">0</span><span class="plus">+</span>
+                <p>Horas Poupadas</p>
+            </div>
+            <div class="stat-box" data-anime="scroll" style="transition-delay: 0.4s;">
+                <span class="counter" data-target="2">0</span><span class="plus">M+</span>
+                <p>Geridos (R$)</p>
+            </div>
+        </section>
+
+        <!-- SECÇÃO: PROBLEMAS COM EFEITO GLOW -->
         <section id="problemas" class="pain-section">
             <h2 data-anime="scroll">O seu negócio vende todo dia, mas o seu caixa está cego?</h2>
             
             <div class="cards-grid">
-                <div class="card" data-anime="scroll">
+                <div class="card glow-effect" data-anime="scroll">
                     <span class="icon">❌</span>
                     <p>Não sabe o lucro real líquido no fim do mês.</p>
                 </div>
-                <div class="card" data-anime="scroll" style="transition-delay: 0.2s;">
+                <div class="card glow-effect" data-anime="scroll" style="transition-delay: 0.2s;">
                     <span class="icon">💸</span>
                     <p>Paga juros por esquecer ou atrasar o vencimento de boletos.</p>
                 </div>
-                <div class="card" data-anime="scroll" style="transition-delay: 0.4s;">
+                <div class="card glow-effect" data-anime="scroll" style="transition-delay: 0.4s;">
                     <span class="icon">⚠️</span>
                     <p>Mistura despesas pessoais (CPF) com as contas da empresa (CNPJ).</p>
                 </div>
             </div>
         </section>
 
-        <!-- Dobra 3: Soluções (Acordeão Interativo) -->
+        <!-- SECÇÃO: SOLUÇÕES (ACORDEÃO) -->
         <section id="solucoes" class="solutions-section">
             <h2 data-anime="scroll">Como a Prisma Finance resolve isso?</h2>
             <div class="accordion-container" data-anime="scroll">
-                
                 <div class="accordion-item">
                     <button class="accordion-header">Organização Diária e Conciliação Bancária <span class="icon">+</span></button>
                     <div class="accordion-content">
-                        <p>Acompanhamos todas as entradas e saídas diárias da sua conta, garantindo que nenhum cêntimo se perde. O seu saldo bancário baterá sempre certo com os seus relatórios.</p>
+                        <p>Acompanhamos todas as entradas e saídas diárias, garantindo que nenhum cêntimo se perde.</p>
                     </div>
                 </div>
-
                 <div class="accordion-item">
                     <button class="accordion-header">Gestão de Contas a Pagar e Receber <span class="icon">+</span></button>
                     <div class="accordion-content">
-                        <p>Agendamos os seus pagamentos para aprovação e monitorizamos os seus recebimentos. Chega de pagar juros por esquecimentos ou deixar cobranças para trás.</p>
+                        <p>Agendamos os seus pagamentos para aprovação e monitorizamos os recebimentos. Chega de juros.</p>
                     </div>
                 </div>
-
                 <div class="accordion-item">
                     <button class="accordion-header">Relatórios de Lucratividade (DRE) <span class="icon">+</span></button>
                     <div class="accordion-content">
-                        <p>Entregamos um painel claro todos os meses. Vai finalmente saber se a sua empresa deu lucro ou prejuízo, e para onde está a ir o seu dinheiro.</p>
+                        <p>Vai finalmente saber se a sua empresa deu lucro ou prejuízo, e para onde está a ir o dinheiro.</p>
                     </div>
                 </div>
-
             </div>
         </section>
     </main>
 
-    <!-- Rodapé -->
+    <!-- RODAPÉ -->
     <footer id="fim">
         <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Brasão da Prisma Finance">
         <h3>Prisma Finance</h3>
@@ -98,6 +112,13 @@
         </div>
         <p class="direitos">Prisma Finance &copy; 2026. Todos os direitos reservados. BPO Financeiro e Gestão Estratégica.</p>
     </footer>
+
+    <!-- BOTÃO WHATSAPP FLUTUANTE PULSANTE -->
+    <a href="https://wa.me/5584999999999?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20o%20meu%20diagn%C3%B3stico%20financeiro%20gratuito!" class="whatsapp-float" target="_blank" title="Fale connosco no WhatsApp">
+        <svg viewBox="0 0 24 24" width="35" height="35" fill="white">
+            <path d="M12.031 0C5.385 0 0 5.388 0 12.034c0 2.124.553 4.195 1.604 6.02L.034 24l6.105-1.603A11.968 11.968 0 0012.031 24c6.645 0 12.032-5.388 12.032-12.034S18.676 0 12.031 0zm0 22.015a9.923 9.923 0 01-5.068-1.385l-.364-.216-3.766.988.995-3.67-.236-.375A9.926 9.926 0 012.062 12.03c0-5.497 4.475-9.972 9.969-9.972 5.497 0 9.97 4.475 9.97 9.972 0 5.494-4.473 9.985-9.97 9.985zm4.846-6.618c-.266-.134-1.572-.777-1.815-.866-.244-.09-.422-.134-.6.134-.178.267-.687.866-.843 1.044-.155.178-.31.2-.576.066-.266-.134-1.121-.413-2.136-1.317-.788-.703-1.32-1.571-1.476-1.839-.155-.266-.017-.411.116-.543.12-.12.266-.311.399-.466.134-.155.178-.266.266-.444.09-.178.044-.333-.022-.466-.066-.134-.6-1.446-.821-1.98-.216-.52-.435-.45-.6-.458-.155-.008-.333-.008-.511-.008-.178 0-.466.066-.71.333-.244.266-.932.912-.932 2.224s.954 2.58 1.088 2.758c.133.178 1.88 2.868 4.55 3.993 1.854.78 2.544.82 3.424.686.88-.134 2.064-.843 2.353-1.657.288-.814.288-1.512.2-1.657-.089-.145-.311-.223-.577-.356z"/>
+        </svg>
+    </a>
 
     <script src="js/script.js"></script>
 </body>
