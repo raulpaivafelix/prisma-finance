@@ -1,5 +1,20 @@
-/* 1. EFEITO DE LUZ (GLOW) GLOBAL NOS CARTÕES BENTO */
-// Anexamos o evento ao documento inteiro para detetar o rato de forma global
+/* 1. LÓGICA DO MODAL DE LOGIN (JANELA FLUTUANTE) */
+function abrirLogin() {
+    document.getElementById('loginModal').classList.add('ativo');
+}
+
+function fecharLogin() {
+    document.getElementById('loginModal').classList.remove('ativo');
+}
+
+// Fechar o modal ao clicar fora da caixa principal
+document.getElementById('loginModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        fecharLogin();
+    }
+});
+
+/* 2. EFEITO DE LUZ (GLOW) GLOBAL NOS CARTÕES BENTO */
 document.onmousemove = e => {
     for(const card of document.getElementsByClassName("card")) {
       const rect = card.getBoundingClientRect(),
@@ -11,7 +26,7 @@ document.onmousemove = e => {
     };
 }
   
-/* 2. ANIMAÇÃO DE APARECIMENTO (FADE UP) NO SCROLL */
+/* 3. ANIMAÇÃO DE APARECIMENTO (FADE UP) NO SCROLL */
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -22,7 +37,7 @@ const observer = new IntersectionObserver((entries) => {
   
 document.querySelectorAll('[data-anime="fade"]').forEach(el => observer.observe(el));
   
-/* 3. CONTADORES DE ALTA PERFORMANCE (NÚMEROS A ROLAR) */
+/* 4. CONTADORES DE ALTA PERFORMANCE (NÚMEROS A ROLAR) */
 const counters = document.querySelectorAll('.counter');
 const counterObserver = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
