@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prisma Finance | Sistema Operacional Financeiro</title>
-    <meta name="description" content="A Prisma Finance conecta os seus bancos e automatiza rotinas financeiras em Natal/RN.">
+    <meta name="description" content="A Prisma Finance conecta os seus bancos e automatiza rotinas financeiras.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -12,12 +12,20 @@
 </head>
 <body>
 
-    <!-- BARRA DE LEITURA E CURSOR -->
+    <!-- PRELOADER DE LUXO -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <img src="assets/prisma-brasao.svg" alt="Prisma Finance" class="preloader-logo">
+            <div class="loading-bar"><div class="loading-progress"></div></div>
+            <p>Carregando Workspace Prisma OS...</p>
+        </div>
+    </div>
+
+    <!-- INDICADORES VISUAIS -->
     <div class="scroll-progress" id="scroll-progress"></div>
     <div class="cursor-dot" id="cursor-dot"></div>
     <div class="cursor-outline" id="cursor-outline"></div>
 
-    <!-- TOAST (FOMO) -->
     <div class="live-toast" id="live-toast">
         <div class="toast-icon">✨</div>
         <div class="toast-text" id="toast-text">Nova empresa conectada via Open Finance.</div>
@@ -35,9 +43,9 @@
             <a href="#planos" class="magnetic">Planos</a>
         </nav>
         <div class="header-actions">
-            <button class="cmd-hint magnetic" onclick="abrirCommandPalette()"><span>⌘</span> + K</button>
-            <button onclick="abrirLogin()" class="btn-login magnetic">Acesso Cliente</button>
-            <button onclick="abrirDiagnostico()" class="btn-nav magnetic aura-glow-btn">Fazer Diagnóstico</button>
+            <button class="cmd-hint magnetic" onclick="window.abrirCommandPalette()"><span>⌘</span> + K</button>
+            <button class="btn-login magnetic" onclick="window.abrirLogin()">Acesso Cliente</button>
+            <button class="btn-nav magnetic aura-glow-btn" onclick="window.abrirDiagnostico()">Fazer Diagnóstico</button>
         </div>
     </header>
 
@@ -52,7 +60,7 @@
                     <h1 class="gradient-text">O seu financeiro no piloto automático. O seu foco no crescimento.</h1>
                     <p>Conectamos os seus bancos, automatizamos rotinas e entregamos a visão de um CFO em tempo real.</p>
                     <div class="hero-buttons">
-                        <button onclick="abrirDiagnostico()" class="btn-primary magnetic">Começar Gratuitamente <span class="arrow">→</span></button>
+                        <button onclick="window.abrirDiagnostico()" class="btn-primary magnetic">Começar Gratuitamente <span class="arrow">→</span></button>
                     </div>
                 </div>
 
@@ -63,8 +71,8 @@
                         <span class="sandbox-title">app.prisma.finance/dashboard</span>
                     </div>
                     <div class="sandbox-tabs">
-                        <button class="s-tab active" onclick="switchTab('caixa')">Fluxo Real</button>
-                        <button class="s-tab" onclick="switchTab('aprovacoes')">Boletos <span class="badge" id="badge-boletos">3</span></button>
+                        <button class="s-tab active" onclick="window.switchTab('caixa')">Fluxo Real</button>
+                        <button class="s-tab" onclick="window.switchTab('aprovacoes')">Boletos <span class="badge" id="badge-boletos">3</span></button>
                     </div>
                     <div class="sandbox-body">
                         <div id="tab-caixa" class="s-content active">
@@ -83,7 +91,7 @@
                                 <div class="s-item"><span>Fornecedor Cloud</span><strong>R$ 2.400</strong></div>
                                 <div class="s-item"><span>Impostos DAS</span><strong>R$ 1.850</strong></div>
                             </div>
-                            <button class="s-btn-aprovar magnetic" id="btn-aprovar" onclick="aprovarLote()">Aprovar Lote via App</button>
+                            <button class="s-btn-aprovar magnetic" id="btn-aprovar" onclick="window.aprovarLote()">Aprovar Lote via App</button>
                         </div>
                     </div>
                 </div>
@@ -121,8 +129,12 @@
         <div class="footer-content">
             <div class="footer-brand">
                 <img src="assets/prisma-brasao.svg" class="brand-crest grayscale" alt="Prisma Finance">
-                <p>Ciências Contábeis e Tecnologia de Ponta.</p>
+                <p>Tecnologia e Gestão Financeira de Ponta.</p>
             </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Prisma Finance. All rights reserved.</p>
+            <div class="system-status magnetic"><span class="status-dot"></span><span>AES-256 Encrypted | Latency 12ms</span></div>
         </div>
     </footer>
 
@@ -130,7 +142,7 @@
     <div id="loginModal" class="modal-overlay">
         <div class="modal-box aura-glow">
             <div class="diag-inner-content" style="text-align: center;">
-                <button onclick="fecharLogin()" class="btn-fechar magnetic">&times;</button>
+                <button onclick="window.fecharLogin()" class="btn-fechar magnetic">&times;</button>
                 
                 <div id="login-scanner" class="scanner-screen active">
                     <div class="fingerprint-icon">
