@@ -17,7 +17,8 @@
         </div>
         
         <div class="menu-interativo">
-            <button onclick="alternarOpcoes()" class="botao-opcoes">Ver Opções</button>
+            <!-- Botão limpo, a ação agora é feita pelo CSS ao passar o rato -->
+            <button class="botao-opcoes">Ver Opções</button>
             <div id="caixa-opcoes" class="opcoes-ocultas">
                 <a href="#inicio">Início</a>
                 <a href="#problemas">Os Problemas</a>
@@ -32,7 +33,9 @@
         <section id="inicio" class="hero">
             <h1>Terceirize o financeiro da sua empresa e compre o seu tempo de volta.</h1>
             <p>A Prisma Finance organiza o seu fluxo de caixa, elimina a mistura de contas e entrega clareza diária por uma fração do custo de um funcionário CLT.</p>
-            <a href="#contato" class="cta-button">Fazer Diagnóstico Gratuito</a>
+            
+            <!-- Botão de Diagnóstico (Link direto para o WhatsApp) -->
+            <a href="https://wa.me/5584999999999?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20o%20meu%20diagn%C3%B3stico%20financeiro%20gratuito!" target="_blank" class="cta-button">Fazer Diagnóstico Gratuito</a>
         </section>
         
         <!-- Dobra 2: Gatilhos Mentais (Cartões) -->
@@ -60,9 +63,17 @@
     <footer id="fim">
         <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Brasão da Prisma Finance">
         <h3>Prisma Finance</h3>
-        <p>Prisma Finance &copy; 2026. Todos os direitos reservados. BPO Financeiro e Gestão Estratégica.</p>
+        
+        <div class="contactos-info">
+            <p>📍 Sede: Natal, Rio Grande do Norte</p>
+            <p>📱 WhatsApp: (84) 99999-9999</p>
+            <p>✉️ Email: contato@prismafinance.com.br</p>
+        </div>
+        
+        <p class="direitos">Prisma Finance &copy; 2026. Todos os direitos reservados. BPO Financeiro e Gestão Estratégica.</p>
     </footer>
 
+    <!-- Ligação ao JavaScript -->
     <script src="js/script.js"></script>
 </body>
 </html>
