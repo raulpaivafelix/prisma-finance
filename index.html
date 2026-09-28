@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prisma Finance | Automação Financeira de Elite</title>
-    <!-- Preconnect para carregar a fonte mais rápido -->
+    <meta name="description" content="A Prisma Finance conecta os seus bancos, automatiza rotinas e dá-lhe a visão de um CFO em tempo real. Autogestão financeira inteligente em Natal/RN.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 </head>
 <body>
 
-    <!-- CURSOR MAGNÉTICO (Apenas Desktop) -->
+    <!-- CURSOR MAGNÉTICO -->
     <div class="cursor-dot" id="cursor-dot"></div>
     <div class="cursor-outline" id="cursor-outline"></div>
 
@@ -26,11 +26,10 @@
             <a href="#app" class="magnetic">A Plataforma</a>
             <a href="#roi" class="magnetic">Calculadora</a>
             <a href="#depoimentos" class="magnetic">Clientes</a>
-            <a href="#planos" class="magnetic">Planos</a>
         </nav>
         <div class="header-actions">
             <button onclick="abrirLogin()" class="btn-login magnetic">Login Cliente</button>
-            <a href="https://wa.me/5584999999999" target="_blank" class="btn-nav magnetic">Agendar Demo</a>
+            <button onclick="abrirDiagnostico()" class="btn-nav magnetic">Agendar Demo</button>
         </div>
     </header>
 
@@ -39,13 +38,12 @@
         <section class="hero mesh-bg" data-anime="fade">
             <div class="orb orb-1"></div>
             <div class="orb orb-2"></div>
-            
             <div class="hero-content">
                 <div class="hero-badge">BPO Financeiro e Automação Web</div>
                 <h1 class="gradient-text">O seu financeiro no piloto automático. O seu foco no crescimento.</h1>
                 <p>O <strong>Prisma App</strong> conecta os seus bancos, automatiza rotinas e dá-lhe a visão de um CFO em tempo real. Faça a autogestão da sua empresa com precisão absoluta.</p>
                 <div class="hero-buttons">
-                    <a href="#planos" class="btn-primary magnetic">Ver Planos <span class="arrow">→</span></a>
+                    <button onclick="abrirDiagnostico()" class="btn-primary magnetic">Fazer Diagnóstico Gratuito <span class="arrow">→</span></button>
                     <button onclick="abrirLogin()" class="btn-secondary magnetic">Testar Sistema</button>
                 </div>
             </div>
@@ -55,63 +53,35 @@
         <div class="trust-carousel">
             <div class="carousel-track integration-track">
                 <span>✦ Integração Nubank</span><span>✦ Banco do Brasil</span><span>✦ Itaú Empresas</span><span>✦ Bradesco</span><span>✦ Omie ERP</span><span>✦ ContaAzul</span><span>✦ Bling</span>
-                <!-- Loop -->
                 <span>✦ Integração Nubank</span><span>✦ Banco do Brasil</span><span>✦ Itaú Empresas</span><span>✦ Bradesco</span><span>✦ Omie ERP</span><span>✦ ContaAzul</span><span>✦ Bling</span>
             </div>
         </div>
 
-        <!-- MÉTRICAS -->
-        <section class="metrics" data-anime="fade">
-            <div class="metric"><h2 class="counter" data-target="98">0</h2><span>%</span><p>Automação de Rotinas</p></div>
-            <div class="metric"><h2 class="counter" data-target="10000">0</h2><span>+</span><p>Horas Poupadas</p></div>
-            <div class="metric"><h2 class="counter" data-target="2">0</h2><span>M+</span><p>Geridos com Segurança</p></div>
-            <div class="metric"><h2 class="counter" data-target="100">0</h2><span>%</span><p>Conformidade LGPD</p></div>
-        </section>
-
-        <!-- PROBLEMAS -->
-        <section id="problemas" class="section-padding">
+        <!-- MÁQUINA DO TEMPO (RAIO-X) -->
+        <section class="section-padding bg-alt">
             <div class="section-header" data-anime="fade">
-                <h2>O caos financeiro custa caro</h2>
-                <p>A falta de processos consome o seu lucro diário.</p>
+                <h2>Do Caos à Clareza em 10 dias</h2>
+                <p>Arraste a barra e veja a transformação da sua gestão financeira.</p>
             </div>
-            <div class="bento-grid">
-                <div class="card tilt-card span-2" data-anime="fade">
-                    <div class="card-content">
-                        <div class="icon-box warning">⚠️</div>
-                        <h3>Mistura de Contas (Risco Jurídico)</h3>
-                        <p>Pagar contas pessoais com dinheiro da empresa ou vice-versa quebra o princípio da Entidade Contábil e cega a sua análise de lucro. Nós separamos CPF e CNPJ com rigor.</p>
+            <div class="before-after-container tilt-card" id="ba-container" data-anime="fade">
+                <div class="ba-img before-img">
+                    <div class="messy-excel">
+                        <div class="excel-cell bg-red">PAGAMENTO ATRASADO - R$ 4.500</div>
+                        <div class="excel-cell">DÍVIDA FORNECEDOR?</div>
+                        <div class="excel-cell bg-red">JUROS 12%</div>
+                        <div class="excel-cell">ONDE ESTÁ O RECIBO???</div>
                     </div>
+                    <div class="ba-label label-before">ANTES (CAOS)</div>
                 </div>
-                <div class="card tilt-card" data-anime="fade" style="transition-delay: 0.2s;">
-                    <div class="card-content">
-                        <div class="icon-box danger">❌</div>
-                        <h3>Lucro Cego</h3>
-                        <p>Vende muito, mas não vê o dinheiro? Sem um DRE mensal, está a pilotar de olhos vendados.</p>
+                <div class="ba-img after-img" id="ba-after">
+                    <div class="sleek-dashboard">
+                        <div class="dash-chart"></div>
+                        <div class="dash-cards"><div class="d-card"></div><div class="d-card"></div><div class="d-card"></div></div>
                     </div>
+                    <div class="ba-label label-after">DEPOIS (PRISMA APP)</div>
                 </div>
-            </div>
-        </section>
-
-        <!-- A PLATAFORMA (DEEP DIVE) -->
-        <section id="app" class="section-padding bg-alt">
-            <div class="section-header" data-anime="fade">
-                <h2>O seu ecossistema tecnológico</h2>
-                <p>Tudo o que precisa para a autogestão num único portal.</p>
-            </div>
-            
-            <div class="deep-feature" data-anime="fade">
-                <div class="feature-text">
-                    <div class="icon-box highlight">🤖</div>
-                    <h3>Conciliação Bancária com Inteligência Artificial</h3>
-                    <p>O nosso sistema cruza os seus extratos bancários com as notas fiscais em segundos. O algoritmo aprende os padrões e sugere as categorias.</p>
-                    <ul class="check-list">
-                        <li>✔ Identificação automática de Pix e boletos</li>
-                        <li>✔ Sincronização via Open Finance em tempo real</li>
-                    </ul>
-                </div>
-                <div class="feature-mockup tilt-card">
-                    <div class="mockup-chart glow-pulse"></div>
-                    <div class="mockup-bar"></div>
+                <div class="ba-slider" id="ba-slider">
+                    <div class="ba-slider-btn">↔</div>
                 </div>
             </div>
         </section>
@@ -120,13 +90,13 @@
         <section id="roi" class="section-padding">
             <div class="section-header" data-anime="fade">
                 <h2>Calcule o seu Retorno (ROI)</h2>
-                <p>Veja quanto dinheiro a Prisma Finance coloca de volta no seu bolso.</p>
+                <p>Deslize a barra para simular (ligue o som) e veja quanto tempo e dinheiro recupera.</p>
             </div>
             <div class="roi-container tilt-card" data-anime="fade">
                 <div class="roi-input-area">
                     <label>Faturamento Mensal Estimado: <span id="faturamento-val">R$ 50.000</span></label>
-                    <input type="range" id="faturamento" min="10000" max="1000000" step="5000" value="50000" class="magnetic" aria-label="Simulador de Faturamento">
-                    <p class="roi-hint">Deslize a barra para ajustar</p>
+                    <input type="range" id="faturamento" min="10000" max="1000000" step="5000" value="50000" class="magnetic" aria-label="Simulador de faturamento">
+                    <p class="roi-hint">Arraste a bola verde para ajustar</p>
                 </div>
                 <div class="roi-results">
                     <div class="roi-box">
@@ -145,64 +115,44 @@
         <section id="depoimentos" class="section-padding bg-alt">
             <div class="section-header" data-anime="fade">
                 <h2>Quem usa, aprova.</h2>
-                <p>Empresários de Natal/RN que já automatizaram a sua gestão.</p>
+                <p>Empresários que já automatizaram a sua gestão.</p>
             </div>
             <div class="testimonials-grid">
                 <div class="testimonial-card tilt-card" data-anime="fade">
                     <div class="stars">★★★★★</div>
                     <p>"Eu perdia os meus fins de semana a tentar entender para onde ia o dinheiro. O Prisma App deu-me clareza em 10 dias. O DRE é fantástico."</p>
-                    <div class="client-info">
-                        <strong>Diretor de E-commerce</strong>
-                        <span>Segmento de Vestuário</span>
-                    </div>
+                    <div class="client-info"><strong>Diretor de E-commerce</strong><span>Segmento de Vestuário</span></div>
                 </div>
                 <div class="testimonial-card tilt-card" data-anime="fade" style="transition-delay: 0.1s;">
                     <div class="stars">★★★★★</div>
-                    <p>"A separação do meu CPF e CNPJ foi imediata. Ter o acompanhamento contábil da Prisma por trás da tecnologia faz toda a diferença."</p>
-                    <div class="client-info">
-                        <strong>Clínica Odontológica</strong>
-                        <span>Ponta Negra, Natal/RN</span>
-                    </div>
+                    <p>"A separação do meu CPF e CNPJ foi imediata. Ter o acompanhamento da Prisma por trás da tecnologia faz toda a diferença."</p>
+                    <div class="client-info"><strong>Clínica Odontológica</strong><span>Ponta Negra, Natal/RN</span></div>
                 </div>
             </div>
         </section>
 
         <!-- PLANOS -->
         <section id="planos" class="section-padding">
-            <div class="section-header" data-anime="fade">
-                <h2>Planos de Assinatura e BPO</h2>
-            </div>
+            <div class="section-header" data-anime="fade"><h2>Planos de Assinatura e BPO</h2></div>
             <div class="pricing-grid">
                 <div class="pricing-card tilt-card" data-anime="fade">
                     <h3>Essential</h3>
                     <div class="price">Sob Consulta</div>
-                    <ul class="features-list">
-                        <li>✔ Software Prisma App</li>
-                        <li>✔ Conciliação Bancária IA</li>
-                        <li>✔ Dashboard Básico</li>
-                    </ul>
-                    <a href="https://wa.me/5584999999999" class="btn-secondary magnetic" style="width: 100%; text-align: center;">Falar com Consultor</a>
+                    <ul class="features-list"><li>✔ Software Prisma App</li><li>✔ Conciliação Bancária IA</li><li>✔ Dashboard Básico</li></ul>
+                    <button onclick="abrirDiagnostico()" class="btn-secondary magnetic" style="width: 100%;">Falar com Consultor</button>
                 </div>
                 <div class="pricing-card featured tilt-card" data-anime="fade" style="transition-delay: 0.1s;">
                     <div class="popular-badge">Mais Escolhido</div>
                     <h3>Advanced</h3>
                     <div class="price">Sob Consulta</div>
-                    <ul class="features-list">
-                        <li>✔ Emissão de NFs Automática</li>
-                        <li>✔ DRE e Fluxo de Caixa Real</li>
-                        <li>✔ Reunião Estratégica Mensal</li>
-                    </ul>
-                    <a href="https://wa.me/5584999999999" class="btn-primary magnetic" style="width: 100%; text-align: center;">Quero Automatizar <span class="arrow">→</span></a>
+                    <ul class="features-list"><li>✔ Emissão de NFs Automática</li><li>✔ DRE e Fluxo Real</li><li>✔ Reunião Estratégica</li></ul>
+                    <button onclick="abrirDiagnostico()" class="btn-primary magnetic" style="width: 100%;">Quero Automatizar <span class="arrow">→</span></button>
                 </div>
                 <div class="pricing-card tilt-card" data-anime="fade" style="transition-delay: 0.2s;">
                     <h3>Virtual CFO</h3>
                     <div class="price">Sob Consulta</div>
-                    <ul class="features-list">
-                        <li>✔ Gestão de Múltiplos CNPJs</li>
-                        <li>✔ Planeamento Tributário</li>
-                        <li>✔ Assessoria Semanal</li>
-                    </ul>
-                    <a href="https://wa.me/5584999999999" class="btn-secondary magnetic" style="width: 100%; text-align: center;">Serviço Premium</a>
+                    <ul class="features-list"><li>✔ Gestão Múltiplos CNPJs</li><li>✔ Planeamento Tributário</li><li>✔ Assessoria Semanal</li></ul>
+                    <button onclick="abrirDiagnostico()" class="btn-secondary magnetic" style="width: 100%;">Serviço Premium</button>
                 </div>
             </div>
         </section>
@@ -216,40 +166,85 @@
                 <p>O Futuro da Autogestão Financeira para Empresas.</p>
             </div>
             <div class="footer-contact">
-                <h4>Sede Administrativa</h4>
-                <p>📍 Ponta Negra, Natal - RN</p>
-                <p>📱 (84) 99999-9999</p>
+                <h4>Sede Administrativa</h4><p>📍 Ponta Negra, Natal - RN</p><p>📱 (84) 99999-9999</p>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Prisma Finance Tecnologia. Fundada por Raul Paiva.</p>
-        </div>
+        <div class="footer-bottom"><p>&copy; 2026 Prisma Finance Tecnologia. Fundada por Raul Paiva.</p></div>
     </footer>
+
+    <!-- WIDGET DE CHAT (IA FLUTUANTE) -->
+    <div class="chat-wrapper">
+        <div class="chat-box" id="chat-box">
+            <div class="chat-header">
+                <div class="chat-avatar">P</div>
+                <div><h4>Prisma AI</h4><p>Online agora</p></div>
+                <button class="chat-close magnetic" onclick="fecharChat()">&times;</button>
+            </div>
+            <div class="chat-body" id="chat-body">
+                <div class="chat-msg bot">Olá! Sou a assistente da Prisma. Quer descobrir como poupar milhares de Reais este mês?</div>
+            </div>
+            <div class="chat-options" id="chat-options">
+                <button class="magnetic" onclick="chatResponder('Quero saber os planos')">Quero saber os planos</button>
+                <button class="magnetic" onclick="abrirDiagnostico(); fecharChat()">Fazer diagnóstico grátis</button>
+            </div>
+        </div>
+        <button class="chat-toggle magnetic" onclick="abrirChat()">💬</button>
+    </div>
+
+    <!-- MODAL DIAGNÓSTICO (TYPEFORM) -->
+    <div id="diagModal" class="modal-overlay">
+        <div class="modal-box diag-box">
+            <button onclick="fecharDiagnostico()" class="btn-fechar magnetic">&times;</button>
+            
+            <div id="step-1" class="diag-step ativo">
+                <h2>Qual é o segmento da sua empresa?</h2>
+                <p>Para personalizarmos a sua experiência.</p>
+                <div class="diag-options">
+                    <button class="magnetic" onclick="nextStep(2, 'Segmento', 'Serviços/Clínica')">Clínica / Serviços</button>
+                    <button class="magnetic" onclick="nextStep(2, 'Segmento', 'Comércio Físico')">Comércio Físico</button>
+                    <button class="magnetic" onclick="nextStep(2, 'Segmento', 'E-commerce')">E-commerce / Digital</button>
+                </div>
+            </div>
+
+            <div id="step-2" class="diag-step">
+                <h2>Quantas horas perde com o financeiro por semana?</h2>
+                <div class="diag-options">
+                    <button class="magnetic" onclick="nextStep(3, 'Horas', 'Menos de 5h')">Menos de 5h</button>
+                    <button class="magnetic" onclick="nextStep(3, 'Horas', 'De 5h a 10h')">Entre 5h e 10h</button>
+                    <button class="magnetic" onclick="nextStep(3, 'Horas', 'Mais de 10h')">Mais de 10h (O caos)</button>
+                </div>
+            </div>
+
+            <div id="step-3" class="diag-step">
+                <div class="loading-spinner"></div>
+                <h2>A processar a sua estrutura...</h2>
+                <p>A nossa IA está a mapear os seus processos.</p>
+            </div>
+
+            <div id="step-4" class="diag-step">
+                <h2>Excelente notícia! 🎉</h2>
+                <p>Conseguimos automatizar até <strong>95%</strong> da sua rotina atual. O diagnóstico está pronto.</p>
+                <button onclick="enviarWhatsApp()" class="btn-primary magnetic" style="width:100%; margin-top:20px; justify-content:center;">Falar com Especialista no WhatsApp</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL DE LOGIN -->
     <div id="loginModal" class="modal-overlay">
         <div class="modal-box">
-            <button onclick="fecharLogin()" class="btn-fechar magnetic" aria-label="Fechar Janela">&times;</button>
+            <button onclick="fecharLogin()" class="btn-fechar magnetic">&times;</button>
             <div class="modal-header">
                 <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Prisma Finance">
                 <h2>Prisma App Workspace</h2>
-                <p>Acesso seguro à sua central financeira.</p>
             </div>
             <form class="login-form">
-                <div class="input-group">
-                    <label for="user-email">E-mail Corporativo</label>
-                    <input type="email" id="user-email" placeholder="ceo@suaempresa.com.br" required>
-                </div>
-                <div class="input-group">
-                    <label for="user-password">Senha</label>
-                    <input type="password" id="user-password" placeholder="••••••••" required>
-                </div>
-                <button type="button" class="btn-primary magnetic" style="width: 100%; margin-top: 10px;" onclick="alert('O Sistema Prisma está a receber atualizações de IA. Por favor, solicite o acesso ao seu consultor via WhatsApp.')">Entrar no Sistema Seguro <span class="arrow">→</span></button>
+                <div class="input-group"><label>E-mail Corporativo</label><input type="email" placeholder="ceo@empresa.com" required></div>
+                <div class="input-group"><label>Senha</label><input type="password" placeholder="••••••••" required></div>
+                <button type="button" class="btn-primary magnetic" style="width: 100%; justify-content:center;" onclick="alert('Atualizações de segurança em curso. Contacte o suporte Prisma.')">Entrar no Sistema Seguro</button>
             </form>
         </div>
     </div>
 
-    <!-- Script carregado no final para otimização de renderização -->
     <script src="js/script.js"></script>
 </body>
 </html>
