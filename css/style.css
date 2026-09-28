@@ -1,4 +1,3 @@
-/* --- 1. BASE E VARIÁVEIS --- */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
 
 :root {
@@ -12,15 +11,10 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
 
-/* --- 2. CABEÇALHO (GLASSMORPHISM) --- */
-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 15px 5%; position: sticky; top: 0; z-index: 1000;
-    background: rgba(6, 9, 19, 0.85); backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
+/* HEADER */
+header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; position: sticky; top: 0; z-index: 1000; background: rgba(6, 9, 19, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); }
 .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; }
 .brand-crest { width: 35px; height: auto; }
 .nav-links { display: flex; gap: 20px; }
@@ -32,19 +26,17 @@ header {
 .btn-nav { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 10px 20px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2); transition: 0.3s; }
 .btn-nav:hover { background: var(--text-main); color: var(--bg-color); }
 
-/* --- 3. REGRAS GERAIS DE SECÇÕES --- */
+/* UTILITÁRIOS GERAIS */
 .section-padding { padding: 100px 5%; max-width: 1200px; margin: 0 auto; }
 .bg-alt { background-color: var(--bg-alt); max-width: 100%; padding-left: 5%; padding-right: 5%; }
 .section-header { text-align: center; margin-bottom: 60px; max-width: 800px; margin-inline: auto;}
 .section-header h2 { font-size: 2.5rem; margin-bottom: 15px; }
 .section-header p { color: var(--text-muted); font-size: 1.15rem; }
+.tilt-card { transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); transform-style: preserve-3d; }
 
-/* --- 4. HERO SECTION --- */
+/* HERO */
 .hero { text-align: center; padding: 120px 5% 60px; max-width: 900px; margin: 0 auto; position: relative; }
-.hero::before {
-    content: ''; position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
-    width: 600px; height: 600px; background: radial-gradient(circle, rgba(59, 130, 246, 0.15), transparent 60%); z-index: -1;
-}
+.hero::before { content: ''; position: absolute; top: -50%; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(59, 130, 246, 0.15), transparent 60%); z-index: -1; }
 .hero-badge { display: inline-block; padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 25px; }
 .gradient-text { font-size: 3.8rem; font-weight: 800; line-height: 1.1; margin-bottom: 25px; background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .hero p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 40px; max-width: 700px; margin-inline: auto; }
@@ -54,16 +46,60 @@ header {
 .btn-secondary { color: var(--text-main); text-decoration: none; background: transparent; border: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 1.1rem; transition: 0.3s; cursor: pointer; font-family: inherit;}
 .btn-secondary:hover { color: var(--primary); }
 
-/* --- 5. CARROSSEL DE PROVA SOCIAL --- */
+/* CARROSSEL E MÉTRICAS */
 .trust-carousel { background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 15px 0; overflow: hidden; white-space: nowrap; position: relative; display: flex; }
 .trust-carousel::before, .trust-carousel::after { content: ''; position: absolute; top: 0; width: 100px; height: 100%; z-index: 2; }
 .trust-carousel::before { left: 0; background: linear-gradient(to right, var(--bg-color), transparent); }
 .trust-carousel::after { right: 0; background: linear-gradient(to left, var(--bg-color), transparent); }
-.carousel-track { display: inline-block; animation: scroll-marquee 20s linear infinite; }
-.carousel-track span { color: var(--text-muted); font-size: 0.95rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin: 0 40px; }
+.carousel-track { display: inline-block; animation: scroll-marquee 25s linear infinite; }
+.integration-track span { color: var(--text-main); font-size: 0.95rem; font-weight: 600; letter-spacing: 1px; margin: 0 40px; }
 @keyframes scroll-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-/* --- 6. CALCULADORA ROI --- */
+.metrics { display: flex; justify-content: center; flex-wrap: wrap; gap: 60px; padding: 60px 5%; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.metric { display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center;}
+.metric h2, .metric span { font-size: 3rem; font-weight: 800; color: var(--text-main); margin: 0; line-height: 1;}
+.metric span { color: var(--primary); }
+.metric p { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; margin-top: 5px; }
+
+/* BENTO GRID (Cards) */
+.bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1200px; margin: 0 auto; }
+.card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; position: relative; overflow: hidden; cursor: crosshair; }
+.card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%); z-index: 1; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
+.card:hover::before { opacity: 1; }
+.card-content { padding: 40px; position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center;}
+.span-2 { grid-column: span 2; }
+.icon-box { font-size: 2.2rem; margin-bottom: 20px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(255,255,255,0.05); flex-shrink: 0;}
+.icon-box.warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.icon-box.danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.icon-box.info { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
+.icon-box.highlight { background: rgba(16, 185, 129, 0.1); color: var(--accent); }
+.card h3 { font-size: 1.4rem; margin-bottom: 15px; }
+.card p { color: var(--text-muted); font-size: 1.05rem; }
+
+/* DEEP DIVE FEATURES */
+.deep-feature { display: flex; align-items: center; gap: 60px; max-width: 1100px; margin: 0 auto 80px; }
+.deep-feature.reverse { flex-direction: row-reverse; }
+.feature-text { flex: 1; }
+.feature-text h3 { font-size: 2rem; margin-bottom: 20px; }
+.feature-text p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 25px; }
+.check-list { list-style: none; }
+.check-list li { color: var(--text-main); font-weight: 600; margin-bottom: 12px; font-size: 1.05rem; }
+
+.feature-mockup { flex: 1; background: var(--surface); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; height: 350px; padding: 30px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+.mockup-chart { width: 100%; height: 120px; background: linear-gradient(180deg, rgba(59, 130, 246, 0.2), transparent); border-top: 2px solid var(--primary); border-radius: 8px; }
+.mockup-bar { width: 100%; height: 40px; background: rgba(255,255,255,0.03); border-radius: 8px; }
+.mockup-bar.short { width: 70%; }
+.mockup-circle { width: 120px; height: 120px; border: 8px solid var(--accent); border-radius: 50%; border-right-color: transparent; margin: 0 auto 20px; }
+.mockup-grid-mini { display: flex; gap: 15px; }
+.m-box { flex: 1; height: 60px; background: rgba(255,255,255,0.03); border-radius: 8px; }
+
+/* SEGURANÇA */
+.security-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; max-width: 1200px; margin: 0 auto; }
+.security-item { background: rgba(255,255,255,0.01); border-left: 2px solid var(--primary); padding: 30px 25px; border-radius: 0 12px 12px 0; }
+.security-item h3 { font-size: 1.1rem; margin-bottom: 10px; }
+.security-item p { font-size: 0.95rem; color: var(--text-muted); }
+
+/* CALCULADORA ROI */
 .roi-container { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; max-width: 900px; margin: 0 auto; }
 .roi-input-area label { display: flex; justify-content: space-between; font-weight: 600; font-size: 1.1rem; margin-bottom: 20px; }
 .roi-input-area span { color: var(--primary); font-size: 1.3rem; }
@@ -73,27 +109,18 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px
 input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: rgba(255,255,255,0.1); border-radius: 5px; }
 .roi-results { display: flex; gap: 20px; }
-.roi-box { background: var(--bg-alt); padding: 25px; border-radius: 12px; flex: 1; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+.roi-box { background: var(--bg-color); padding: 25px; border-radius: 12px; flex: 1; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
 .roi-box h4 { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px; }
 .roi-box h3 { font-size: 2rem; color: var(--text-main); }
 .roi-box.highlight { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
 .roi-box.highlight h3 { color: var(--primary); text-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
 
-/* --- 7. BENTO GRID (GRELHA COM EFEITO DE LUZ E TILT) --- */
-.bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1200px; margin: 0 auto; }
-.card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; position: relative; overflow: hidden; cursor: crosshair; }
-.card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%); z-index: 1; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
-.card:hover::before { opacity: 1; }
-.card-content { padding: 40px; position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center;}
-.span-2 { grid-column: span 2; }
-.icon-box { font-size: 2.2rem; margin-bottom: 20px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(255,255,255,0.05); flex-shrink: 0;}
-.icon-box.info { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
-.icon-box.highlight { background: rgba(16, 185, 129, 0.1); color: var(--accent); }
-.card h3 { font-size: 1.4rem; margin-bottom: 15px; }
-.card p { color: var(--text-muted); font-size: 1.05rem; }
-.tilt-card { transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); transform-style: preserve-3d; }
+/* SOBRE NÓS (DNA) */
+.about-container { max-width: 900px; margin: 0 auto; text-align: center; }
+.about-text h2 { margin-bottom: 30px; line-height: 1.2; }
+.about-text p { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 20px; text-align: justify; }
 
-/* --- 8. PREÇOS (PLANOS SAAS) --- */
+/* PLANOS SAAS */
 .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1100px; margin: 0 auto; align-items: center; }
 .pricing-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 40px; position: relative; display: flex; flex-direction: column; }
 .pricing-card.featured { background: rgba(59, 130, 246, 0.05); border-color: var(--primary); z-index: 2; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
@@ -103,14 +130,17 @@ input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cur
 .features-list { list-style: none; margin-bottom: 40px; flex-grow: 1;}
 .features-list li { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.95rem; }
 
-/* --- 9. RODAPÉ --- */
-footer { text-align: center; padding: 60px 5% 20px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 50px; background: var(--bg-alt);}
-.grayscale { filter: grayscale(100%) opacity(0.5); width: 50px; margin-bottom: 20px; }
-.footer-content p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 20px; }
-.contactos span { color: var(--text-main); margin: 0 10px; font-size: 0.95rem; }
-.footer-bottom { margin-top: 40px; font-size: 0.85rem; color: rgba(255,255,255,0.3); }
+/* RODAPÉ E MODAL */
+footer { padding: 80px 5% 30px; border-top: 1px solid rgba(255,255,255,0.05); background: var(--bg-alt); }
+.footer-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 50px; max-width: 1200px; margin: 0 auto; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 50px; }
+.footer-brand p { color: var(--text-muted); margin-top: 20px; max-width: 300px; }
+.footer-links h4, .footer-contact h4 { font-size: 1.1rem; margin-bottom: 20px; color: var(--text-main); }
+.footer-links a { display: block; color: var(--text-muted); text-decoration: none; margin-bottom: 10px; transition: 0.2s; }
+.footer-links a:hover { color: var(--primary); }
+.footer-contact p { color: var(--text-muted); margin-bottom: 10px; }
+.footer-bottom { text-align: center; padding-top: 30px; color: rgba(255,255,255,0.3); font-size: 0.85rem; display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto; }
+.legal-links a { color: rgba(255,255,255,0.3); text-decoration: none; margin: 0 10px; }
 
-/* --- 10. MODAL DE LOGIN --- */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s ease; }
 .modal-overlay.ativo { opacity: 1; visibility: visible; }
 .modal-box { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; width: 90%; max-width: 420px; position: relative; transform: translateY(-50px); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
@@ -126,18 +156,18 @@ footer { text-align: center; padding: 60px 5% 20px; border-top: 1px solid rgba(2
 .input-group input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; color: white; font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; }
 .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(59, 130, 246, 0.2); }
 
-/* --- 11. ANIMAÇÕES E MEDIA QUERIES --- */
-[data-anime="fade"] { opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
-[data-anime="fade"].show { opacity: 1; transform: translateY(0); }
-
+/* --- RESPONSIVIDADE (MEDIA QUERIES) --- */
 @media (max-width: 900px) {
     .nav-links { display: none; }
     .header-actions { flex-direction: column; width: 100%; gap: 10px; margin-top: 15px; }
     .btn-login { padding: 10px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; width: 100%; }
     .gradient-text { font-size: 2.5rem; }
-    .hero-buttons { flex-direction: column; }
     .bento-grid, .pricing-grid, .roi-container { grid-template-columns: 1fr; }
+    /* Ajuste para a grelha de segurança não quebrar no mobile */
+    .security-grid { grid-template-columns: 1fr; gap: 15px; }
     .span-2 { grid-column: span 1; }
+    .deep-feature, .deep-feature.reverse { flex-direction: column; gap: 30px; }
+    .footer-content { grid-template-columns: 1fr; text-align: center; }
+    .footer-bottom { flex-direction: column; gap: 15px; }
     .roi-results { flex-direction: column; }
-    .contactos span { display: block; margin: 10px 0; }
 }
