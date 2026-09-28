@@ -4,75 +4,186 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prisma Finance | Gestão Financeira Premium</title>
-    <!-- Fonte premium e moderna -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- Cabeçalho Ultra-Minimalista -->
+    <!-- CABEÇALHO -->
     <header>
         <div class="logo">
             <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Prisma Finance">
             <span>PRISMA FINANCE</span>
         </div>
+        <nav class="nav-links">
+            <a href="#problemas">O Problema</a>
+            <a href="#solucoes">Soluções</a>
+            <a href="#sobre">A Empresa</a>
+            <a href="#metodo">Como Funciona</a>
+        </nav>
         <a href="https://wa.me/5584999999999?text=Ol%C3%A1%2C%20desejo%20uma%20an%C3%A1lise%20financeira%20da%20minha%20empresa." target="_blank" class="btn-nav">Falar com Consultor</a>
     </header>
 
     <main>
-        <!-- Secção Principal (Hero) com Texto em Gradiente -->
+        <!-- HERO -->
         <section class="hero" data-anime="fade">
-            <div class="hero-badge">BPO Financeiro Especializado</div>
+            <div class="hero-badge">BPO Financeiro Especializado em Natal/RN</div>
             <h1 class="gradient-text">O seu financeiro no piloto automático. O seu foco no crescimento.</h1>
-            <p>Assumimos toda a operação financeira da sua empresa. Conciliação bancária, contas a pagar e DRE, com a precisão de um CFO por uma fração do custo.</p>
+            <p>Assumimos toda a operação financeira da sua empresa. Conciliação bancária, contas a pagar e DRE, com a precisão de um CFO por uma fração do custo de um funcionário CLT.</p>
             <div class="hero-buttons">
                 <a href="https://wa.me/5584999999999" target="_blank" class="btn-primary">Solicitar Diagnóstico</a>
-                <a href="#bento" class="btn-secondary">Ver como funciona ↓</a>
+                <a href="#solucoes" class="btn-secondary">Conhecer Soluções ↓</a>
             </div>
         </section>
 
-        <!-- Contadores de Autoridade Integrados -->
+        <!-- MÉTRICAS -->
         <section class="metrics" data-anime="fade">
-            <div class="metric"><h2 class="counter" data-target="50">0</h2><span>+</span><p>Empresas</p></div>
+            <div class="metric"><h2 class="counter" data-target="50">0</h2><span>+</span><p>Empresas Atendidas</p></div>
             <div class="metric"><h2 class="counter" data-target="10000">0</h2><span>+</span><p>Horas Poupadas</p></div>
             <div class="metric"><h2 class="counter" data-target="2">0</h2><span>M+</span><p>Geridos (R$)</p></div>
         </section>
 
-        <!-- Grelha Bento Box (Tendência de Design Apple/Stripe) -->
-        <section id="bento" class="bento-section">
-            <div class="bento-header" data-anime="fade">
+        <!-- OS PROBLEMAS (BENTO GRID) -->
+        <section id="problemas" class="section-padding">
+            <div class="section-header" data-anime="fade">
                 <h2>Não deixe o caos financeiro travar o seu negócio</h2>
+                <p>Identifica-se com algum destes cenários no seu dia a dia?</p>
             </div>
-            
-            <div class="bento-grid" id="cards">
-                <!-- Cartão Principal (Ocupa 2 espaços) -->
-                <div class="card span-2">
+            <div class="bento-grid">
+                <div class="card span-2" data-anime="fade">
                     <div class="card-content">
                         <div class="icon-box warning">⚠️</div>
                         <h3>Mistura de Contas (CPF vs CNPJ)</h3>
-                        <p>O maior erro dos empresários é não saber onde acaba o dinheiro da empresa e começa o dinheiro pessoal. Nós separamos tudo com rigor militar.</p>
+                        <p>O maior erro dos empresários é não saber onde acaba o dinheiro da empresa e começa o dinheiro pessoal. Nós separamos tudo com rigor militar, garantindo a saúde do negócio e a sua segurança jurídica.</p>
                     </div>
                 </div>
-                <!-- Cartão Secundário 1 -->
-                <div class="card">
+                <div class="card" data-anime="fade" style="transition-delay: 0.2s;">
                     <div class="card-content">
                         <div class="icon-box danger">❌</div>
                         <h3>Lucro Cego</h3>
-                        <p>Vende todos os dias, mas não vê a cor do dinheiro no fim do mês? Entregamos-lhe um DRE claro e objetivo.</p>
+                        <p>Vende todos os dias, mas não vê a cor do dinheiro no fim do mês? A falta de registo esconde os verdadeiros ralos financeiros.</p>
                     </div>
                 </div>
-                <!-- Cartão Secundário 2 -->
-                <div class="card">
+                <div class="card" data-anime="fade" style="transition-delay: 0.3s;">
                     <div class="card-content">
                         <div class="icon-box alert">💸</div>
                         <h3>Juros por Atraso</h3>
-                        <p>Nunca mais pague multas por esquecer o vencimento de boletos ou impostos. O seu fluxo de caixa será previsível.</p>
+                        <p>Pagar multas por esquecer o vencimento de boletos ou impostos é deitar dinheiro ao lixo. O seu fluxo de caixa precisa de previsibilidade.</p>
                     </div>
                 </div>
             </div>
         </section>
+
+        <!-- AS SOLUÇÕES -->
+        <section id="solucoes" class="section-padding bg-alt">
+            <div class="section-header" data-anime="fade">
+                <h2>A nossa engenharia financeira ao seu serviço</h2>
+                <p>O BPO (Business Process Outsourcing) da Prisma vai muito além de lançar contas numa planilha. É gestão inteligente.</p>
+            </div>
+            <div class="bento-grid">
+                <div class="card" data-anime="fade">
+                    <div class="card-content">
+                        <div class="icon-box info">📊</div>
+                        <h3>Contas a Pagar e Receber</h3>
+                        <p>Agendamos todos os seus pagamentos diretamente no seu banco (apenas aguardando a sua aprovação final) e monitorizamos todas as entradas para reduzir a inadimplência.</p>
+                    </div>
+                </div>
+                <div class="card" data-anime="fade">
+                    <div class="card-content">
+                        <div class="icon-box info">🏦</div>
+                        <h3>Conciliação Bancária</h3>
+                        <p>Cruzamos cada cêntimo que entra e sai da sua conta com as notas fiscais e recibos. Transparência total e zero furos no caixa.</p>
+                    </div>
+                </div>
+                <div class="card" data-anime="fade">
+                    <div class="card-content">
+                        <div class="icon-box info">📄</div>
+                        <h3>Emissão de Notas Fiscais e Boletos</h3>
+                        <p>Tiramos a burocracia das suas mãos. Faturamos as suas vendas ou serviços de forma automática e enviamos diretamente para os seus clientes.</p>
+                    </div>
+                </div>
+                <div class="card span-3" data-anime="fade">
+                    <div class="card-content flex-row">
+                        <div class="icon-box highlight">📈</div>
+                        <div>
+                            <h3>Relatórios de Alta Performance (DRE e Fluxo de Caixa)</h3>
+                            <p>Todos os meses tem uma reunião connosco. Apresentamos painéis visuais fáceis de entender que mostram o seu Lucro Real, Margem de Contribuição e Ponto de Equilíbrio. Vai tomar decisões baseadas em dados, não em intuição.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SOBRE A EMPRESA -->
+        <section id="sobre" class="section-padding">
+            <div class="about-container" data-anime="fade">
+                <div class="about-text">
+                    <h2>Muito mais do que assessoria.<br><span class="gradient-text" style="font-size: 2.5rem;">O seu braço direito estratégico.</span></h2>
+                    <p>Sediada em Natal/RN, a <strong>Prisma Finance</strong> nasceu com um propósito claro: resgatar o bem-estar e o tempo livre dos empresários.</p>
+                    <p>Muitos empreendedores trabalham 14 horas por dia e, quando chegam a casa, ainda têm de organizar papéis, conciliar extratos e preocupar-se com pagamentos. Nós existimos para que possa focar-se exclusivamente naquilo que faz o seu negócio crescer: o seu produto, o seu serviço e as suas vendas.</p>
+                    <p>A nossa equipa traz práticas de grandes corporações, adaptadas para a realidade das micro e pequenas empresas, garantindo sigilo total, tecnologia de ponta e um atendimento próximo.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- O MÉTODO (COMO FUNCIONA) -->
+        <section id="metodo" class="section-padding bg-alt">
+            <div class="section-header" data-anime="fade">
+                <h2>Como funciona a nossa parceria?</h2>
+                <p>Um processo de implantação suave, rápido e 100% digital.</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-step" data-anime="fade">
+                    <div class="step-number">1</div>
+                    <h3>Diagnóstico e Alinhamento</h3>
+                    <p>Uma reunião gratuita para entendermos as dores do seu financeiro atual e mapearmos os seus processos de vendas e despesas.</p>
+                </div>
+                <div class="timeline-step" data-anime="fade" style="transition-delay: 0.1s;">
+                    <div class="step-number">2</div>
+                    <h3>Setup e Integração</h3>
+                    <p>Implementamos o sistema de gestão (ERP) ideal para si e integramos o nosso acesso restrito aos seus bancos e sistemas de notas.</p>
+                </div>
+                <div class="timeline-step" data-anime="fade" style="transition-delay: 0.2s;">
+                    <div class="step-number">3</div>
+                    <h3>Operação Diária (BPO)</h3>
+                    <p>Passamos a gerir o seu dia a dia. Você apenas envia os comprovantes pelo WhatsApp ou pasta partilhada, e nós tratamos do resto.</p>
+                </div>
+                <div class="timeline-step" data-anime="fade" style="transition-delay: 0.3s;">
+                    <div class="step-number">4</div>
+                    <h3>Análise de Resultados</h3>
+                    <p>Até ao 5º dia útil do mês seguinte, entregamos os relatórios fechados e reunimos para discutir métricas e planeamento estratégico.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ (PERGUNTAS FREQUENTES) -->
+        <section class="section-padding">
+            <div class="section-header" data-anime="fade">
+                <h2>Perguntas Frequentes</h2>
+            </div>
+            <div class="faq-container" data-anime="fade">
+                <details class="faq-item">
+                    <summary>Vou perder o controlo do meu dinheiro?</summary>
+                    <div class="faq-content">De forma alguma. A Prisma Finance não tem poder para movimentar o seu dinheiro. Nós preparamos os pagamentos no banco, mas <strong>apenas você</strong> (com a sua senha ou token) pode autorizar e efetivar as transações.</div>
+                </details>
+                <details class="faq-item">
+                    <summary>A Prisma substitui o meu contabilista?</summary>
+                    <div class="faq-content">Não. Nós fazemos a gestão financeira (o dia a dia, fluxo de caixa, pagamentos). O seu contabilista trata da parte tributária, impostos e folha de pagamento. Na verdade, nós facilitamos muito a vida dele, enviando toda a documentação já organizada mensalmente.</div>
+                </details>
+                <details class="faq-item">
+                    <summary>Qualquer empresa pode contratar o BPO Financeiro?</summary>
+                    <div class="faq-content">Sim! Atendemos prestadores de serviços, clínicas, agências, e-commerces e comércios locais. Se a sua empresa processa recebimentos e tem contas a pagar, nós podemos profissionalizar o seu setor financeiro.</div>
+                </details>
+                <details class="faq-item">
+                    <summary>Os meus dados estarão seguros?</summary>
+                    <div class="faq-content">Absolutamente. Trabalhamos com sistemas encriptados, em conformidade com a LGPD, e assinamos um rigoroso acordo de confidencialidade (NDA) com todos os nossos clientes.</div>
+                </details>
+            </div>
+        </section>
+
     </main>
 
+    <!-- RODAPÉ -->
     <footer>
         <div class="footer-content">
             <img src="assets/prisma-brasao.svg" class="brand-crest grayscale" alt="Prisma Finance">
