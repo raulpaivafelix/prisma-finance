@@ -1,11 +1,45 @@
-document.addEventListener('DOMContentLoaded', () => {
+// Variáveis Globais de Estado (Para não falhar o envio de WhatsApp)
+window.currentFat = "50.000";
+window.currentPoupa = "2.250";
 
-    /* =========================================
-       1. CURSOR MAGNÉTICO
-    ========================================= */
+document.addEventListener('DOMContentLoaded', () => {
+    
+    const isDesktop = window.matchMedia("(pointer: fine)").matches;
+
+    /* --- 1. PRELOADER & SAUDAÇÃO --- */
+    const preloader = document.getElementById('preloader');
+    if(preloader) {
+        setTimeout(() => {
+            preloader.style.opacity = '0';
+            setTimeout(() => { preloader.style.display = 'none'; window.animateCharts(); }, 800);
+        }, 1200);
+    }
+
+    const hora = new Date().getHours();
+    const greetEl = document.getElementById('dynamic-greeting');
+    if(greetEl) {
+        if(hora >= 5 && hora < 12) greetEl.innerText = "Bom dia. Já planeou o seu caixa de hoje?";
+        else if(hora >= 12 && hora < 18) greetEl.innerText = "Boa tarde. A sua empresa no piloto automático.";
+        else greetEl.innerText = "Boa noite. Nós cuidamos do financeiro enquanto descansa.";
+    }
+
+    /* --- 2. PROGRESSO & CTA FLUTUANTE --- */
+    window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        document.getElementById('scroll-progress').style.width = (winScroll / height) * 100 + "%";
+
+        const floatingCta = document.getElementById('floating-cta');
+        if(floatingCta) {
+            winScroll > 600 ? floatingCta.classList.add('visible') : floatingCta.classList.remove('visible');
+        }
+    });
+
+    /* --- 3. CURSOR & TILT 3D (APENAS DESKTOP) --- */
     const cursorDot = document.getElementById("cursor-dot");
     const cursorOutline = document.getElementById("cursor-outline");
-    if (window.matchMedia("(pointer: fine)").matches && cursorDot && cursorOutline) {
+    
+    if (isDesktop && cursorDot && cursorOutline) {
         window.addEventListener("mousemove", (e) => {
             cursorDot.style.left = `${e.clientX}px`; cursorDot.style.top = `${e.clientY}px`;
             cursorOutline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 150, fill: "forwards" });
@@ -14,90 +48,37 @@ document.addEventListener('DOMContentLoaded', () => {
             el.addEventListener("mouseenter", () => { cursorDot.classList.add("hover"); cursorOutline.classList.add("hover"); });
             el.addEventListener("mouseleave", () => { cursorDot.classList.remove("hover"); cursorOutline.classList.remove("hover"); });
         });
-    }
 
-    /* =========================================
-       2. NOTIFICAÇÕES AO VIVO (SOCIAL PROOF)
-    ========================================= */
-    const msgs = [
-        "Comércio Físico em Natal economizou 20h esta semana.",
-        "Clínica em Ponta Negra conciliou R$ 15k via IA agora.",
-        "Novo DRE gerado com sucesso via Prisma App.",
-        "Agência aprovou lote de pagamentos com segurança AES-256."
-    ];
-    const toast = document.getElementById('live-toast');
-    const toastText = document.getElementById('toast-text');
-    if(toast) {
-        setInterval(() => {
-            toastText.innerText = msgs[Math.floor(Math.random() * msgs.length)];
-            toast.classList.add('show');
-            playTickSound(); // Micro-som para alertar
-            setTimeout(() => toast.classList.remove('show'), 4000);
-        }, 18000); // Mostra a cada 18s
-    }
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                
+                // Glare do Prisma Black Card
+                if(card.id === 'prisma-card') {
+                    const glare = document.getElementById('card-glare');
+                    if(glare) {
+                        glare.style.setProperty('--mx', `${(x / rect.width) * 100}%`);
+                        glare.style.setProperty('--my', `${(y / rect.height) * 100}%`);
+                    }
+                }
 
-    /* =========================================
-       3. LIVE SANDBOX (HERO INTERATIVO)
-    ========================================= */
-    window.switchTab = (tab) => {
-        document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.s-content').forEach(c => c.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById(`tab-${tab}`).classList.add('active');
-    };
-
-    window.aprovarLote = () => {
-        const btn = document.getElementById('btn-aprovar');
-        const badge = document.getElementById('badge-boletos');
-        const saldo = document.getElementById('s-balance');
-        
-        btn.innerText = "A processar...";
-        setTimeout(() => {
-            document.querySelectorAll('.s-item').forEach(i => i.classList.add('cleared'));
-            btn.innerText = "✓ Lote Aprovado Seguro";
-            btn.classList.add('done');
-            badge.innerText = "0";
-            badge.style.background = "#059669";
-            saldo.innerText = "R$ 140.950,00"; // Saldo descontado
-            saldo.classList.add('success');
-            playTickSound();
-            if(navigator.vibrate) navigator.vibrate([50, 50, 50]);
-        }, 800);
-    };
-
-    /* =========================================
-       4. TOGGLE MENSAL / ANUAL
-    ========================================= */
-    window.togglePricing = () => {
-        const isAnual = document.getElementById('billing-toggle').checked;
-        document.getElementById('label-mensal').classList.toggle('active', !isAnual);
-        document.getElementById('label-anual').classList.toggle('active', isAnual);
-        
-        document.querySelectorAll('.price-val').forEach(price => {
-            // Animação de contador rápido na mudança de preço
-            const target = isAnual ? price.getAttribute('data-anual') : price.getAttribute('data-mensal');
-            price.innerText = target;
+                const rotateX = (((y) - (rect.height / 2)) / (rect.height / 2)) * -4; 
+                const rotateY = (((x) - (rect.width / 2)) / (rect.width / 2)) * 4;  
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            card.addEventListener('mouseleave', () => card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`);
         });
-    };
-
-    /* =========================================
-       5. RAIO-X (ANTES E DEPOIS)
-    ========================================= */
-    const baContainer = document.getElementById('ba-container');
-    if(baContainer) {
-        const slideMove = (e) => {
-            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            let percentage = Math.max(0, Math.min(100, ((clientX - baContainer.getBoundingClientRect().left) / baContainer.offsetWidth) * 100));
-            document.getElementById('ba-after').style.clipPath = `inset(0 0 0 ${percentage}%)`;
-            document.getElementById('ba-slider').style.left = `${percentage}%`;
-        };
-        baContainer.addEventListener('mousemove', slideMove);
-        baContainer.addEventListener('touchmove', slideMove, {passive: true});
     }
 
-    /* =========================================
-       6. ÁUDIO HAPTIC & CALCULADORA ROI
-    ========================================= */
+    /* --- 4. COMMAND PALETTE --- */
+    window.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault(); window.abrirCommandPalette();
+        }
+    });
+
+    /* --- 5. AUDIO E CALCULADORA ROI --- */
     let audioCtx = null;
     window.playTickSound = () => {
         try {
@@ -107,8 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             osc.connect(gainNode); gainNode.connect(audioCtx.destination);
             osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.03);
-            gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime); 
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+            gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
             osc.start(); osc.stop(audioCtx.currentTime + 0.03);
         } catch(e) {}
     };
@@ -119,84 +99,114 @@ document.addEventListener('DOMContentLoaded', () => {
         ['mousedown', 'touchstart'].forEach(evt => range.addEventListener(evt, () => { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }, {passive:true}));
         range.addEventListener('input', (e) => {
             const val = parseInt(e.target.value);
-            if(Math.abs(val - lastVal) >= 5000) { playTickSound(); if(navigator.vibrate) navigator.vibrate(2); lastVal = val; }
-            document.getElementById('faturamento-val').innerText = `R$ ${val.toLocaleString('pt-BR')}`;
+            if(Math.abs(val - lastVal) >= 5000) { window.playTickSound(); if(navigator.vibrate) navigator.vibrate(2); lastVal = val; }
+            
+            window.currentFat = val.toLocaleString('pt-BR');
+            window.currentPoupa = Math.floor(val * 0.045).toLocaleString('pt-BR');
+
+            document.getElementById('faturamento-val').innerText = `R$ ${window.currentFat}`;
             document.getElementById('tempo-poupado').innerText = `${20 + Math.floor(val / 10000)}h / mês`;
-            document.getElementById('dinheiro-poupado').innerText = `R$ ${Math.floor(val * 0.045).toLocaleString('pt-BR')}`;
+            document.getElementById('dinheiro-poupado').innerText = `R$ ${window.currentPoupa}`;
         });
     }
 
-    /* =========================================
-       7. ANIMAÇÕES (Scroll & Tilt 3D)
-    ========================================= */
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
-    }, { threshold: 0.1 }); 
-    document.querySelectorAll('[data-anime="fade"]').forEach(el => observer.observe(el));
+    /* --- 6. ANIMAÇÕES SCROLL --- */
+    const obsFade = new IntersectionObserver(e => e.forEach(i => { if(i.isIntersecting) i.target.classList.add('show'); }), { threshold: 0.1 }); 
+    document.querySelectorAll('[data-anime="fade"]').forEach(el => obsFade.observe(el));
 
-    if (window.matchMedia("(pointer: fine)").matches) {
-        document.querySelectorAll('.tilt-card').forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const rotateX = (((e.clientY - rect.top) - (rect.height / 2)) / (rect.height / 2)) * -4; 
-                const rotateY = (((e.clientX - rect.left) - (rect.width / 2)) / (rect.width / 2)) * 4;  
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            });
-            card.addEventListener('mouseleave', () => card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`);
-        });
-    }
-
-    /* =========================================
-       8. GESTÃO DE MODAIS E CHATBOT
-    ========================================= */
-    window.abrirLogin = () => document.getElementById('loginModal').classList.add('ativo');
-    window.fecharLogin = () => document.getElementById('loginModal').classList.remove('ativo');
-
-    window.abrirChat = () => document.getElementById('chat-box').classList.toggle('open');
-    window.fecharChat = () => document.getElementById('chat-box').classList.remove('open');
-    window.chatResponder = (texto) => {
-        const chatBody = document.getElementById('chat-body');
-        chatBody.innerHTML += `<div class="chat-msg user">${texto}</div>`;
-        document.getElementById('chat-options').style.display = 'none';
-        setTimeout(() => {
-            chatBody.innerHTML += `<div class="chat-msg bot">Perfeito! A transferir para o Consultor Raul Paiva...</div>`;
-            chatBody.scrollTop = chatBody.scrollHeight;
-            playTickSound();
-            setTimeout(() => window.open("https://wa.me/5584999999999?text=Ol%C3%A1%2C%20estou%20no%20site%20da%20Prisma%20e%20gostaria%20de%20ver%20os%20planos.", "_blank"), 1500);
-        }, 800);
-    };
-
-    /* =========================================
-       9. DIAGNÓSTICO COM AGENDAMENTO (Typeform)
-    ========================================= */
-    let diagData = {};
-    window.abrirDiagnostico = () => {
-        document.getElementById('diagModal').classList.add('ativo');
-        document.querySelectorAll('.diag-step').forEach(el => el.classList.remove('ativo'));
-        document.getElementById('step-1').classList.add('ativo');
-    };
-    window.fecharDiagnostico = () => document.getElementById('diagModal').classList.remove('ativo');
-    
-    window.nextStep = (num, chave, valor) => {
-        diagData[chave] = valor;
-        document.querySelectorAll('.diag-step').forEach(el => el.classList.remove('ativo'));
-        document.getElementById(`step-${num}`).classList.add('ativo');
-
-        if(num === 4) { // Tela de carregamento IA
-            setTimeout(() => {
-                document.getElementById('step-4').classList.remove('ativo');
-                document.getElementById('step-5').classList.add('ativo');
-                playTickSound();
-            }, 2500);
-        }
-    };
-
-    window.enviarWhatsApp = () => {
-        const txt = `*Diagnóstico Prisma Finance*\nSegmento: ${diagData['Segmento']}\nTempo perdido: ${diagData['Horas']}\nPreferência de Agendamento: *${diagData['Horario']}*\n\nOlá Raul, quero automatizar a minha gestão!`;
-        window.open(`https://wa.me/5584999999999?text=${encodeURIComponent(txt)}`, '_blank');
-    };
-
-    document.querySelectorAll('.modal-overlay').forEach(modal => {
+    // Fechar modais ao clicar no fundo
+    document.querySelectorAll('.modal-overlay, .cmd-palette-overlay').forEach(modal => {
         modal.addEventListener('click', function(e) { if(e.target === this) this.classList.remove('ativo'); });
     });
 });
+
+/* =========================================
+   FUNÇÕES GLOBAIS DE JANELA (WINDOW)
+========================================= */
+
+// Command Palette
+window.abrirCommandPalette = () => { document.getElementById('cmd-palette').classList.add('ativo'); setTimeout(() => document.getElementById('cmd-input').focus(), 100); };
+window.fecharCommandPalette = () => { document.getElementById('cmd-palette').classList.remove('ativo'); };
+
+// Login Biométrico
+window.abrirLogin = () => {
+    document.getElementById('loginModal').classList.add('ativo');
+    document.getElementById('login-scanner').classList.add('active');
+    document.getElementById('login-form').style.display = 'none';
+    const scanText = document.getElementById('scan-text');
+    scanText.innerText = "Aguardando leitura...";
+    setTimeout(() => { scanText.innerText = "Estabelecendo conexão AES-256..."; window.playTickSound(); }, 800);
+    setTimeout(() => {
+        document.getElementById('login-scanner').classList.remove('active');
+        document.getElementById('login-form').style.display = 'block';
+    }, 2500);
+};
+window.fecharLogin = () => document.getElementById('loginModal').classList.remove('ativo');
+
+// Sandbox Vivos e Raio-X
+window.animateCharts = () => document.querySelectorAll('.s-bar').forEach(bar => bar.style.height = bar.getAttribute('data-target'));
+window.switchTab = (tab) => {
+    document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.s-content').forEach(c => c.classList.remove('active'));
+    event.target.classList.add('active'); document.getElementById(`tab-${tab}`).classList.add('active');
+    if(tab === 'caixa') window.animateCharts();
+};
+window.aprovarLote = () => {
+    const btn = document.getElementById('btn-aprovar'); btn.innerText = "A processar...";
+    setTimeout(() => {
+        document.querySelectorAll('.s-item').forEach(i => i.classList.add('cleared'));
+        btn.innerText = "✓ Lote Seguro Aprovado"; btn.classList.add('done');
+        document.getElementById('badge-boletos').innerText = "0"; document.getElementById('badge-boletos').style.background = "#059669";
+        document.getElementById('s-balance').innerText = "R$ 140.950,00"; document.getElementById('s-balance').classList.add('success');
+        window.playTickSound(); if(navigator.vibrate) navigator.vibrate([50, 50]);
+    }, 800);
+};
+
+window.togglePricing = () => {
+    const isAnual = document.getElementById('billing-toggle').checked;
+    document.getElementById('label-mensal').classList.toggle('active', !isAnual);
+    document.getElementById('label-anual').classList.toggle('active', isAnual);
+    document.querySelectorAll('.price-val').forEach(p => p.innerText = isAnual ? p.getAttribute('data-anual') : p.getAttribute('data-mensal'));
+};
+
+// Chatbot
+window.abrirChat = () => document.getElementById('chat-box').classList.toggle('open');
+window.fecharChat = () => document.getElementById('chat-box').classList.remove('open');
+window.chatResponder = (txt) => {
+    document.getElementById('chat-body').innerHTML += `<div class="chat-msg user">${txt}</div>`;
+    document.getElementById('chat-options').style.display = 'none';
+    setTimeout(() => {
+        document.getElementById('chat-body').innerHTML += `<div class="chat-msg bot">A transferir para Raul Paiva...</div>`;
+        window.playTickSound(); setTimeout(() => window.enviarWhatsAppDireto(), 1500);
+    }, 800);
+};
+
+// Diagnóstico Typeform
+let diagData = {};
+window.abrirDiagnostico = () => {
+    document.getElementById('diagModal').classList.add('ativo');
+    document.querySelectorAll('.diag-step').forEach(el => el.classList.remove('ativo'));
+    document.getElementById('step-1').classList.add('ativo');
+};
+window.fecharDiagnostico = () => document.getElementById('diagModal').classList.remove('ativo');
+window.nextStep = (num, chave, valor) => {
+    diagData[chave] = valor;
+    document.querySelectorAll('.diag-step').forEach(el => el.classList.remove('ativo'));
+    document.getElementById(`step-${num}`).classList.add('ativo');
+    if(num === 4) {
+        setTimeout(() => {
+            document.getElementById('step-4').classList.remove('ativo');
+            document.getElementById('step-5').classList.add('ativo'); window.playTickSound();
+        }, 2000);
+    }
+};
+
+// WhatsApp Inteligente (Usa Variáveis Globais de Faturamento)
+window.enviarWhatsAppInteligente = () => {
+    const txt = `*Diagnóstico Prisma Finance*\nSegmento: ${diagData['Segmento']}\nTempo perdido: ${diagData['Horas']}\nAgendamento VIP: *${diagData['Horario']}*\n\n💰 *Dados da Empresa:*\nFaturamento aproximado: R$ ${window.currentFat}\nVi que posso poupar cerca de R$ ${window.currentPoupa} com a automação.\n\nOlá Raul, quero começar a minha jornada com o Prisma App!`;
+    window.open(`https://wa.me/5584999999999?text=${encodeURIComponent(txt)}`, '_blank');
+};
+window.enviarWhatsAppDireto = () => {
+    const txt = `Olá Raul! Estava na plataforma Prisma e quero automatizar o meu negócio. O meu faturamento é de cerca de R$ ${window.currentFat}. Podemos conversar?`;
+    window.open(`https://wa.me/5584999999999?text=${encodeURIComponent(txt)}`, '_blank');
+};
