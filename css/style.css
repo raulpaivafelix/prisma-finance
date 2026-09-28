@@ -1,93 +1,202 @@
-
-       /* --- CONFIGURAÇÕES GERAIS --- */
+/* --- CONFIGURAÇÕES GERAIS --- */
+* { box-sizing: border-box; }
 body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #fcfcfc;
+    color: #333;
+    line-height: 1.6;
 }
 
-/* --- CABEÇALHO E LOGÓTIPO --- */
+/* --- CABEÇALHO --- */
 header {
     display: flex;
-    justify-content: space-between; /* Afasta o logo e o botão */
+    justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
-    background-color: #f4f4f9;
+    padding: 20px 5%;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky; /* Mantém o menu preso no topo ao fazer scroll */
+    top: 0;
+    z-index: 100;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 1.5rem;
+    gap: 12px;
+    font-size: 1.4rem;
     font-weight: 800;
     color: #0b132b;
 }
 
-/* A REGRA QUE IMPEDE O BRASÃO DE FICAR GIGANTE */
-.brand-crest {
-    width: 44px;
-    height: auto;
-}
+.brand-crest { width: 44px; height: auto; }
 
-/* --- MENU INTERATIVO (BOTÃO) --- */
-.menu-interativo {
-    position: relative;
-}
+/* --- MENU INTERATIVO (ANIMAÇÃO SUAVE) --- */
+.menu-interativo { position: relative; }
 
 .botao-opcoes {
-    padding: 10px 20px;
-    background-color: #0056b3;
+    padding: 10px 24px;
+    background-color: #0b132b;
     color: white;
     border: none;
-    border-radius: 5px;
-    font-weight: bold;
+    border-radius: 6px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.3s ease; /* Animação suave ao passar o rato */
 }
 
-.botao-opcoes:hover {
-    background-color: #004494;
+.botao-opcoes:hover { 
+    background-color: #1c2a54; 
+    transform: translateY(-2px); 
 }
 
+/* Alterámos de display: none para opacity para uma transição suave */
 .opcoes-ocultas {
-    display: none; /* Começa escondido */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    display: flex;
     flex-direction: column;
     background-color: #ffffff;
-    border: 1px solid #ccc;
+    border: 1px solid #eaeaea;
     padding: 10px;
-    width: 150px;
+    width: 160px;
     position: absolute;
-    top: 50px;
+    top: 55px;
     right: 0;
-    border-radius: 4px;
-    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+    transition: all 0.3s ease; /* Animação da caixa a descer */
+}
+
+.mostrar-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 .opcoes-ocultas a {
     text-decoration: none;
-    color: #333;
-    padding: 8px;
-    border-bottom: 1px solid #eee;
+    color: #444;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
 }
 
-.opcoes-ocultas a:hover {
-    background-color: #f1f1f1;
+.opcoes-ocultas a:hover { 
+    background-color: #f4f6f8; 
+    color: #0056b3; 
 }
 
-/* A classe que o JavaScript ativa */
-.mostrar-menu {
-    display: flex; 
+/* --- SEÇÃO INÍCIO (HERO) E CTA --- */
+.hero {
+    text-align: center;
+    padding: 80px 5%;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-/* --- CONTEÚDO E RODAPÉ --- */
-main {
-    padding: 40px;
+.hero h1 { 
+    font-size: 2.5rem; 
+    color: #0b132b; 
+    margin-bottom: 20px; 
+    line-height: 1.2; 
 }
 
+.hero p { 
+    font-size: 1.1rem; 
+    color: #666; 
+    margin-bottom: 40px; 
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 16px 32px;
+    background-color: #f7931e; /* Laranja de alta conversão */
+    color: white;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(247, 147, 30, 0.3);
+    transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #e68010;
+    transform: translateY(-3px); /* Levanta ligeiramente ao passar o rato */
+    box-shadow: 0 6px 20px rgba(247, 147, 30, 0.4);
+}
+
+/* --- SEÇÃO PROBLEMAS (GRELHA DE CARTÕES) --- */
+.pain-section {
+    background-color: #f4f6f8;
+    padding: 80px 5%;
+    text-align: center;
+}
+
+.pain-section h2 { 
+    font-size: 2rem; 
+    color: #0b132b; 
+    margin-bottom: 50px; 
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.card {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    text-align: left;
+    border-top: 4px solid #e03131; /* Alerta visual */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.card .icon { 
+    font-size: 2rem; 
+    display: block; 
+    margin-bottom: 15px; 
+}
+
+.card p { 
+    font-size: 1.05rem; 
+    color: #444; 
+    margin: 0; 
+    font-weight: 600; 
+}
+
+/* --- RODAPÉ --- */
 footer {
     background-color: #0b132b;
     color: white;
     text-align: center;
-    padding: 40px 20px;
-    margin-top: 50px;
+    padding: 60px 20px;
+}
+footer h3 { margin: 15px 0 5px 0; }
+footer p { color: #8a94b5; font-size: 0.9rem; }
+
+/* --- RESPONSIVIDADE (MOBILE-FIRST) --- */
+@media (max-width: 768px) {
+    header { 
+        flex-direction: column; 
+        gap: 15px; 
+        padding: 15px 5%;
+    }
+    .hero h1 { font-size: 2rem; }
+    .cta-button { width: 100%; text-align: center; } /* Botão largo em telemóveis */
+    .cards-grid { grid-template-columns: 1fr; } /* Cartões empilhados */
 }
