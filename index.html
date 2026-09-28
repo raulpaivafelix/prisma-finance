@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <!-- Cabeçalho -->
+    <!-- Cabeçalho (Efeito Glassmorphism) -->
     <header>
         <div class="logo">
             <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Brasão da Prisma Finance">
@@ -17,44 +17,72 @@
         </div>
         
         <div class="menu-interativo">
-            <!-- Botão com o comando de clique para funcionar perfeitamente em telemóveis -->
-            <button onclick="alternarOpcoes()" class="botao-opcoes">Ver Opções</button>
+            <button onclick="alternarOpcoes()" class="botao-opcoes">Menu</button>
             <div id="caixa-opcoes" class="opcoes-ocultas">
                 <a href="#inicio">Início</a>
                 <a href="#problemas">Os Problemas</a>
+                <a href="#solucoes">Soluções</a>
                 <a href="#fim">Contactos</a>
             </div>
         </div>
     </header>
 
-    <!-- Corpo do Site -->
     <main>
-        <!-- Dobra 1: A Promessa e o CTA -->
+        <!-- Dobra 1: Hero com Fundo Gradiente Animado -->
         <section id="inicio" class="hero">
-            <h1>Terceirize o financeiro da sua empresa e compre o seu tempo de volta.</h1>
-            <p>A Prisma Finance organiza o seu fluxo de caixa, elimina a mistura de contas e entrega clareza diária por uma fração do custo de um funcionário CLT.</p>
-            
-            <!-- Botão de Diagnóstico (Link direto para o WhatsApp) -->
-            <a href="https://wa.me/5584999999999?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20o%20meu%20diagn%C3%B3stico%20financeiro%20gratuito!" target="_blank" class="cta-button">Fazer Diagnóstico Gratuito</a>
+            <div class="hero-content" data-anime="scroll">
+                <h1>Terceirize o financeiro da sua empresa e compre o seu tempo de volta.</h1>
+                <p>A Prisma Finance organiza o seu fluxo de caixa, elimina a mistura de contas e entrega clareza diária por uma fração do custo de um funcionário CLT.</p>
+                <a href="https://wa.me/5584999999999?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20o%20meu%20diagn%C3%B3stico%20financeiro%20gratuito!" target="_blank" class="cta-button">Fazer Diagnóstico Gratuito</a>
+            </div>
         </section>
         
-        <!-- Dobra 2: Gatilhos Mentais (Cartões) -->
+        <!-- Dobra 2: Gatilhos Mentais (Fade-in no Scroll) -->
         <section id="problemas" class="pain-section">
-            <h2>O seu negócio vende todo dia, mas o seu caixa está cego?</h2>
+            <h2 data-anime="scroll">O seu negócio vende todo dia, mas o seu caixa está cego?</h2>
             
             <div class="cards-grid">
-                <div class="card">
+                <div class="card" data-anime="scroll">
                     <span class="icon">❌</span>
                     <p>Não sabe o lucro real líquido no fim do mês.</p>
                 </div>
-                <div class="card">
+                <div class="card" data-anime="scroll" style="transition-delay: 0.2s;">
                     <span class="icon">💸</span>
                     <p>Paga juros por esquecer ou atrasar o vencimento de boletos.</p>
                 </div>
-                <div class="card">
+                <div class="card" data-anime="scroll" style="transition-delay: 0.4s;">
                     <span class="icon">⚠️</span>
                     <p>Mistura despesas pessoais (CPF) com as contas da empresa (CNPJ).</p>
                 </div>
+            </div>
+        </section>
+
+        <!-- Dobra 3: Soluções (Acordeão Interativo) -->
+        <section id="solucoes" class="solutions-section">
+            <h2 data-anime="scroll">Como a Prisma Finance resolve isso?</h2>
+            <div class="accordion-container" data-anime="scroll">
+                
+                <div class="accordion-item">
+                    <button class="accordion-header">Organização Diária e Conciliação Bancária <span class="icon">+</span></button>
+                    <div class="accordion-content">
+                        <p>Acompanhamos todas as entradas e saídas diárias da sua conta, garantindo que nenhum cêntimo se perde. O seu saldo bancário baterá sempre certo com os seus relatórios.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">Gestão de Contas a Pagar e Receber <span class="icon">+</span></button>
+                    <div class="accordion-content">
+                        <p>Agendamos os seus pagamentos para aprovação e monitorizamos os seus recebimentos. Chega de pagar juros por esquecimentos ou deixar cobranças para trás.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">Relatórios de Lucratividade (DRE) <span class="icon">+</span></button>
+                    <div class="accordion-content">
+                        <p>Entregamos um painel claro todos os meses. Vai finalmente saber se a sua empresa deu lucro ou prejuízo, e para onde está a ir o seu dinheiro.</p>
+                    </div>
+                </div>
+
             </div>
         </section>
     </main>
@@ -63,17 +91,14 @@
     <footer id="fim">
         <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Brasão da Prisma Finance">
         <h3>Prisma Finance</h3>
-        
         <div class="contactos-info">
             <p>📍 Sede: Ponta Negra, Natal/RN</p>
             <p>📱 WhatsApp: (84) 99999-9999</p>
             <p>✉️ Email: contato@prismafinance.com.br</p>
         </div>
-        
         <p class="direitos">Prisma Finance &copy; 2026. Todos os direitos reservados. BPO Financeiro e Gestão Estratégica.</p>
     </footer>
 
-    <!-- Ligação ao JavaScript -->
     <script src="js/script.js"></script>
 </body>
 </html>
