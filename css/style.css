@@ -2,228 +2,129 @@
 * { box-sizing: border-box; }
 body {
     font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #fcfcfc;
-    color: #333;
-    line-height: 1.6;
+    margin: 0; padding: 0;
+    background-color: #fcfcfc; color: #333; line-height: 1.6;
 }
 
 /* --- CABEÇALHO (GLASSMORPHISM) --- */
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex; justify-content: space-between; align-items: center;
     padding: 15px 5%;
-    /* Fundo semi-transparente e desfoque */
     background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    position: sticky; top: 0; z-index: 1000;
 }
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #0b132b;
-}
-
+.logo { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; color: #0b132b; }
 .brand-crest { width: 44px; height: auto; }
 
 /* --- MENU INTERATIVO --- */
 .menu-interativo { position: relative; }
-
 .botao-opcoes {
-    padding: 10px 24px;
-    background-color: #0b132b;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    padding: 10px 24px; background-color: #0b132b; color: white;
+    border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
 }
-
 .botao-opcoes:hover { background-color: #1c2a54; transform: translateY(-2px); }
 
 .opcoes-ocultas {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    display: flex;
-    flex-direction: column;
-    background-color: #ffffff;
-    border: 1px solid #eaeaea;
-    padding: 10px;
-    width: 160px;
-    position: absolute;
-    top: 55px;
-    right: 0;
-    border-radius: 8px;
-    box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
+    opacity: 0; visibility: hidden; transform: translateY(-10px); display: flex; flex-direction: column;
+    background-color: #ffffff; border: 1px solid #eaeaea; padding: 10px; width: 160px;
+    position: absolute; top: 55px; right: 0; border-radius: 8px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.1); transition: all 0.3s ease;
 }
-
-.mostrar-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.opcoes-ocultas a {
-    text-decoration: none;
-    color: #444;
-    padding: 10px;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
+.mostrar-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.opcoes-ocultas a { text-decoration: none; color: #444; padding: 10px; border-radius: 4px; transition: 0.2s; }
 .opcoes-ocultas a:hover { background-color: #f4f6f8; color: #0b132b; font-weight: 600;}
 
-/* --- SEÇÃO INÍCIO (GRADIENTE ANIMADO) --- */
+/* --- HERO (GRADIENTE E CURSOR DO TYPEWRITER) --- */
 .hero {
-    /* Gradiente em movimento */
     background: linear-gradient(-45deg, #f4f6f8, #e0e7ff, #ffffff, #dbe4ff);
-    background-size: 400% 400%;
-    animation: gradientBG 12s ease infinite;
-    text-align: center;
-    padding: 100px 5%;
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-size: 400% 400%; animation: gradientBG 12s ease infinite;
+    text-align: center; padding: 100px 5%; min-height: 80vh;
+    display: flex; align-items: center; justify-content: center;
 }
-
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
+@keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 .hero-content { max-width: 800px; }
-.hero h1 { font-size: 2.8rem; color: #0b132b; margin-bottom: 20px; line-height: 1.2; }
+
+/* O cursor piscante da máquina de escrever */
+#maquina-escrever { font-size: 2.8rem; color: #0b132b; margin-bottom: 20px; line-height: 1.2; min-height: 110px; }
+#maquina-escrever::after { content: '|'; animation: blink 0.8s infinite; color: #f7931e; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
 .hero p { font-size: 1.15rem; color: #555; margin-bottom: 40px; }
-
 .cta-button {
-    display: inline-block;
-    padding: 18px 36px;
-    background-color: #f7931e;
-    color: white;
-    text-decoration: none;
-    font-weight: 800;
-    font-size: 1.1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(247, 147, 30, 0.3);
-    transition: all 0.3s ease;
+    display: inline-block; padding: 18px 36px; background-color: #f7931e; color: white;
+    text-decoration: none; font-weight: 800; font-size: 1.1rem; border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(247, 147, 30, 0.3); transition: all 0.3s ease;
 }
+.cta-button:hover { background-color: #e68010; transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(247, 147, 30, 0.5); }
 
-.cta-button:hover {
-    background-color: #e68010;
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(247, 147, 30, 0.5);
+/* --- SECÇÃO ESTATÍSTICAS (CONTADORES ANIMADOS) --- */
+.stats-section {
+    background-color: #0b132b; color: white; padding: 60px 5%;
+    display: flex; justify-content: space-around; flex-wrap: wrap; gap: 30px; text-align: center;
 }
+.stat-box .counter { font-size: 4rem; font-weight: 900; color: #f7931e; }
+.stat-box .plus { font-size: 3rem; font-weight: 900; color: #f7931e; }
+.stat-box p { font-size: 1.1rem; color: #a0a8c5; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
 
-/* --- SEÇÃO PROBLEMAS (CARTÕES) --- */
-.pain-section {
-    background-color: #ffffff;
-    padding: 100px 5%;
-    text-align: center;
-}
-
+/* --- PROBLEMAS (CARTÕES COM GLOW EFFECT) --- */
+.pain-section { background-color: #ffffff; padding: 100px 5%; text-align: center; }
 .pain-section h2 { font-size: 2.2rem; color: #0b132b; margin-bottom: 60px; }
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto; }
 
-.cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    max-width: 1100px;
-    margin: 0 auto;
+.glow-effect {
+    background-color: #fcfcfc; padding: 40px 30px; border-radius: 12px; text-align: left;
+    border: 1px solid #eaeaea; border-top: 4px solid #e03131;
+    position: relative; overflow: hidden; z-index: 1; transition: all 0.4s ease;
 }
-
-.card {
-    background-color: #fcfcfc;
-    padding: 40px 30px;
-    border-radius: 12px;
-    border: 1px solid #eaeaea;
-    border-top: 4px solid #e03131;
-    text-align: left;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
+/* Efeito de brilho que roda atrás do cartão ao passar o rato */
+.glow-effect::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(224, 49, 49, 0.1) 10%, transparent 40%);
+    opacity: 0; z-index: -1; transition: opacity 0.5s ease; pointer-events: none;
 }
+.glow-effect:hover { transform: translateY(-8px); border-color: #e03131; box-shadow: 0 15px 35px rgba(224, 49, 49, 0.1); }
+.glow-effect:hover::before { opacity: 1; animation: rotateGlow 6s linear infinite; }
+@keyframes rotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-.card:hover { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
 .card .icon { font-size: 2.5rem; display: block; margin-bottom: 20px; }
 .card p { font-size: 1.1rem; color: #444; margin: 0; font-weight: 600; }
 
-/* --- SEÇÃO SOLUÇÕES (ACORDEÃO) --- */
-.solutions-section {
-    background-color: #f4f6f8;
-    padding: 100px 5%;
-    text-align: center;
-}
-
+/* --- SOLUÇÕES (ACORDEÃO) --- */
+.solutions-section { background-color: #f4f6f8; padding: 100px 5%; text-align: center; }
 .solutions-section h2 { font-size: 2.2rem; color: #0b132b; margin-bottom: 50px; }
-
-.accordion-container {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: left;
-}
-
-.accordion-item {
-    background-color: #ffffff;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    overflow: hidden;
-}
-
+.accordion-container { max-width: 800px; margin: 0 auto; text-align: left; }
+.accordion-item { background-color: #ffffff; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; }
 .accordion-header {
-    width: 100%;
-    padding: 20px 25px;
-    background-color: #ffffff;
-    border: none;
-    text-align: left;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #0b132b;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.3s;
+    width: 100%; padding: 20px 25px; background-color: #ffffff; border: none; text-align: left;
+    font-size: 1.1rem; font-weight: 600; color: #0b132b; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;
 }
-
 .accordion-header:hover { background-color: #f9f9ff; }
 .accordion-header.active { color: #0056b3; }
 .accordion-header .icon { font-size: 1.5rem; transition: transform 0.3s ease; }
-.accordion-header.active .icon { transform: rotate(45deg); /* Transforma o + num x */ }
-
-.accordion-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease-out;
-    background-color: #fafafa;
-}
-
+.accordion-header.active .icon { transform: rotate(45deg); }
+.accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; background-color: #fafafa; }
 .accordion-content p { padding: 0 25px 25px 25px; margin: 0; color: #555; }
 
-/* --- ANIMAÇÕES DE SCROLL --- */
-[data-anime="scroll"] {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
+/* --- BOTÃO WHATSAPP FLUTUANTE (PULSANTE) --- */
+.whatsapp-float {
+    position: fixed; bottom: 30px; right: 30px;
+    background-color: #25d366; border-radius: 50px;
+    width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.2); z-index: 1000;
+    animation: pulse-wa 2s infinite; transition: transform 0.3s;
+}
+.whatsapp-float:hover { transform: scale(1.1); animation: none; }
+@keyframes pulse-wa {
+    0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
 }
 
-[data-anime="scroll"].animar {
-    opacity: 1;
-    transform: translateY(0);
-}
+/* --- ANIMAÇÕES DE SCROLL --- */
+[data-anime="scroll"] { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+[data-anime="scroll"].animar { opacity: 1; transform: translateY(0); }
 
 /* --- RODAPÉ --- */
 footer { background-color: #0b132b; color: white; text-align: center; padding: 60px 20px; }
@@ -235,7 +136,9 @@ footer h3 { margin: 15px 0 5px 0; }
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 768px) {
     header { padding: 15px 5%; }
-    .hero h1 { font-size: 2.2rem; }
+    #maquina-escrever { font-size: 2rem; min-height: 120px; }
     .cta-button { width: 100%; text-align: center; }
     .cards-grid { grid-template-columns: 1fr; }
+    .whatsapp-float { bottom: 20px; right: 20px; width: 50px; height: 50px; }
+    .whatsapp-float svg { width: 30px; height: 30px; }
 }
