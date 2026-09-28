@@ -1,9 +1,15 @@
-// Variáveis Globais de Estado (Para não falhar o envio de WhatsApp)
+// ==========================================
+// 0. SUPABASE CONFIGURATION (O Seu Cofre)
+// ==========================================
+const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// Variáveis Globais de Vendas
 window.currentFat = "50.000";
 window.currentPoupa = "2.250";
 
 document.addEventListener('DOMContentLoaded', () => {
-    
     const isDesktop = window.matchMedia("(pointer: fine)").matches;
 
     /* --- 1. PRELOADER & SAUDAÇÃO --- */
@@ -35,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    /* --- 3. CURSOR & TILT 3D (APENAS DESKTOP) --- */
+    /* --- 3. CURSOR & TILT 3D --- */
     const cursorDot = document.getElementById("cursor-dot");
     const cursorOutline = document.getElementById("cursor-outline");
     
@@ -54,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left; const y = e.clientY - rect.top;
                 
-                // Glare do Prisma Black Card
                 if(card.id === 'prisma-card') {
                     const glare = document.getElementById('card-glare');
                     if(glare) {
@@ -110,25 +115,75 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* --- 6. ANIMAÇÕES SCROLL --- */
+    /* --- 6. INTEGRAÇÃO REAL DO LOGIN (SUPABASE) --- */
+    const loginForm = document.getElementById('login-form');
+    if(loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Impede que a página recarregue
+
+            const email = loginForm.querySelector('input[type="email"]').value;
+            const password = loginForm.querySelector('input[type="password"]').value;
+            const btnSubmit = loginForm.querySelector('button[type="submit"]');
+
+            // Feedback visual no botão
+            btnSubmit.innerText = "A encriptar credenciais...";
+            btnSubmit.style.opacity = "0.7";
+
+            try {
+                // Comunicação segura com o Banco de Dados
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                });
+
+                if (error) throw error;
+
+                // SUCESSO
+                btnSubmit.innerText = "✓ Acesso Autorizado";
+                btnSubmit.style.background = "#059669";
+                window.playTickSound();
+                
+                setTimeout(() => {
+                    alert(`Bem-vindo, ${data.user.email}! A redirecionar para o Workspace...`);
+                    // window.location.href = "/dashboard.html"; // Redirecionamento futuro
+                }, 1000);
+
+            } catch (err) {
+                // ERRO
+                btnSubmit.innerText = "✖ Acesso Negado";
+                btnSubmit.style.background = "#ef4444";
+                
+                const modalBox = document.querySelector('#loginModal .modal-box');
+                modalBox.style.transform = "translateY(0) translateX(10px)";
+                setTimeout(() => modalBox.style.transform = "translateY(0) translateX(-10px)", 100);
+                setTimeout(() => modalBox.style.transform = "translateY(0) translateX(0)", 200);
+
+                setTimeout(() => {
+                    btnSubmit.innerText = "Acessar Cofre Digital";
+                    btnSubmit.style.background = ""; 
+                    btnSubmit.style.opacity = "1";
+                }, 2000);
+            }
+        });
+    }
+
+    /* --- 7. ANIMAÇÕES SCROLL E MODAIS --- */
     const obsFade = new IntersectionObserver(e => e.forEach(i => { if(i.isIntersecting) i.target.classList.add('show'); }), { threshold: 0.1 }); 
     document.querySelectorAll('[data-anime="fade"]').forEach(el => obsFade.observe(el));
 
-    // Fechar modais ao clicar no fundo
     document.querySelectorAll('.modal-overlay, .cmd-palette-overlay').forEach(modal => {
         modal.addEventListener('click', function(e) { if(e.target === this) this.classList.remove('ativo'); });
     });
 });
 
 /* =========================================
-   FUNÇÕES GLOBAIS DE JANELA (WINDOW)
+   FUNÇÕES GLOBAIS DA INTERFACE (WINDOW)
 ========================================= */
-
-// Command Palette
+// Paleta de Comandos
 window.abrirCommandPalette = () => { document.getElementById('cmd-palette').classList.add('ativo'); setTimeout(() => document.getElementById('cmd-input').focus(), 100); };
 window.fecharCommandPalette = () => { document.getElementById('cmd-palette').classList.remove('ativo'); };
 
-// Login Biométrico
+// Login UI
 window.abrirLogin = () => {
     document.getElementById('loginModal').classList.add('ativo');
     document.getElementById('login-scanner').classList.add('active');
@@ -143,7 +198,7 @@ window.abrirLogin = () => {
 };
 window.fecharLogin = () => document.getElementById('loginModal').classList.remove('ativo');
 
-// Sandbox Vivos e Raio-X
+// Sandbox Vivos
 window.animateCharts = () => document.querySelectorAll('.s-bar').forEach(bar => bar.style.height = bar.getAttribute('data-target'));
 window.switchTab = (tab) => {
     document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
@@ -201,7 +256,7 @@ window.nextStep = (num, chave, valor) => {
     }
 };
 
-// WhatsApp Inteligente (Usa Variáveis Globais de Faturamento)
+// WhatsApp Tracking
 window.enviarWhatsAppInteligente = () => {
     const txt = `*Diagnóstico Prisma Finance*\nSegmento: ${diagData['Segmento']}\nTempo perdido: ${diagData['Horas']}\nAgendamento VIP: *${diagData['Horario']}*\n\n💰 *Dados da Empresa:*\nFaturamento aproximado: R$ ${window.currentFat}\nVi que posso poupar cerca de R$ ${window.currentPoupa} com a automação.\n\nOlá Raul, quero começar a minha jornada com o Prisma App!`;
     window.open(`https://wa.me/5584999999999?text=${encodeURIComponent(txt)}`, '_blank');
