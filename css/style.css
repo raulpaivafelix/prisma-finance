@@ -322,3 +322,8 @@
             .purpose-text { padding-left: 22px; }
             .contact-buttons { flex-direction: column; align-items: stretch; }
         }
+
+        .brand-crest {
+  width: 50px; /* Limita a largura */
+  height: auto; /* Mantém a proporção correta */
+}
