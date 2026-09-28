@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    <!-- BARRA DE LEITURA -->
+    <!-- BARRA DE PROGRESSO DE LEITURA -->
     <div class="scroll-progress" id="scroll-progress"></div>
 
     <!-- CURSOR MAGNÉTICO -->
@@ -294,12 +294,11 @@
                     <p style="color: var(--primary); font-size: 0.85rem;" id="scan-text">Aguardando leitura...</p>
                 </div>
 
-                <!-- Formulário com a tag <form> real -->
                 <form id="login-form" class="login-form" style="display: none; text-align: left;">
                     <h2 style="margin-bottom: 20px; text-align: center;">Prisma Workspace</h2>
                     <div class="input-group">
                         <label>E-mail Corporativo</label>
-                        <input type="email" placeholder="ceo@prismafinance.com.br" required>
+                        <input type="email" placeholder="ceo@empresa.com" required>
                     </div>
                     <div class="input-group">
                         <label>Senha Privada</label>
@@ -311,10 +310,8 @@
         </div>
     </div>
 
-    <!-- BIBLIOTECA DO SUPABASE TEM DE ESTAR EM CIMA -->
+    <!-- BIBLIOTECA DO SUPABASE NO FINAL DO ARQUIVO -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- O SEU SCRIPT TEM DE ESTAR EM BAIXO -->
     <script src="js/script.js"></script>
 </body>
 </html>
