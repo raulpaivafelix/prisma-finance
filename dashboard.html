@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace | Prisma Finance OS</title>
+    <title>Workspace Privado | Prisma OS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,12 +13,19 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        /* SIDEBAR E GERAL */
+        /* TOAST DASHBOARD */
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100000; display: flex; flex-direction: column; gap: 10px; }
+        .custom-toast { background: var(--surface); border: 1px solid var(--primary); color: white; padding: 15px 20px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; }
+        .custom-toast.show { transform: translateX(0); }
+
+        /* SIDEBAR */
         .sidebar { width: 280px; background-color: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; }
-        .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--border); font-size: 1.2rem; font-weight: 800; color: white;}
-        .menu-nav { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        .menu-item { display: flex; align-items: center; padding: 14px 15px; color: var(--text-muted); text-decoration: none; border-radius: 8px; font-weight: 600; transition: 0.3s; cursor: pointer; font-size: 0.95rem;}
+        .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border); font-size: 1.2rem; font-weight: 800; color: white;}
+        .menu-nav { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow-y: auto;}
+        .menu-section { color: var(--text-muted); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin: 15px 0 5px 15px; letter-spacing: 1px;}
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; color: var(--text-muted); text-decoration: none; border-radius: 8px; font-weight: 600; transition: 0.3s; cursor: pointer; font-size: 0.95rem;}
         .menu-item:hover, .menu-item.active { background-color: rgba(5, 150, 105, 0.1); color: var(--primary); border-left: 4px solid var(--primary); }
+        
         .user-profile { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border); margin-top: auto; }
         .avatar { width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; }
         .user-info p { font-size: 0.9rem; font-weight: 600; }
@@ -51,7 +58,7 @@
         .t-amount.negative { color: var(--danger); font-weight: 800;}
 
         /* MODAL E LOADER */
-        #auth-loader { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 800; letter-spacing: 2px; }
+        #auth-loader { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 800; letter-spacing: 2px; text-align: center;}
         .spinner { width: 50px; height: 50px; border: 4px solid rgba(5,150,105,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;}
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner-small { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px;}
@@ -78,28 +85,37 @@
 </head>
 <body>
 
+    <!-- Mensagens Dinâmicas -->
+    <div id="toast-container" class="toast-container"></div>
+
     <!-- Barreira de Segurança -->
     <div id="auth-loader">
         <div class="spinner"></div>
         <p>VALIDANDO SESSÃO AES-256...</p>
+        <span style="font-size: 0.8rem; color: #9ca3af; margin-top: 10px;">RLS Secure Protocol Ativo</span>
     </div>
 
-    <!-- Menu Lateral Explicativo -->
+    <!-- Menu Lateral com RH -->
     <aside class="sidebar">
         <div class="logo-area"><h2>PRISMA OS</h2></div>
         <nav class="menu-nav">
+            <span class="menu-section">Financeiro</span>
             <a class="menu-item active">📊 Visão Executiva</a>
             <a class="menu-item">💸 Fluxo de Caixa</a>
             <a class="menu-item">🧾 Emissão de NFs</a>
             <a class="menu-item">📈 DRE em Tempo Real</a>
+            
+            <span class="menu-section">Gestão de Equipa</span>
+            <a class="menu-item" onclick="mostrarToastRH()">👥 Consultoria de RH</a>
+            <a class="menu-item" onclick="mostrarToastRH()">💼 Folha de Pagamento</a>
         </nav>
         <div class="user-profile">
             <div class="avatar" id="user-avatar">C</div>
             <div class="user-info">
-                <p id="user-name">Carregando...</p>
-                <span>Nível: Diretor Financeiro</span>
+                <p id="user-name">A carregar...</p>
+                <span>Nível: Diretor</span>
             </div>
-            <button class="btn-logout" onclick="window.fazerLogout()">Encerrar Sessão</button>
+            <button class="btn-logout" onclick="window.fazerLogout()">Sair</button>
         </div>
     </aside>
 
@@ -108,41 +124,41 @@
         <header class="header">
             <div class="header-title">
                 <h1 id="page-title">Visão Executiva</h1>
-                <p id="page-subtitle">O panorama financeiro atualizado ao milissegundo pelo nosso algoritmo.</p>
+                <p id="page-subtitle">O panorama atualizado ao milissegundo pela IA.</p>
             </div>
             <button class="btn-action" onclick="abrirModalNovaTransacao()">+ Nova Transação</button>
         </header>
 
-        <!-- Informações Financeiras -->
+        <!-- KPIS -->
         <section class="kpi-grid">
             <div class="kpi-card">
-                <p class="kpi-title">Saldo Disponível <span title="Atualizado com o banco" style="cursor:help">ℹ️</span></p>
+                <p class="kpi-title">Saldo Disponível</p>
                 <h2 class="kpi-value">R$ 145.250,00</h2>
                 <span class="kpi-subtitle">Contas sincronizadas</span>
             </div>
             <div class="kpi-card">
                 <p class="kpi-title">Faturamento (Mês)</p>
                 <h2 class="kpi-value">R$ 68.400,00</h2>
-                <span class="kpi-subtitle">↑ +12% vs mês anterior</span>
+                <span class="kpi-subtitle">↑ +12% vs anterior</span>
             </div>
             <div class="kpi-card">
-                <p class="kpi-title">Custos Fixos</p>
+                <p class="kpi-title">Despesa & Folha</p>
                 <h2 class="kpi-value" style="color:var(--danger)">R$ 18.200,00</h2>
                 <span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Dentro do limite</span>
             </div>
             <div class="kpi-card">
                 <p class="kpi-title">Lucro Operacional</p>
                 <h2 class="kpi-value">R$ 50.200,00</h2>
-                <span class="kpi-subtitle">Margem de 73%</span>
+                <span class="kpi-subtitle">Margem Saudável</span>
             </div>
         </section>
 
-        <!-- Painéis de Ação -->
+        <!-- Painéis -->
         <section class="dashboard-grid">
             <div class="panel">
                 <div class="panel-header">
                     <h3>Projeção de Fluxo de Caixa</h3>
-                    <p>Previsão inteligente gerada pela IA Prisma para os próximos 7 dias.</p>
+                    <p>Previsão inteligente da Prisma IA para os próximos 7 dias.</p>
                 </div>
                 <canvas id="cashflowChart" height="250"></canvas>
             </div>
@@ -150,7 +166,7 @@
             <div class="panel">
                 <div class="panel-header">
                     <h3>Aprovações Pendentes</h3>
-                    <p>Despesas prontas para envio ao banco.</p>
+                    <p>Despesas prontas para o banco.</p>
                 </div>
                 <div id="lista-pendencias">
                     <div class="transaction-item">
@@ -166,67 +182,73 @@
             </div>
         </section>
 
-        <!-- O NOVO MODAL SUPER EXPLICATIVO -->
+        <!-- MODAL DE TRANSAÇÃO -->
         <div id="modal-transacao" class="modal-overlay">
             <div class="modal-box">
                 <div class="modal-header">
-                    <h3>Registar Documento</h3>
+                    <h3>Anexar Documento</h3>
                     <button onclick="fecharModalNovaTransacao()" class="btn-close">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5;">
-                        A nossa Inteligência Artificial extrairá automaticamente os dados da sua fatura.
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+                        A nossa Inteligência Artificial extrairá todos os dados automaticamente.
                     </p>
-                    
                     <div class="input-group">
-                        <label>Classificação Contábil</label>
+                        <label>Classificação</label>
                         <div class="type-toggles">
-                            <button class="type-btn active" onclick="this.classList.add('active'); this.nextElementSibling.classList.remove('active');">Despesa</button>
-                            <button class="type-btn" onclick="this.classList.add('active'); this.previousElementSibling.classList.remove('active');">Receita</button>
+                            <button class="type-btn active" onclick="this.classList.add('active'); this.nextElementSibling.classList.remove('active');">Despesa Financeira</button>
+                            <button class="type-btn" onclick="this.classList.add('active'); this.previousElementSibling.classList.remove('active');">Custo de Pessoal (RH)</button>
                         </div>
                     </div>
-
-                    <div class="upload-area" id="drop-area">
+                    <div class="upload-area">
                         <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📄</span>
                         <strong style="color: white;">Clique ou arraste o documento</strong>
-                        <p style="font-size: 0.8rem; margin-top: 5px;">Formatos aceites: PDF, JPG, PNG.</p>
                     </div>
-
-                    <button class="btn-action" id="btn-processar-ia" style="width: 100%; margin-top: 25px;" onclick="processarFatura()">Processar Documento via IA</button>
+                    <button class="btn-action" id="btn-processar-ia" style="width: 100%; margin-top: 25px;" onclick="processarFatura()">Processar via IA</button>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
+        // Função Global de Toast para o Dashboard
+        window.mostrarToastRH = () => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.innerHTML = `<span style="margin-right:8px;">👥</span> Módulo de RH bloqueado no plano atual. Fale com o seu Gestor.`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
+        };
+
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // 1. SUPABASE E SEGURANÇA
-                if (!window.supabase) throw new Error("Acesso à base de dados bloqueado.");
+                // SEGURANÇA SUPABASE
+                if (!window.supabase) throw new Error("Acesso à base de dados bloqueado pela rede.");
                 const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
                 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
                 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
                 const { data, error } = await supabase.auth.getSession();
-                if (error || !data.session) {
-                    window.location.replace('index.html'); return;
-                }
+                if (error || !data.session) { window.location.replace('index.html'); return; }
 
-                // Autorizado
                 document.getElementById('auth-loader').style.display = 'none';
                 document.getElementById('user-name').innerText = data.session.user.email;
                 document.getElementById('user-avatar').innerText = data.session.user.email.charAt(0).toUpperCase();
 
-                // 2. LÓGICA DO MENU LATERAL
+                // NAVEGAÇÃO
                 const conteudos = {
-                    '📊 Visão Executiva': { titulo: 'Visão Executiva', sub: 'O panorama financeiro atualizado ao milissegundo pelo nosso algoritmo.' },
-                    '💸 Fluxo de Caixa': { titulo: 'Gestão de Fluxo de Caixa', sub: 'Monitorize todas as entradas e saídas da empresa de forma categorizada.' },
-                    '🧾 Emissão de NFs': { titulo: 'Central de Notas Fiscais', sub: 'Emissão automática de NFS-e integrada com a Prefeitura.' },
-                    '📈 DRE em Tempo Real': { titulo: 'Demonstração de Resultados', sub: 'Análise de rentabilidade e saúde financeira estruturada.' }
+                    '📊 Visão Executiva': { titulo: 'Visão Executiva', sub: 'O panorama atualizado ao milissegundo pela IA.' },
+                    '💸 Fluxo de Caixa': { titulo: 'Gestão de Fluxo', sub: 'Monitorize todas as entradas e saídas.' },
+                    '🧾 Emissão de NFs': { titulo: 'Central de NFs', sub: 'Emissão automática de NFS-e.' },
+                    '📈 DRE em Tempo Real': { titulo: 'DRE & Rentabilidade', sub: 'Análise de lucro operacional.' }
                 };
 
                 document.querySelectorAll('.menu-item').forEach(item => {
-                    item.addEventListener('click', (e) => {
+                    item.addEventListener('click', () => {
+                        if(item.innerText.includes('RH') || item.innerText.includes('Folha')) return;
+                        
                         document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
                         item.classList.add('active');
                         const dados = conteudos[item.innerText];
@@ -237,47 +259,45 @@
                     });
                 });
 
-                // 3. LÓGICA DA APROVAÇÃO DE PAGAMENTOS
+                // APROVAR PAGAMENTOS
                 const btnAprovar = document.getElementById('btn-aprovar-lote');
                 if(btnAprovar) {
                     btnAprovar.addEventListener('click', () => {
-                        btnAprovar.innerHTML = "<span class='spinner-small'></span> Comunicando com o Banco...";
+                        btnAprovar.innerHTML = "<span class='spinner-small'></span> Sincronizando Bank API...";
                         btnAprovar.style.opacity = '0.8';
                         setTimeout(() => {
                             document.querySelectorAll('.transaction-item').forEach(el => {
                                 el.style.opacity = '0'; el.style.transform = 'translateX(30px)';
                             });
-                            btnAprovar.innerText = "✓ Lote Sincronizado e Pago";
+                            btnAprovar.innerText = "✓ Lote Aprovado e Pago";
                             btnAprovar.style.background = "#059669";
                             btnAprovar.style.pointerEvents = "none";
                         }, 1500);
                     });
                 }
 
-                // 4. LÓGICA DO MODAL (Nova Transação)
+                // MODAL E FATURA
                 const modal = document.getElementById('modal-transacao');
                 window.abrirModalNovaTransacao = () => modal.classList.add('ativo');
                 window.fecharModalNovaTransacao = () => modal.classList.remove('ativo');
 
                 window.processarFatura = () => {
                     const btnProc = document.getElementById('btn-processar-ia');
-                    btnProc.innerHTML = "<span class='spinner-small'></span> A extrair dados com IA...";
+                    btnProc.innerHTML = "<span class='spinner-small'></span> A ler documento...";
                     btnProc.style.opacity = '0.8';
-                    
                     setTimeout(() => {
-                        btnProc.innerText = "✓ Documento Registado no Sistema!";
+                        btnProc.innerText = "✓ Documento Registado!";
                         btnProc.style.background = "#059669";
-                        
                         setTimeout(() => {
                             fecharModalNovaTransacao();
-                            btnProc.innerText = "Processar Documento via IA";
+                            btnProc.innerText = "Processar via IA";
                             btnProc.style.background = "";
                             btnProc.style.opacity = '1';
                         }, 2000);
-                    }, 2500);
+                    }, 2000);
                 };
 
-                // 5. RENDERIZAÇÃO DO GRÁFICO
+                // GRÁFICO CHART.JS
                 if(typeof Chart !== 'undefined') {
                     const ctx = document.getElementById('cashflowChart').getContext('2d');
                     let gradient = ctx.createLinearGradient(0, 0, 0, 400);
@@ -288,23 +308,19 @@
                         data: {
                             labels: ['Hoje', 'Amanhã', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
                             datasets: [{
-                                label: 'Projeção (R$)',
+                                label: 'Saldo Projetado',
                                 data: [145250, 141770, 148500, 146000, 160000, 158000, 158000],
                                 borderColor: '#059669', backgroundColor: gradient, borderWidth: 3, fill: true, tension: 0.4
                             }]
                         },
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } } }
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } } }
                     });
                 }
 
-                // 6. LOGOUT
-                window.fazerLogout = async () => {
-                    await supabase.auth.signOut();
-                    window.location.replace('index.html');
-                };
+                window.fazerLogout = async () => { await supabase.auth.signOut(); window.location.replace('index.html'); };
 
             } catch (err) {
-                alert("Sessão Inválida. Por favor, faça login novamente.");
+                alert("Segurança: Sessão Encerrada.");
                 window.location.replace('index.html');
             }
         });
