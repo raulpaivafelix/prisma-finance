@@ -5,19 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prisma Finance | Sistema Operacional Financeiro</title>
     <meta name="description" content="A Prisma Finance conecta os seus bancos e automatiza rotinas financeiras.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- PRELOADER DE LUXO -->
+    <!-- PRELOADER -->
     <div id="preloader">
         <div class="preloader-content">
             <img src="assets/prisma-brasao.svg" alt="Prisma Finance" class="preloader-logo">
             <div class="loading-bar"><div class="loading-progress"></div></div>
-            <p>Carregando Workspace Prisma OS...</p>
+            <p>Carregando Workspace...</p>
         </div>
     </div>
 
@@ -28,11 +26,14 @@
             <span>PRISMA FINANCE</span>
         </div>
         <nav class="nav-links">
-            <a href="#roi">Calculadora ROI</a>
+            <a href="#beneficios">Como Ajuda</a>
+            <a href="#tecnologia">Tecnologia</a>
+            <a href="#roi">Calculadora</a>
+            <a href="#planos">Planos</a>
         </nav>
         <div class="header-actions">
             <button class="btn-login" onclick="window.abrirLogin()">Acesso Cliente</button>
-            <button class="btn-nav aura-glow-btn">Fazer Diagnóstico</button>
+            <button class="btn-nav aura-glow-btn">Diagnóstico Grátis</button>
         </div>
     </header>
 
@@ -41,15 +42,75 @@
         <section class="hero mesh-bg">
             <div class="hero-badge">Automação financeira BPO</div>
             <h1 class="gradient-text">O seu financeiro no piloto automático. O seu foco no crescimento.</h1>
-            <p style="color: #9ca3af; font-size: 1.1rem; margin-bottom: 40px; max-width: 600px;">Conectamos os seus bancos e entregamos a visão de um CFO em tempo real, para que possa focar-se no que realmente importa.</p>
+            <p class="hero-subtext">Conectamos os seus bancos e entregamos a visão de um CFO em tempo real, para que possa focar-se no que realmente importa.</p>
             <button onclick="window.abrirLogin()" class="btn-primary">Aceder ao Cofre Digital →</button>
+        </section>
+
+        <!-- CARROSSEL DE CONFIANÇA -->
+        <div class="trust-carousel">
+            <div class="carousel-track integration-track">
+                <span>✦ Integração Nubank</span><span>✦ Banco do Brasil</span><span>✦ Itaú</span><span>✦ Bradesco</span><span>✦ Omie ERP</span><span>✦ ContaAzul</span><span>✦ Bling</span>
+                <span>✦ Integração Nubank</span><span>✦ Banco do Brasil</span><span>✦ Itaú</span><span>✦ Bradesco</span><span>✦ Omie ERP</span><span>✦ ContaAzul</span><span>✦ Bling</span>
+            </div>
+        </div>
+
+        <!-- COMO AJUDA NO DIA A DIA -->
+        <section id="beneficios" class="section-padding">
+            <div class="section-header">
+                <h2>Como a Prisma revoluciona o seu dia a dia</h2>
+                <p>Esqueça as planilhas manuais e as horas perdidas a conciliar extratos.</p>
+            </div>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="b-icon">🤖</div>
+                    <h3>Inteligência Artificial</h3>
+                    <p>Basta anexar a fatura. A nossa IA lê o fornecedor, o valor e a data de vencimento e agenda o pagamento automaticamente.</p>
+                </div>
+                <div class="benefit-card highlight-card aura-glow">
+                    <div class="b-icon">📊</div>
+                    <h3>DRE em Tempo Real</h3>
+                    <p>Saiba se a sua empresa deu lucro ou prejuízo este mês com um painel executivo atualizado ao milissegundo.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="b-icon">🧾</div>
+                    <h3>Emissão de Notas Fiscais</h3>
+                    <p>Emitimos as suas notas fiscais de serviço e enviamos diretamente para os seus clientes de forma 100% automatizada.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TECNOLOGIA QUE SE TOCA -->
+        <section id="tecnologia" class="section-padding bg-alt">
+            <div class="deep-feature">
+                <div class="feature-text">
+                    <h2 style="font-size: 2.2rem; margin-bottom: 20px;">O que a Prisma Oferece</h2>
+                    <p style="margin-bottom: 20px; color: var(--text-muted);">A experiência Prisma vai além do ecrã. Tenha o controlo financeiro absoluto nas suas mãos.</p>
+                    <ul class="check-list">
+                        <li>✔ Conciliação Bancária em milissegundos</li>
+                        <li>✔ Agendamento de Contas a Pagar</li>
+                        <li>✔ Reuniões Mensais de Consultoria C-Level</li>
+                        <li>✔ Cartão Corporativo Inteligente (Sincronizado com o DRE)</li>
+                    </ul>
+                </div>
+                <div class="hologram-wrapper">
+                    <div class="prisma-card">
+                        <div class="card-logo">PRISMA</div>
+                        <div class="card-chip"></div>
+                        <div class="card-number">•••• •••• •••• 2026</div>
+                        <div class="card-bottom">
+                            <span>CEO DA EMPRESA</span>
+                            <span class="card-type">CORPORATE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- CALCULADORA ROI -->
         <section id="roi" class="section-padding">
-            <div style="text-align: center; margin-bottom: 40px;">
-                <h2 style="font-size: 2.5rem;">Calcule o seu Retorno (ROI)</h2>
-                <p style="color: #9ca3af;">Descubra quanto tempo e dinheiro a Prisma poupa à sua empresa.</p>
+            <div class="section-header">
+                <h2>Calcule o seu Retorno (ROI)</h2>
+                <p>Descubra quanto tempo e dinheiro a Prisma poupa à sua empresa todos os meses.</p>
             </div>
             <div class="roi-container aura-glow">
                 <div class="roi-content">
@@ -62,14 +123,71 @@
                     </div>
                     <div class="roi-results">
                         <div class="roi-box">
-                            <h4 style="color: #9ca3af; font-size: 0.9rem;">Tempo Poupado</h4>
+                            <h4 style="color: var(--text-muted); font-size: 0.9rem;">Tempo Poupado</h4>
                             <h3 id="tempo-poupado" style="font-size: 2.2rem;">25h / mês</h3>
                         </div>
                         <div class="roi-box highlight">
-                            <h4 style="color: #9ca3af; font-size: 0.9rem;">Economia Estimada</h4>
+                            <h4 style="color: var(--text-muted); font-size: 0.9rem;">Economia Estimada</h4>
                             <h3 id="dinheiro-poupado" style="font-size: 2.2rem;">R$ 2.250</h3>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VALORES E SERVIÇOS -->
+        <section id="planos" class="section-padding bg-alt">
+            <div class="section-header">
+                <h2>Valores de cada Serviço</h2>
+                <p>Escolha o nível de gestão financeira que a sua empresa precisa para escalar.</p>
+                
+                <div class="pricing-toggle">
+                    <span id="label-mensal" class="active">Mensal</span>
+                    <label class="switch"><input type="checkbox" id="billing-toggle" onchange="window.togglePricing()"><span class="slider round"></span></label>
+                    <span id="label-anual" style="color: var(--text-muted);">Anual (-20%)</span>
+                </div>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Essential</h3>
+                    <p class="plan-desc">Para empresas a iniciar a organização.</p>
+                    <div class="price">R$ <span class="price-val" data-mensal="597" data-anual="477">597</span><span class="period">/mês</span></div>
+                    <ul class="features-list">
+                        <li>✔ Acesso ao Prisma App</li>
+                        <li>✔ Conciliação Bancária Básico</li>
+                        <li>✔ Dashboards Financeiros</li>
+                    </ul>
+                    <button onclick="window.abrirLogin()" class="btn-secondary">Selecionar</button>
+                </div>
+
+                <div class="pricing-card featured aura-glow">
+                    <div class="popular-badge">Mais Escolhido</div>
+                    <div class="pricing-content-inner">
+                        <h3>Advanced</h3>
+                        <p class="plan-desc">A solução BPO Financeira completa.</p>
+                        <div class="price">R$ <span class="price-val" data-mensal="997" data-anual="797">997</span><span class="period">/mês</span></div>
+                        <ul class="features-list">
+                            <li>✔ Tudo do Essential</li>
+                            <li>✔ Emissão de NFs Automática</li>
+                            <li>✔ Contas a Pagar e Receber</li>
+                            <li>✔ Reunião de Resultados Mensal</li>
+                        </ul>
+                        <button onclick="window.abrirLogin()" class="btn-primary" style="width: 100%;">Automatizar Empresa</button>
+                    </div>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>Virtual CFO</h3>
+                    <p class="plan-desc">Diretoria financeira para grandes operações.</p>
+                    <div class="price" style="font-size: 1.6rem; padding: 12px 0;">Sob Consulta</div>
+                    <ul class="features-list">
+                        <li>✔ Tudo do Advanced</li>
+                        <li>✔ Planeamento Tributário</li>
+                        <li>✔ Gestão Multi-CNPJ</li>
+                        <li>✔ Prisma Black Card</li>
+                    </ul>
+                    <button onclick="window.abrirLogin()" class="btn-secondary">Falar com Consultor</button>
                 </div>
             </div>
         </section>
@@ -113,7 +231,6 @@
         </div>
     </div>
 
-    <!-- BIBLIOTECAS E MOTOR -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/script.js"></script>
 </body>
