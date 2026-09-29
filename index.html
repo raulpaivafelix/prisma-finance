@@ -7,7 +7,6 @@
     <meta name="description" content="A Prisma Finance conecta os seus bancos, automatiza rotinas e gere o seu RH.">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     
-    <!-- CSS INTERNO BLINDADO (Garante 100% de carregamento) -->
     <style>
         :root {
             --bg-color: #030712; --bg-alt: #0b1120; --surface: #111827;
@@ -19,11 +18,18 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth;}
 
-        /* TOAST NOTIFICATIONS */
+        /* ANIMAÇÕES DE SCROLL (REVEAL) */
+        .reveal { opacity: 0; transform: translateY(40px); transition: 0.8s all cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* TOAST E WHATSAPP FLUTUANTE */
         .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100000; display: flex; flex-direction: column; gap: 10px; }
         .custom-toast { background: var(--surface); border: 1px solid var(--primary); color: white; padding: 15px 20px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; }
         .custom-toast.show { transform: translateX(0); }
         .custom-toast.error { border-color: var(--danger); color: #fca5a5; }
+
+        .whatsapp-float { position: fixed; bottom: 20px; left: 20px; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(37,211,102,0.3); z-index: 9999; transition: 0.3s; cursor: pointer; text-decoration: none;}
+        .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 15px 25px rgba(37,211,102,0.5); }
 
         /* PRELOADER */
         #preloader { position: fixed; inset: 0; background: var(--bg-color); z-index: 999999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
@@ -45,11 +51,12 @@
         .section-header h2 { font-size: 2.5rem; margin-bottom: 15px; }
         .section-header p { color: var(--text-muted); font-size: 1.1rem;}
 
-        /* CABEÇALHO E HERO */
+        /* CABEÇALHO E MENU MOBILE */
         header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; position: sticky; top: 0; z-index: 9000; background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
         .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; }
         .brand-crest { width: 35px; height: auto; }
-        .nav-links { display: flex; gap: 20px; }
+        
+        .nav-links { display: flex; gap: 20px; transition: 0.3s; }
         .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: 0.3s; }
         .nav-links a:hover { color: var(--text-main); }
         .header-actions { display: flex; gap: 15px; align-items: center; }
@@ -57,7 +64,10 @@
         .btn-login:hover { color: var(--primary); }
         .btn-nav { font-size: 0.9rem; padding: 10px 20px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2); }
         .btn-nav.aura-glow-btn { border-color: var(--primary); color: var(--primary); }
+        
+        .menu-toggle { display: none; font-size: 1.8rem; cursor: pointer; color: white; user-select: none; }
 
+        /* HERO */
         .hero { padding: 100px 5%; max-width: 1200px; margin: 0 auto; text-align: center; }
         .hero-subtext { margin: 0 auto 40px; color: var(--text-muted); font-size: 1.1rem; max-width: 750px; line-height: 1.8;}
         .hero-badge { display: inline-block; padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; background: rgba(5, 150, 105, 0.1); color: var(--primary); border: 1px solid rgba(5, 150, 105, 0.2); margin-bottom: 25px; }
@@ -66,6 +76,14 @@
         .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(5,150,105,0.3);}
         .btn-secondary { background: rgba(255,255,255,0.05); color: white; padding: 14px; width: 100%; border: 1px solid var(--border); border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; font-family: inherit;}
         .btn-secondary:hover { background: var(--surface); border-color: var(--primary); }
+
+        /* COMO FUNCIONA (A JORNADA) */
+        .steps-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; position: relative; margin-top: 40px; }
+        .step-card { background: var(--surface); padding: 30px; border-radius: 16px; border: 1px solid var(--border); text-align: center; position: relative; z-index: 2; transition: 0.3s;}
+        .step-card:hover { transform: translateY(-5px); border-color: var(--primary);}
+        .step-number { width: 50px; height: 50px; background: rgba(5,150,105,0.1); color: var(--primary); border: 1px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; margin: 0 auto 20px; }
+        .step-card h3 { font-size: 1.1rem; margin-bottom: 10px;}
+        .step-card p { font-size: 0.9rem; color: var(--text-muted);}
 
         /* GRID DE SOLUÇÕES */
         .solutions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; }
@@ -76,7 +94,7 @@
         .solution-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;}
         .highlight-card { border-color: var(--primary); }
 
-        /* CARTÃO HOLOGRÁFICO */
+        /* CARTÃO HOLOGRÁFICO E ROI E PLANOS (Mantidos do anterior) */
         .deep-feature { display: flex; align-items: center; gap: 60px; max-width: 1100px; margin: 0 auto; }
         .feature-text { flex: 1; }
         .check-list { list-style: none; margin-top: 20px;}
@@ -88,7 +106,6 @@
         .card-number { font-family: monospace; font-size: 1.1rem; letter-spacing: 3px; color: white; }
         .card-bottom { display: flex; justify-content: space-between; color: rgba(255,255,255,0.6); font-size: 0.8rem; font-weight: 600; }
 
-        /* CALCULADORA ROI */
         .roi-content { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; background: var(--surface); padding: 40px; border-radius: 20px;}
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: var(--primary); margin-top: -10px; cursor: pointer;}
@@ -97,7 +114,6 @@
         .roi-box { background: var(--bg-color); padding: 25px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
         .roi-box.highlight { border-color: var(--primary); background: rgba(5, 150, 105, 0.05); }
 
-        /* PLANOS */
         .pricing-toggle { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 30px; font-weight: 600; }
         .pricing-toggle span.active { color: white; }
         .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
@@ -118,7 +134,6 @@
         .features-list { list-style: none; margin-bottom: 30px; flex: 1;}
         .features-list li { margin-bottom: 12px; font-size: 0.9rem; display: flex; gap: 10px; color: var(--text-muted);}
 
-        /* MEGA FOOTER */
         .mega-footer { background: var(--bg-alt); padding: 80px 5% 30px; border-top: 1px solid var(--border); }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; max-width: 1200px; margin: 0 auto; border-bottom: 1px solid var(--border); padding-bottom: 50px; }
         .footer-links h4 { font-size: 1.1rem; margin-bottom: 25px; color: white; }
@@ -146,40 +161,43 @@
         .input-group input:focus { border-color: var(--primary); background: rgba(5,150,105,0.05); }
         .spinner-small { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px;}
 
+        /* RESPONSIVIDADE E MENU MOBILE */
         @media (max-width: 950px) {
-            .nav-links { display: none; }
+            .menu-toggle { display: block; }
+            .nav-links { position: absolute; top: 100%; left: 0; width: 100%; background: var(--bg-surface); flex-direction: column; padding: 20px; gap: 20px; border-bottom: 1px solid var(--border); transform: translateY(-10px); opacity: 0; visibility: hidden; transition: 0.3s;}
+            .nav-links.active { transform: translateY(0); opacity: 1; visibility: visible; }
             .hero { padding-top: 60px; }
             .gradient-text { font-size: 2.8rem; }
             .deep-feature, .roi-content, .footer-grid { grid-template-columns: 1fr; flex-direction: column; }
             .pricing-card.featured { transform: none; margin: 20px 0; }
             .footer-grid { gap: 30px; text-align: center; }
             .security-badges { justify-content: center; }
-            .footer-bottom { flex-direction: column; gap: 15px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="toast-container" class="toast-container"></div>
+    <!-- WHATSAPP FLUTUANTE -->
+    <a href="https://wa.me/5584999999999" class="whatsapp-float" target="_blank" onclick="window.simularAcao('A abrir o WhatsApp seguro...');">
+        <svg viewBox="0 0 24 24" width="35" height="35" fill="white">
+            <path d="M12.031 0C5.385 0 0 5.388 0 12.037c0 2.128.554 4.2 1.605 6.02L.15 23.473l5.568-1.46c1.763.957 3.75 1.462 5.795 1.462h.005c6.645 0 12.034-5.388 12.034-12.037C23.551 5.388 18.169 0 12.031 0zm.005 21.492c-1.802 0-3.568-.485-5.115-1.402l-.367-.217-3.8.997 1.018-3.704-.238-.378c-1.008-1.603-1.54-3.46-1.54-5.378 0-5.556 4.52-10.076 10.082-10.076 5.558 0 10.078 4.52 10.078 10.076 0 5.555-4.52 10.075-10.078 10.075h-.005zm5.526-7.534c-.303-.152-1.796-.886-2.074-.988-.278-.101-.48-.152-.683.152-.202.303-.783.988-.96 1.19-.177.202-.354.228-.657.076-1.54-.775-2.768-1.5-3.83-2.91-.204-.27-.024-.413.125-.56.136-.135.303-.354.455-.53.152-.178.202-.304.303-.506.101-.202.051-.38-.025-.532-.076-.152-.683-1.646-.935-2.253-.246-.593-.496-.513-.683-.522-.177-.008-.38-.01-.582-.01-.202 0-.53.076-.808.38-.278.304-1.06 1.038-1.06 2.532 0 1.494 1.086 2.937 1.238 3.14.152.202 2.14 3.266 5.184 4.58.723.312 1.288.498 1.728.638.726.23 1.386.197 1.905.12.582-.086 1.796-.734 2.05-1.443.253-.71.253-1.317.177-1.443-.076-.127-.278-.203-.582-.355z"></path>
+        </svg>
+    </a>
 
-    <div id="preloader">
-        <div class="preloader-content">
-            <img src="assets/prisma-brasao.svg" alt="Prisma Finance" class="preloader-logo">
-            <div class="loading-bar"><div class="loading-progress"></div></div>
-            <p>Carregando Ecossistema Criptografado...</p>
-        </div>
-    </div>
+    <div id="toast-container" class="toast-container"></div>
+    <div id="preloader"><div class="preloader-content"><img src="assets/prisma-brasao.svg" alt="Prisma Finance" class="preloader-logo"><div class="loading-bar"><div class="loading-progress"></div></div><p>Carregando Ecossistema Criptografado...</p></div></div>
 
     <header>
         <div class="logo">
             <img src="assets/prisma-brasao.svg" class="brand-crest" alt="Prisma Finance">
             <span>PRISMA FINANCE</span>
         </div>
+        <div class="menu-toggle" onclick="toggleMobileMenu()">☰</div>
         <nav class="nav-links">
-            <a href="#solucoes">Soluções & RH</a>
-            <a href="#tecnologia">Segurança</a>
-            <a href="#roi">Calculadora</a>
-            <a href="#planos">Planos</a>
+            <a href="#como-funciona" onclick="toggleMobileMenu()">Como Funciona</a>
+            <a href="#solucoes" onclick="toggleMobileMenu()">Soluções & RH</a>
+            <a href="#tecnologia" onclick="toggleMobileMenu()">Segurança</a>
+            <a href="#planos" onclick="toggleMobileMenu()">Planos</a>
         </nav>
         <div class="header-actions">
             <button class="btn-login" onclick="window.abrirLogin()">Acesso Cliente</button>
@@ -188,7 +206,7 @@
     </header>
 
     <main>
-        <section class="hero mesh-bg">
+        <section class="hero mesh-bg reveal">
             <div class="hero-badge">🔒 100% Seguro | Automação BPO & RH</div>
             <h1 class="gradient-text">O seu financeiro e RH no piloto automático. O seu foco no crescimento.</h1>
             <p class="hero-subtext">Não somos apenas um software. Somos o seu departamento corporativo completo. Conectamos bancos, gerimos a sua equipe, processamos faturas com IA e entregamos a visão de um CEO em tempo real.</p>
@@ -198,11 +216,38 @@
             </div>
         </section>
 
-        <section id="solucoes" class="section-padding">
+        <!-- NOVO: COMO FUNCIONA -->
+        <section id="como-funciona" class="section-padding reveal">
             <div class="section-header">
-                <h2>Ecossistema Corporativo Completo</h2>
-                <p>Muito mais do que BPO. Uma plataforma robusta desenhada para escalar o seu financeiro e os seus recursos humanos.</p>
+                <h2>Como a Prisma Transforma a sua Empresa</h2>
+                <p>Uma jornada simples, sem dores de cabeça e 100% guiada pelos nossos especialistas.</p>
             </div>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Diagnóstico Gratuito</h3>
+                    <p>Mapeamos os seus gargalos financeiros e de RH atuais numa reunião rápida.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Onboarding de 7 Dias</h3>
+                    <p>A nossa equipa configura os acessos de leitura aos bancos e estrutura o seu Dashboard.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Inteligência Artificial</h3>
+                    <p>Comece a enviar as faturas. A IA lê e agenda tudo; você só aprova no telemóvel.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Reunião de Resultados</h3>
+                    <p>No fecho do mês, sentamo-nos consigo para analisar o DRE e planear o crescimento.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="solucoes" class="section-padding reveal">
+            <div class="section-header"><h2>Ecossistema Corporativo Completo</h2><p>Muito mais do que BPO. Uma plataforma robusta desenhada para escalar o seu financeiro e os seus recursos humanos.</p></div>
             <div class="solutions-grid">
                 <div class="solution-card"><div class="s-icon">🏦</div><h3>Conciliação Bancária IA</h3><p>Cruzamos os seus extratos bancários com as notas fiscais de forma automática e segura em milissegundos.</p></div>
                 <div class="solution-card"><div class="s-icon">🧾</div><h3>Contas (Pagar/Receber)</h3><p>O sistema extrai os dados via OCR, agenda no seu banco e notifica-o apenas para aprovar.</p></div>
@@ -215,34 +260,26 @@
             </div>
         </section>
 
-        <section id="tecnologia" class="section-padding bg-alt">
+        <section id="tecnologia" class="section-padding bg-alt reveal">
             <div class="deep-feature">
                 <div class="feature-text">
                     <h2 style="font-size: 2.2rem; margin-bottom: 20px;">Segurança de Nível Bancário</h2>
                     <p style="margin-bottom: 20px; color: var(--text-muted);">Os dados financeiros e da sua equipe exigem a blindagem máxima. O Prisma OS é impenetrável.</p>
-                    <ul class="check-list">
-                        <li>✔ Criptografia de Ponta-a-Ponta (AES-256)</li>
-                        <li>✔ Infraestrutura em Nuvem (AWS & Supabase)</li>
-                        <li>✔ Total conformidade com a LGPD</li>
-                        <li>✔ Autenticação Biométrica e RLS</li>
-                    </ul>
+                    <ul class="check-list"><li>✔ Criptografia (AES-256)</li><li>✔ Nuvem (AWS & Supabase)</li><li>✔ LGPD</li><li>✔ Autenticação Biométrica</li></ul>
                 </div>
                 <div class="hologram-wrapper">
                     <div class="prisma-card">
                         <div class="card-logo">PRISMA SAFE</div>
-                        <div class="card-chip"></div>
-                        <div class="card-number">SECURE VAULT ACTIVE</div>
+                        <div class="card-chip" style="background: linear-gradient(135deg, #4ade80, #166534);"></div>
+                        <div class="card-number" style="font-size:1.1rem">SECURE VAULT ACTIVE</div>
                         <div class="card-bottom"><span>PROTEÇÃO DE DADOS</span><span class="card-type">256-BIT</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="roi" class="section-padding">
-            <div class="section-header">
-                <h2>Calcule o seu Retorno (ROI)</h2>
-                <p>Veja quanto tempo e dinheiro devolvemos à sua empresa ao automatizar o Financeiro e o RH.</p>
-            </div>
+        <section id="roi" class="section-padding reveal">
+            <div class="section-header"><h2>Calcule o seu Retorno (ROI)</h2><p>Veja quanto tempo e dinheiro devolvemos à sua empresa ao automatizar o Financeiro e o RH.</p></div>
             <div class="roi-container aura-glow">
                 <div class="roi-content">
                     <div>
@@ -260,17 +297,15 @@
             </div>
         </section>
 
-        <section id="planos" class="section-padding bg-alt">
+        <section id="planos" class="section-padding bg-alt reveal">
             <div class="section-header">
                 <h2>Planos e Investimento</h2>
-                <p>Escolha a robustez que a sua operação exige hoje, e faça o upgrade conforme cresce.</p>
                 <div class="pricing-toggle">
                     <span id="label-mensal" class="active">Mensal</span>
                     <label class="switch"><input type="checkbox" id="billing-toggle" onchange="window.togglePricing()"><span class="slider round"></span></label>
                     <span id="label-anual" style="color: var(--text-muted);">Anual (-20%)</span>
                 </div>
             </div>
-
             <div class="pricing-grid">
                 <div class="pricing-card">
                     <h3>Essential</h3><p class="plan-desc">O básico financeiro perfeito.</p>
@@ -278,25 +313,22 @@
                     <ul class="features-list"><li>✔ Conciliação Bancária</li><li>✔ Dashboards Financeiros</li><li>✔ Contas a Pagar/Receber IA</li></ul>
                     <button onclick="window.simularAcao('Processando assinatura Essential...')" class="btn-secondary">Selecionar</button>
                 </div>
-
                 <div class="pricing-card featured aura-glow">
                     <div class="popular-badge">Mais Escolhido</div>
                     <div class="pricing-content-inner">
                         <h3>Advanced</h3><p class="plan-desc">BPO Financeiro completo.</p>
                         <div class="price">R$ <span class="price-val" data-mensal="997" data-anual="797">997</span><span class="period">/mês</span></div>
-                        <ul class="features-list"><li>✔ Tudo do Essential</li><li>✔ Emissão de NFs Automática</li><li>✔ Régua de Cobrança (WhatsApp)</li><li>✔ Reunião de Resultados Mensal</li></ul>
+                        <ul class="features-list"><li>✔ Tudo do Essential</li><li>✔ Emissão de NFs Automática</li><li>✔ Régua de Cobrança (WhatsApp)</li><li>✔ Reunião Mensal</li></ul>
                         <button onclick="window.simularAcao('Processando assinatura Advanced...')" class="btn-primary" style="width: 100%;">Automatizar</button>
                     </div>
                 </div>
-
                 <div class="pricing-card" style="border-color: rgba(5,150,105,0.4);">
                     <div style="color: var(--primary); font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase;">⭐ Financeiro + RH</div>
                     <h3>Premium</h3><p class="plan-desc">Gestão total da empresa.</p>
                     <div class="price">R$ <span class="price-val" data-mensal="1497" data-anual="1197">1497</span><span class="period">/mês</span></div>
-                    <ul class="features-list"><li>✔ Tudo do Advanced</li><li>✔ Consultoria de RH (Recrutamento)</li><li>✔ Departamento Pessoal (Folha)</li><li>✔ Gestão de Benefícios</li></ul>
+                    <ul class="features-list"><li>✔ Tudo do Advanced</li><li>✔ Consultoria de RH</li><li>✔ Folha de Pagamento</li><li>✔ Gestão de Benefícios</li></ul>
                     <button onclick="window.simularAcao('Processando assinatura Premium (RH inclusivo)...')" class="btn-secondary" style="border-color: var(--primary);">Selecionar Premium</button>
                 </div>
-
                 <div class="pricing-card">
                     <h3>Virtual CFO</h3><p class="plan-desc">Para grandes operações.</p>
                     <div class="price" style="font-size: 1.6rem; padding: 12px 0;">Sob Consulta</div>
@@ -307,19 +339,17 @@
         </section>
     </main>
 
-    <footer class="mega-footer">
+    <footer class="mega-footer reveal">
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="logo" style="margin-bottom: 20px;"><img src="assets/prisma-brasao.svg" class="brand-crest grayscale" alt="Prisma Finance"><span>PRISMA FINANCE</span></div>
-                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">A inteligência corporativa que a sua empresa merece.</p>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">A inteligência corporativa que a sua empresa merece. BPO Financeiro e RH blindados.</p>
                 <div class="security-badges"><span class="badge-mini">🔒 AES-256</span><span class="badge-mini">🛡️ LGPD</span><span class="badge-mini">☁️ AWS Cloud</span></div>
             </div>
             <div class="footer-links"><h4>Plataforma</h4><a href="#solucoes">Soluções</a><a href="#tecnologia">Segurança</a><a href="#planos">Preços</a></div>
-            <div class="footer-links"><h4>Empresa</h4><a href="#">Sobre Nós</a><a href="#">Contato</a></div>
+            <div class="footer-links"><h4>Empresa</h4><a href="#">Sobre Nós</a><a href="#">Trabalhe Conosco</a><a href="#">Contato</a></div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Prisma Finance Technology. Todos os direitos reservados.</p>
-        </div>
+        <div class="footer-bottom"><p>&copy; 2026 Prisma Finance Technology. Todos os direitos reservados.</p></div>
     </footer>
 
     <div id="loginModal" class="modal-overlay">
@@ -341,15 +371,23 @@
         </div>
     </div>
 
-    <!-- SCRIPT INTERNO BLINDADO -->
+    <!-- SCRIPT INTERNO BLINDADO E ATUALIZADO COM ANIMAÇÕES E MENU MOBILE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Preloader
             const preloader = document.getElementById('preloader');
-            if (preloader) {
-                setTimeout(() => { preloader.style.opacity = '0'; setTimeout(() => { preloader.style.display = 'none'; }, 500); }, 1500);
-            }
+            if (preloader) { setTimeout(() => { preloader.style.opacity = '0'; setTimeout(() => { preloader.style.display = 'none'; }, 500); }, 1500); }
 
+            // Scroll Animations (Intersection Observer)
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) { entry.target.classList.add('active'); }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            // Supabase Logic
             const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
             const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
             let supabase = null;
@@ -363,13 +401,10 @@
                     const password = loginForm.querySelector('input[type="password"]').value;
                     const btnSubmit = loginForm.querySelector('button[type="submit"]');
 
-                    btnSubmit.innerHTML = "<span class='spinner-small'></span> Criptografando conexão...";
+                    btnSubmit.innerHTML = "<span class='spinner-small'></span> Criptografando...";
                     btnSubmit.style.opacity = "0.8";
 
-                    if(!supabase) {
-                        window.simularAcao("Erro Crítico: Bloqueio de rede detetado.", true);
-                        btnSubmit.innerText = "Tentar Novamente"; return;
-                    }
+                    if(!supabase) { window.simularAcao("Erro Crítico: Bloqueio de rede detetado.", true); btnSubmit.innerText = "Tentar Novamente"; return; }
 
                     try {
                         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -381,14 +416,12 @@
                     } catch (err) {
                         btnSubmit.innerText = "✖ Acesso Negado";
                         btnSubmit.style.background = "#ef4444";
-                        setTimeout(() => {
-                            btnSubmit.innerText = "Acessar Dados Seguros";
-                            btnSubmit.style.background = ""; btnSubmit.style.opacity = "1";
-                        }, 2000);
+                        setTimeout(() => { btnSubmit.innerText = "Acessar Dados Seguros"; btnSubmit.style.background = ""; btnSubmit.style.opacity = "1"; }, 2000);
                     }
                 });
             }
 
+            // Calculadora
             const range = document.getElementById('faturamento');
             if(range) {
                 range.addEventListener('input', (e) => {
@@ -400,18 +433,17 @@
             }
         });
 
+        // Funções Globais
+        window.toggleMobileMenu = () => { document.querySelector('.nav-links').classList.toggle('active'); };
+        
         window.abrirLogin = () => {
             document.getElementById('loginModal').classList.add('ativo');
             document.getElementById('login-scanner').classList.add('active');
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('scan-text').innerText = "Verificando protocolos de segurança...";
             setTimeout(() => { document.getElementById('scan-text').innerText = "Conexão AES-256 estabelecida."; }, 800);
-            setTimeout(() => {
-                document.getElementById('login-scanner').classList.remove('active');
-                document.getElementById('login-form').style.display = 'block';
-            }, 2000);
+            setTimeout(() => { document.getElementById('login-scanner').classList.remove('active'); document.getElementById('login-form').style.display = 'block'; }, 2000);
         };
-
         window.fecharLogin = () => document.getElementById('loginModal').classList.remove('ativo');
 
         window.togglePricing = () => {
