@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workspace Privado | Prisma OS</title>
+    <link rel="icon" href="assets/prisma-brasao.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -60,6 +61,7 @@
         .t-info h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 3px;}
         .t-info p { font-size: 0.75rem; color: var(--text-muted);}
         .t-amount { font-weight: 800; color: var(--danger);}
+        .t-amount.positive { color: var(--primary); }
 
         #auth-loader { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 800; letter-spacing: 2px; text-align: center;}
         .spinner { width: 50px; height: 50px; border: 4px solid rgba(5,150,105,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;}
@@ -71,12 +73,26 @@
         .modal-box { background: var(--bg-surface); width: 90%; max-width: 480px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.8); padding: 30px; transform: translateY(30px); transition: 0.4s;}
         .modal-overlay.ativo .modal-box { transform: translateY(0); }
         
+        /* NOVO DESIGN DE IMPRESSÃO (PDF LIMPO) */
         @media print {
-            .sidebar, .btn-action, .btn-secondary, .toast-container { display: none !important; }
-            .main-content { padding: 0; }
-            body { background: white; color: black; }
-            .kpi-card, .panel { background: white; border: 1px solid #ccc; box-shadow: none; color: black;}
-            .kpi-value, .kpi-title, .panel-header h3, .panel-header p, .t-info h4 { color: black !important;}
+            @page { margin: 1cm; size: A4 portrait; }
+            body { background: white; color: black; display: block; overflow: visible;}
+            .sidebar, .btn-action, .btn-secondary, .toast-container, .header-actions { display: none !important; }
+            .main-content { padding: 0; display: block; overflow: visible;}
+            .header { margin-bottom: 20px; }
+            .header-title h1 { color: #030712 !important; font-size: 24pt; border-bottom: 3px solid #059669; padding-bottom: 10px; margin-bottom: 5px;}
+            .header-title p { color: #4b5563 !important; }
+            
+            .kpi-grid { display: flex; gap: 15px; margin-bottom: 30px; page-break-inside: avoid; }
+            .kpi-card { background: white !important; border: 1px solid #e5e7eb; padding: 15px; flex: 1; box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-left: 5px solid #059669; transition: none;}
+            .kpi-value { color: #111827 !important; font-size: 1.8rem; }
+            .kpi-title, .kpi-subtitle { color: #4b5563 !important; }
+            
+            .dashboard-grid { display: block; }
+            .panel { background: white !important; border: 1px solid #e5e7eb; box-shadow: none; margin-bottom: 25px; page-break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
+            .panel-header h3, .panel-header p, .t-info h4 { color: #111827 !important;}
+            canvas { max-height: 250px !important; }
+            .transaction-item { background: #f9fafb !important; border-color: #e5e7eb !important; padding: 10px; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
         }
 
         .input-group { margin-bottom: 20px; }
@@ -102,7 +118,7 @@
 
     <!-- MENU LATERAL -->
     <aside class="sidebar">
-        <div class="logo-area"><h2>PRISMA OS</h2></div>
+        <div class="logo-area"><img src="assets/prisma-brasao.svg" width="25"> <h2>PRISMA OS</h2></div>
         <nav class="menu-nav">
             <span class="menu-section">Financeiro BPO</span>
             <a class="menu-item active" data-tab="visao">📊 Visão Executiva</a>
@@ -157,8 +173,8 @@
             <div class="panel">
                 <div class="panel-header">
                     <div>
-                        <h3 id="list-title">Aprovações Pendentes</h3>
-                        <p id="list-subtitle">Documentos registados recentemente.</p>
+                        <h3 id="list-title">Movimentações Recentes</h3>
+                        <p id="list-subtitle">Documentos e lançamentos registados.</p>
                     </div>
                 </div>
                 <div id="lista-pendencias"></div>
@@ -213,11 +229,11 @@
         };
 
         window.exportarPDF = () => {
-            simularAcao("A gerar Relatório C-Level do Mês...");
+            simularAcao("Gerando Relatório Oficial do Mês...");
             setTimeout(() => {
-                simularAcao("✅ Relatório Prisma OS exportado com sucesso!");
-                setTimeout(() => window.print(), 1000); 
-            }, 2500);
+                simularAcao("✅ Relatório gerado! A preparar impressão...");
+                setTimeout(() => window.print(), 800); 
+            }, 1500);
         };
 
         let currentUserEmail = "";
@@ -226,7 +242,6 @@
         let myChart = null;
         let currentTab = 'visao';
 
-        // VERIFICA SE O ADMIN JÁ PROVISIONOU O CNPJ DESTE CLIENTE
         function verificarVozDoCliente(email) {
             currentUserEmail = email;
             const perfilVinculo = localStorage.getItem('prisma_vinculo_' + email);
@@ -263,16 +278,21 @@
                 userData = JSON.parse(savedData);
             } else {
                 userData = {
-                    saldo: 145250, faturamento: 68400, custos: 18200, impostos: 11050,
-                    rh_headcount: 14, rh_folha: 42500, rh_beneficios: 5200,
-                    transacoes: [
-                        { desc: "Amazon Web Services", valor: 1250, data: "Vence Hoje", tipo: "Despesa" },
-                        { desc: "Impostos Federais (DAS)", valor: 3480, data: "Vence Amanhã", tipo: "Despesa" }
-                    ]
+                    saldo: 0, faturamento: 0, custos: 0, impostos: 0,
+                    rh_headcount: 0, rh_folha: 0, rh_beneficios: 0, transacoes: []
                 };
                 salvarBancoDeDados();
             }
             renderDashboard(currentTab);
+            
+            // Fica "escutando" se o Admin injetar faturas em tempo real
+            window.addEventListener('storage', (e) => {
+                if(e.key === dbKey) {
+                    userData = JSON.parse(e.newValue);
+                    renderDashboard(currentTab);
+                    simularAcao("Nova atualização recebida do seu Consultor!");
+                }
+            });
         }
 
         function salvarBancoDeDados() {
@@ -289,14 +309,14 @@
             const ebitda = userData.faturamento - userData.impostos - userData.custos;
 
             if (tab === 'visao') {
-                document.getElementById('page-title').innerText = "Visão Executiva";
+                document.getElementById('page-title').innerText = "Visão Executiva - " + document.getElementById('user-company-name').innerText;
                 document.getElementById('page-subtitle').innerText = "O panorama financeiro atualizado ao milissegundo pela IA.";
                 
                 kpiHTML = `
                     <div class="kpi-card"><p class="kpi-title">Saldo Disponível</p><h2 class="kpi-value">${formatoBRL(userData.saldo)}</h2><span class="kpi-subtitle">Contas sincronizadas</span></div>
                     <div class="kpi-card"><p class="kpi-title">Faturamento (Mês)</p><h2 class="kpi-value">${formatoBRL(userData.faturamento)}</h2><span class="kpi-subtitle">↑ Receitas</span></div>
                     <div class="kpi-card"><p class="kpi-title">Custos Totais</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.custos)}</h2><span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Despesas</span></div>
-                    <div class="kpi-card"><p class="kpi-title">Lucro Operacional</p><h2 class="kpi-value">${formatoBRL(lucroOperacional)}</h2><span class="kpi-subtitle">Margem de 73%</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Lucro Operacional</p><h2 class="kpi-value">${formatoBRL(lucroOperacional)}</h2><span class="kpi-subtitle">Métrica principal</span></div>
                 `;
                 document.getElementById('chart-title').innerText = "Projeção de Fluxo de Caixa";
                 chartData = { type: 'line', labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], data: [userData.saldo, userData.saldo+1000, userData.saldo-2000, userData.saldo-500, userData.saldo+4000, userData.saldo+4000, userData.saldo+4000] };
@@ -333,13 +353,15 @@
             const lista = document.getElementById('lista-pendencias');
             lista.innerHTML = "";
             if(userData.transacoes.length === 0) {
-                lista.innerHTML = "<p style='color: #9ca3af; font-size: 0.9rem;'>Sem pendências de aprovação para este CNPJ.</p>";
+                lista.innerHTML = "<p style='color: #9ca3af; font-size: 0.9rem;'>Sem movimentações registadas ainda.</p>";
             } else {
                 userData.transacoes.forEach(t => {
+                    const sinal = t.tipo === "Receita" ? "+" : "-";
+                    const cssClass = t.tipo === "Receita" ? "positive" : "negative";
                     lista.innerHTML += `
                         <div class="transaction-item">
                             <div class="t-info"><h4>${t.desc}</h4><p>${t.tipo || 'Despesa'} • ${t.data}</p></div>
-                            <div class="t-amount negative">- ${formatoBRL(t.valor)}</div>
+                            <div class="t-amount ${cssClass}">${sinal} ${formatoBRL(t.valor)}</div>
                         </div>`;
                 });
             }
@@ -401,17 +423,16 @@
             btnAprovar.style.opacity = '0.8';
             
             setTimeout(() => {
-                document.querySelectorAll('.transaction-item').forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateX(30px)'; });
-                
-                userData.transacoes = [];
-                salvarBancoDeDados();
-
-                btnAprovar.innerText = "✓ Lote Aprovado e Pago"; 
+                btnAprovar.innerText = "✓ Lote Sincronizado e Pago"; 
                 btnAprovar.style.background = "#059669"; 
                 btnAprovar.style.pointerEvents = "none";
-                simularAcao("Comprovativos bancários gerados para este CNPJ!");
+                simularAcao("Comprovantes bancários gerados para este CNPJ!");
                 
-                setTimeout(() => renderDashboard(currentTab), 500);
+                setTimeout(() => {
+                    btnAprovar.innerText = "Aprovar e Enviar ao Banco"; 
+                    btnAprovar.style.background = ""; 
+                    btnAprovar.style.pointerEvents = "auto";
+                }, 4000);
             }, 2000);
         };
 
