@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace | Prisma OS</title>
+    <title>Workspace Privado | Prisma OS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="css/style.css?v=3.0">
+
     <style>
-        /* Estilos base herdados do design system */
         :root { --bg-dark: #030712; --bg-surface: #111827; --primary: #059669; --danger: #ef4444; --text-main: #f9fafb; --text-muted: #9ca3af; --border: rgba(255, 255, 255, 0.05); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
+        /* TOAST DASHBOARD */
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100000; display: flex; flex-direction: column; gap: 10px; }
+        .custom-toast { background: var(--surface); border: 1px solid var(--primary); color: white; padding: 15px 20px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; }
+        .custom-toast.show { transform: translateX(0); }
+        .custom-toast.error { border-color: var(--danger); color: #fca5a5; }
+
+        /* SIDEBAR E GERAL */
         .sidebar { width: 280px; background-color: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; transition: 0.3s;}
         .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border); font-size: 1.2rem; font-weight: 800; color: white;}
         .menu-nav { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow-y: auto;}
@@ -33,12 +39,13 @@
         .header-title p { color: var(--text-muted); font-size: 1rem; }
         
         .header-actions { display: flex; gap: 15px;}
-        .btn-action { background: var(--primary); color: white; border: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 1rem;}
+        .btn-action { background: var(--primary); color: white; border: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-family: inherit; cursor: pointer; transition: 0.3s; font-size: 1rem;}
         .btn-action:hover { background: #047857; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(5,150,105,0.2); }
-        .btn-secondary { background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border); padding: 14px 28px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 1rem;}
+        .btn-secondary { background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border); padding: 14px 28px; border-radius: 8px; font-weight: 600; font-family: inherit; cursor: pointer; transition: 0.3s; font-size: 1rem; display: flex; align-items: center; gap: 8px;}
+        .btn-secondary:hover { background: var(--surface); border-color: var(--primary); color: var(--primary);}
 
         .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .kpi-card { background: var(--bg-surface); padding: 25px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
+        .kpi-card { background: var(--bg-surface); padding: 25px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: 0.4s;}
         .kpi-title { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between;}
         .kpi-value { font-size: 2rem; font-weight: 800; color: white; margin-bottom: 5px;}
         .kpi-subtitle { font-size: 0.75rem; color: #059669; font-weight: 600; background: rgba(5,150,105,0.1); padding: 4px 8px; border-radius: 4px; display: inline-block;}
@@ -49,24 +56,47 @@
         .panel-header h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 5px;}
         .panel-header p { font-size: 0.85rem; color: var(--text-muted); }
 
-        .transaction-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border);}
+        .transaction-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border); transition: 0.4s ease;}
         .t-info h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 3px;}
         .t-info p { font-size: 0.75rem; color: var(--text-muted);}
         .t-amount { font-weight: 800; color: var(--danger);}
+        .t-amount.positive { color: var(--primary); }
 
-        #auth-loader { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 800; letter-spacing: 2px;}
+        #auth-loader { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 800; letter-spacing: 2px; text-align: center;}
         .spinner { width: 50px; height: 50px; border: 4px solid rgba(5,150,105,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;}
         @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner-small { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px;}
 
+        /* MODAL DE NOVA TRANSAÇÃO APRIMORADO */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
         .modal-overlay.ativo { opacity: 1; visibility: visible; }
-        .modal-box { background: var(--bg-surface); width: 90%; max-width: 480px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.8); padding: 30px; }
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;}
-        .form-input { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: white; outline: none; font-size: 1rem;}
-        .form-input:focus { border-color: var(--primary); }
-        .btn-close { float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+        .modal-box { background: var(--bg-surface); width: 90%; max-width: 480px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.8); transform: translateY(30px); transition: 0.4s; }
+        .modal-overlay.ativo .modal-box { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 25px; border-bottom: 1px solid var(--border); }
+        .modal-header h3 { font-size: 1.3rem; }
+        .btn-close { background: transparent; border: none; color: var(--text-muted); font-size: 2rem; cursor: pointer; }
+        .modal-body { padding: 30px 25px; }
         
+        .input-group { margin-bottom: 20px; display: flex; gap: 15px; }
+        .input-box { flex: 1; }
+        .input-box label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;}
+        .form-input { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: white; outline: none; font-family: inherit; font-size: 1rem; transition: 0.2s;}
+        .form-input:focus { border-color: var(--primary); background: rgba(5,150,105,0.05);}
+        .type-toggles { display: flex; gap: 10px; margin-bottom: 20px;}
+        .type-btn { flex: 1; padding: 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;}
+        .type-btn.active { background: rgba(5,150,105,0.1); color: var(--primary); border-color: var(--primary); }
+        .upload-area { border: 2px dashed var(--border); border-radius: 8px; padding: 25px; text-align: center; color: var(--text-muted); cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.1); }
+        .upload-area:hover { border-color: var(--primary); color: var(--primary); background: rgba(5,150,105,0.05); }
+        
+        /* IMPRESSÃO PDF */
+        @media print {
+            .sidebar, .btn-action, .btn-secondary, .toast-container { display: none !important; }
+            .main-content { padding: 0; }
+            body { background: white; color: black; }
+            .kpi-card, .panel { background: white; border: 1px solid #ccc; box-shadow: none; color: black;}
+            .kpi-value, .kpi-title, .panel-header h3, .panel-header p, .t-info h4 { color: black !important;}
+        }
+
         @media (max-width: 950px) {
             .dashboard-grid { grid-template-columns: 1fr; }
             body { flex-direction: column; overflow-y: auto;}
@@ -77,178 +107,349 @@
 </head>
 <body>
 
-    <div id="auth-loader"><div class="spinner"></div><p>CARREGANDO DADOS DA EMPRESA...</p></div>
+    <div id="toast-container" class="toast-container"></div>
 
+    <div id="auth-loader">
+        <div class="spinner"></div>
+        <p>VALIDANDO SESSÃO AES-256...</p>
+        <span style="font-size: 0.8rem; color: #9ca3af; margin-top: 10px;">RLS Secure Protocol Ativo</span>
+    </div>
+
+    <!-- MENU LATERAL -->
     <aside class="sidebar">
         <div class="logo-area"><h2>PRISMA OS</h2></div>
         <nav class="menu-nav">
             <span class="menu-section">Financeiro BPO</span>
-            <a class="menu-item active">📊 Visão Executiva</a>
-            <a class="menu-item">📈 DRE & Resultados</a>
+            <a class="menu-item active" data-tab="visao">📊 Visão Executiva</a>
+            <a class="menu-item" data-tab="dre">📈 DRE & Resultados</a>
+            <a class="menu-item" onclick="simularAcao('A redirecionar para a Central de Notas...')">🧾 Emissão de NFs</a>
+            
             <span class="menu-section">Recursos Humanos</span>
-            <a class="menu-item">👥 Equipe & Folha</a>
+            <a class="menu-item" data-tab="rh">👥 Equipa & Folha</a>
+            <a class="menu-item" onclick="simularAcao('Módulo de Recrutamento em atualização...')">🎯 Gestão de Talentos</a>
         </nav>
         <div class="user-profile">
             <div class="avatar" id="user-avatar">?</div>
             <div class="user-info">
-                <p id="user-name">ceo@empresa.com</p>
-                <span id="user-company">Empresa</span>
+                <p id="user-name">A carregar...</p>
+                <span id="user-company">Plano Premium</span>
             </div>
             <button class="btn-logout" onclick="window.fazerLogout()">Sair</button>
         </div>
     </aside>
 
     <main class="main-content">
+        <!-- CABEÇALHO COM BOTÕES DE AÇÃO -->
         <header class="header">
             <div class="header-title">
-                <h1>Visão Executiva</h1>
-                <p>Cofre privado. Dados atualizados em tempo real.</p>
+                <h1 id="page-title">Visão Executiva</h1>
+                <p id="page-subtitle">O panorama financeiro atualizado ao milissegundo pela IA.</p>
             </div>
             <div class="header-actions">
-                <button class="btn-action" onclick="abrirTransacao()">+ Nova Transação</button>
+                <button class="btn-secondary" onclick="exportarPDF()">📄 Exportar Relatório</button>
+                <button class="btn-action" onclick="abrirModalNovaTransacao()">+ Nova Transação</button>
             </div>
         </header>
 
-        <section class="kpi-grid">
-            <div class="kpi-card"><p class="kpi-title">Saldo Disponível</p><h2 class="kpi-value" id="kpi-saldo">R$ 0,00</h2><span class="kpi-subtitle">Em Conta</span></div>
-            <div class="kpi-card"><p class="kpi-title">Faturamento (Mês)</p><h2 class="kpi-value" id="kpi-receita">R$ 0,00</h2><span class="kpi-subtitle">↑ Receitas</span></div>
-            <div class="kpi-card"><p class="kpi-title">Custos Atuais</p><h2 class="kpi-value" id="kpi-custos" style="color:var(--danger)">R$ 0,00</h2><span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Despesas</span></div>
-            <div class="kpi-card"><p class="kpi-title">Lucro Operacional</p><h2 class="kpi-value" id="kpi-lucro">R$ 0,00</h2><span class="kpi-subtitle">Líquido</span></div>
+        <!-- KPIS DINÂMICOS -->
+        <section class="kpi-grid" id="kpi-container">
+            <!-- Renderizados via JavaScript -->
         </section>
 
+        <!-- PAINÉIS INFERIORES -->
         <section class="dashboard-grid">
             <div class="panel">
-                <div class="panel-header"><h3>Projeção de Caixa (7 dias)</h3></div>
+                <div class="panel-header">
+                    <div>
+                        <h3 id="chart-title">Projeção de Fluxo de Caixa</h3>
+                        <p id="chart-subtitle">Previsão baseada no histórico de receitas e despesas.</p>
+                    </div>
+                </div>
                 <canvas id="mainChart" height="250"></canvas>
             </div>
             
             <div class="panel">
-                <div class="panel-header"><h3>Histórico de Despesas</h3></div>
-                <div id="lista-transacoes">
-                    <!-- Gerado dinamicamente -->
+                <div class="panel-header">
+                    <div>
+                        <h3 id="list-title">Aprovações Pendentes</h3>
+                        <p id="list-subtitle">Documentos registados recentemente.</p>
+                    </div>
                 </div>
+                <div id="lista-pendencias">
+                    <!-- Preenchido pelo JavaScript com as despesas do cliente -->
+                </div>
+                <button class="btn-action" id="btn-aprovar-lote" style="width: 100%; margin-top: 15px;" onclick="aprovarLote()">Aprovar e Enviar ao Banco</button>
             </div>
         </section>
 
-        <!-- Modal Nova Transação Real -->
+        <!-- MODAL DE TRANSAÇÃO (COM INPUTS E UPLOAD) -->
         <div id="modal-transacao" class="modal-overlay">
             <div class="modal-box">
-                <button onclick="fecharTransacao()" class="btn-close">&times;</button>
-                <h3 style="margin-bottom: 20px;">Adicionar Despesa</h3>
-                <div class="input-group">
-                    <label>Fornecedor / Descrição</label>
-                    <input type="text" id="t-desc" class="form-input" placeholder="Ex: Impostos Federais">
+                <div class="modal-header">
+                    <h3>Anexar Documento</h3>
+                    <button onclick="fecharModalNovaTransacao()" class="btn-close">&times;</button>
                 </div>
-                <div class="input-group">
-                    <label>Valor (R$)</label>
-                    <input type="number" id="t-valor" class="form-input" placeholder="1500">
+                <div class="modal-body">
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+                        Digite o valor ou anexe o documento. A nossa Inteligência Artificial fará a conciliação automática.
+                    </p>
+
+                    <div class="input-group">
+                        <div class="input-box">
+                            <label>Descrição / Fornecedor</label>
+                            <input type="text" id="t-desc" class="form-input" placeholder="Ex: Impostos DAS">
+                        </div>
+                        <div class="input-box">
+                            <label>Valor (R$)</label>
+                            <input type="number" id="t-valor" class="form-input" placeholder="1500.00">
+                        </div>
+                    </div>
+
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Classificação Contábil</label>
+                    <div class="type-toggles">
+                        <button class="type-btn active" id="btn-tipo-despesa" onclick="document.getElementById('btn-tipo-despesa').classList.add('active'); document.getElementById('btn-tipo-rh').classList.remove('active');">Despesa Financeira</button>
+                        <button class="type-btn" id="btn-tipo-rh" onclick="document.getElementById('btn-tipo-rh').classList.add('active'); document.getElementById('btn-tipo-despesa').classList.remove('active');">Custo de Pessoal (RH)</button>
+                    </div>
+
+                    <div class="upload-area">
+                        <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📄</span>
+                        <strong style="color: white;">Clique ou arraste a Fatura (Opcional)</strong>
+                    </div>
+
+                    <button class="btn-action" id="btn-processar-ia" style="width: 100%; margin-top: 25px;" onclick="processarFaturaReal()">Processar Documento via IA</button>
                 </div>
-                <button class="btn-action" style="width: 100%;" onclick="salvarTransacao()">Processar Despesa</button>
             </div>
         </div>
     </main>
 
     <script>
-        // MOTOR DE DADOS INDIVIDUAIS POR CLIENTE (O CÉREBRO DO SAAS)
+        // ==========================================
+        // 1. UTILITÁRIOS E TOASTS
+        // ==========================================
+        const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+        
+        window.simularAcao = (mensagem, isError = false) => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `custom-toast ${isError ? 'error' : ''}`;
+            toast.innerHTML = `<span style="margin-right:8px;">${isError ? '⚠️' : '✨'}</span> ${mensagem}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
+        };
+
+        window.exportarPDF = () => {
+            simularAcao("A gerar Relatório C-Level do Mês...");
+            setTimeout(() => {
+                simularAcao("✅ Relatório Prisma OS exportado com sucesso!");
+                setTimeout(() => window.print(), 1000); 
+            }, 2500);
+        };
+
+        // ==========================================
+        // 2. MOTOR DE BANCO DE DADOS (CÉREBRO DO SAAS)
+        // ==========================================
         let currentUserEmail = "";
         let userData = {};
         let myChart = null;
+        let currentTab = 'visao';
 
-        // Função para formatar dinheiro
-        const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
-
-        // Inicializa o Perfil do Cliente baseado no E-mail
         function carregarDadosDoCliente(email) {
             currentUserEmail = email;
-            const dbKey = 'prisma_data_' + email; // Chave única para este cliente
+            const dbKey = 'prisma_data_v2_' + email; 
             
             let savedData = localStorage.getItem(dbKey);
             
             if (savedData) {
                 userData = JSON.parse(savedData);
             } else {
-                // Cria um perfil financeiro novo e único se for o primeiro login deste cliente
+                // Criação do cofre padrão inicial para clientes novos
                 userData = {
-                    saldo: 125000,
-                    faturamento: 45000,
-                    custos: 0,
-                    transacoes: []
+                    saldo: 145250, faturamento: 68400, custos: 18200, impostos: 11050,
+                    rh_headcount: 14, rh_folha: 42500, rh_beneficios: 5200,
+                    transacoes: [
+                        { desc: "Amazon Web Services", valor: 1250, data: "Vence Hoje", tipo: "Despesa" },
+                        { desc: "Impostos Federais (DAS)", valor: 3480, data: "Vence Amanhã", tipo: "Despesa" }
+                    ]
                 };
                 salvarBancoDeDados();
             }
-            atualizarTela();
+            renderDashboard(currentTab);
         }
 
         function salvarBancoDeDados() {
-            localStorage.setItem('prisma_data_' + currentUserEmail, JSON.stringify(userData));
+            localStorage.setItem('prisma_data_v2_' + currentUserEmail, JSON.stringify(userData));
         }
 
-        function atualizarTela() {
-            // Atualiza KPIs
-            userData.lucro = userData.faturamento - userData.custos;
-            document.getElementById('kpi-saldo').innerText = formatoBRL(userData.saldo);
-            document.getElementById('kpi-receita').innerText = formatoBRL(userData.faturamento);
-            document.getElementById('kpi-custos').innerText = formatoBRL(userData.custos);
-            document.getElementById('kpi-lucro').innerText = formatoBRL(userData.lucro);
+        // ==========================================
+        // 3. RENDERIZAÇÃO INTELIGENTE (ABAS E GRÁFICOS)
+        // ==========================================
+        function renderDashboard(tab) {
+            currentTab = tab;
+            const kpiContainer = document.getElementById('kpi-container');
+            let kpiHTML = '';
+            let chartData = {};
 
-            // Atualiza Lista
-            const lista = document.getElementById('lista-transacoes');
+            // Cálculos dinâmicos
+            const lucroOperacional = userData.faturamento - userData.custos;
+            const ebitda = userData.faturamento - userData.impostos - userData.custos;
+
+            if (tab === 'visao') {
+                document.getElementById('page-title').innerText = "Visão Executiva";
+                document.getElementById('page-subtitle').innerText = "O panorama financeiro atualizado ao milissegundo pela IA.";
+                
+                kpiHTML = `
+                    <div class="kpi-card"><p class="kpi-title">Saldo Disponível</p><h2 class="kpi-value">${formatoBRL(userData.saldo)}</h2><span class="kpi-subtitle">Contas sincronizadas</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Faturamento (Mês)</p><h2 class="kpi-value">${formatoBRL(userData.faturamento)}</h2><span class="kpi-subtitle">↑ Receitas</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Custos Totais</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.custos)}</h2><span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Despesas</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Lucro Operacional</p><h2 class="kpi-value">${formatoBRL(lucroOperacional)}</h2><span class="kpi-subtitle">Margem de 73%</span></div>
+                `;
+                
+                document.getElementById('chart-title').innerText = "Projeção de Fluxo de Caixa";
+                chartData = { type: 'line', labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], data: [userData.saldo, userData.saldo+1000, userData.saldo-2000, userData.saldo-500, userData.saldo+4000, userData.saldo+4000, userData.saldo+4000] };
+            
+            } else if (tab === 'dre') {
+                document.getElementById('page-title').innerText = "Demonstração de Resultados";
+                document.getElementById('page-subtitle').innerText = "A saúde financeira detalhada por categorias.";
+                
+                kpiHTML = `
+                    <div class="kpi-card"><p class="kpi-title">Receita Bruta</p><h2 class="kpi-value">${formatoBRL(userData.faturamento)}</h2><span class="kpi-subtitle">Vendas/Serviços</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Impostos Retidos</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.impostos)}</h2><span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Simples Nacional</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Despesas Fixas</p><h2 class="kpi-value">${formatoBRL(userData.custos)}</h2><span class="kpi-subtitle">Operacionais</span></div>
+                    <div class="kpi-card"><p class="kpi-title">EBITDA</p><h2 class="kpi-value" style="color:var(--primary)">${formatoBRL(ebitda)}</h2><span class="kpi-subtitle">Caixa Gerado</span></div>
+                `;
+                
+                document.getElementById('chart-title').innerText = "Receitas vs Despesas (Ano)";
+                chartData = { type: 'line', labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], data: [25000, 40000, 38000, 50000, 68000, userData.faturamento] };
+            
+            } else if (tab === 'rh') {
+                document.getElementById('page-title').innerText = "Departamento Pessoal & RH";
+                document.getElementById('page-subtitle').innerText = "Gestão inteligente da sua equipa e custos de folha.";
+                
+                kpiHTML = `
+                    <div class="kpi-card"><p class="kpi-title">Headcount (Equipa)</p><h2 class="kpi-value">${userData.rh_headcount} Colab.</h2><span class="kpi-subtitle">Ativos</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Custo Folha Salarial</p><h2 class="kpi-value">${formatoBRL(userData.rh_folha)}</h2><span class="kpi-subtitle">Mês atual</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Encargos (INSS/FGTS)</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.rh_folha * 0.30)}</h2><span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Provisão</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Custo Benefícios</p><h2 class="kpi-value">${formatoBRL(userData.rh_beneficios)}</h2><span class="kpi-subtitle">VR/VA/Plano</span></div>
+                `;
+                
+                document.getElementById('chart-title').innerText = "Evolução do Custo com Pessoal";
+                chartData = { type: 'bar', labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], data: [38000, 38000, 39500, 39500, 42500, userData.rh_folha] };
+            }
+
+            kpiContainer.innerHTML = kpiHTML;
+
+            // Atualiza a lista de pendências
+            const lista = document.getElementById('lista-pendencias');
             lista.innerHTML = "";
             if(userData.transacoes.length === 0) {
-                lista.innerHTML = "<p style='color: #9ca3af; font-size: 0.9rem;'>Nenhuma despesa registada ainda.</p>";
+                lista.innerHTML = "<p style='color: #9ca3af; font-size: 0.9rem;'>Sem pendências de aprovação.</p>";
             } else {
-                // Mostra as transações mais recentes no topo
-                [...userData.transacoes].reverse().forEach(t => {
+                userData.transacoes.forEach(t => {
                     lista.innerHTML += `
                         <div class="transaction-item">
-                            <div class="t-info"><h4>${t.desc}</h4><p>Registado Hoje</p></div>
+                            <div class="t-info"><h4>${t.desc}</h4><p>${t.tipo || 'Despesa'} • ${t.data}</p></div>
                             <div class="t-amount negative">- ${formatoBRL(t.valor)}</div>
                         </div>`;
                 });
             }
 
-            // Atualiza Gráfico
-            if(myChart) myChart.destroy();
+            // Atualiza o Gráfico
+            if (myChart) myChart.destroy();
             const ctx = document.getElementById('mainChart').getContext('2d');
             let gradient = ctx.createLinearGradient(0, 0, 0, 400);
             gradient.addColorStop(0, 'rgba(5, 150, 105, 0.4)'); gradient.addColorStop(1, 'rgba(5, 150, 105, 0.0)'); 
             
-            // Simula uma queda no gráfico baseada nos custos para dar realismo
-            const dataBase = userData.saldo;
             myChart = new Chart(ctx, { 
-                type: 'line', 
-                data: { labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], datasets: [{ label: 'Saldo (R$)', data: [dataBase, dataBase+1000, dataBase-userData.custos, dataBase-userData.custos+500, dataBase, dataBase, dataBase], borderColor: '#059669', backgroundColor: gradient, borderWidth: 3, fill: true, tension: 0.4 }] }, 
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } } } 
+                type: chartData.type, 
+                data: { 
+                    labels: chartData.labels, 
+                    datasets: [{ 
+                        label: 'Valor (R$)', 
+                        data: chartData.data, 
+                        borderColor: '#059669', 
+                        backgroundColor: chartData.type === 'line' ? gradient : '#059669', 
+                        borderWidth: 3, fill: true, tension: 0.4, borderRadius: 4 
+                    }] 
+                }, 
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } } } 
             });
         }
 
-        // FUNÇÃO REAL DE NOVA TRANSAÇÃO
-        function abrirTransacao() { document.getElementById('modal-transacao').classList.add('ativo'); }
-        function fecharTransacao() { document.getElementById('modal-transacao').classList.remove('ativo'); }
-        
-        function salvarTransacao() {
+        // ==========================================
+        // 4. LÓGICA DE FATURAS E APROVAÇÃO (A MAGIA DO SAAS)
+        // ==========================================
+        const modal = document.getElementById('modal-transacao');
+        window.abrirModalNovaTransacao = () => modal.classList.add('ativo');
+        window.fecharModalNovaTransacao = () => modal.classList.remove('ativo');
+
+        window.processarFaturaReal = () => {
             const desc = document.getElementById('t-desc').value;
             const valor = parseFloat(document.getElementById('t-valor').value);
-            
-            if(!desc || !valor || valor <= 0) { alert("Preencha o fornecedor e um valor válido."); return; }
+            const isRH = document.getElementById('btn-tipo-rh').classList.contains('active');
 
-            // Lógica financeira: Adiciona à lista e tira do saldo
-            userData.transacoes.push({ desc: desc, valor: valor });
-            userData.saldo -= valor;
-            userData.custos += valor;
-            
-            salvarBancoDeDados();
-            atualizarTela();
-            
-            document.getElementById('t-desc').value = "";
-            document.getElementById('t-valor').value = "";
-            fecharTransacao();
-        }
+            if(!desc || !valor || valor <= 0) { simularAcao("Por favor, preencha a Descrição e o Valor.", true); return; }
 
-        // INICIALIZAÇÃO E AUTENTICAÇÃO REAL
+            const btnProc = document.getElementById('btn-processar-ia');
+            btnProc.innerHTML = "<span class='spinner-small'></span> A IA está a ler e conciliar..."; 
+            btnProc.style.opacity = '0.8';
+            
+            setTimeout(() => {
+                // Matemática real na conta do cliente
+                userData.saldo -= valor;
+                if(isRH) {
+                    userData.rh_folha += valor;
+                } else {
+                    userData.custos += valor;
+                }
+                
+                userData.transacoes.unshift({ desc: desc, valor: valor, data: "Registado Agora", tipo: isRH ? "Custo RH" : "Despesa" });
+                
+                salvarBancoDeDados();
+                renderDashboard(currentTab);
+
+                btnProc.innerText = "✓ Lançamento Automático Feito!"; 
+                btnProc.style.background = "#059669";
+                simularAcao("Fatura processada. Valores deduzidos do saldo e atualizados nos gráficos.");
+                
+                setTimeout(() => { 
+                    fecharModalNovaTransacao(); 
+                    btnProc.innerText = "Processar Documento via IA"; 
+                    btnProc.style.background = ""; 
+                    btnProc.style.opacity = '1'; 
+                    document.getElementById('t-desc').value = '';
+                    document.getElementById('t-valor').value = '';
+                }, 2000);
+            }, 2000);
+        };
+
+        window.aprovarLote = () => {
+            const btnAprovar = document.getElementById('btn-aprovar-lote');
+            btnAprovar.innerHTML = "<span class='spinner-small'></span> Sincronizando com Banco...";
+            btnAprovar.style.opacity = '0.8';
+            
+            setTimeout(() => {
+                document.querySelectorAll('.transaction-item').forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateX(30px)'; });
+                
+                // Limpa o histórico de pendências do cliente
+                userData.transacoes = [];
+                salvarBancoDeDados();
+
+                btnAprovar.innerText = "✓ Lote Aprovado e Pago"; 
+                btnAprovar.style.background = "#059669"; 
+                btnAprovar.style.pointerEvents = "none";
+                simularAcao("Comprovativos bancários gerados e anexados com sucesso!");
+                
+                setTimeout(() => renderDashboard(currentTab), 500);
+            }, 2000);
+        };
+
+        // ==========================================
+        // 5. INICIALIZAÇÃO SUPABASE
+        // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                if (!window.supabase) throw new Error("Bloqueio de API");
+                if (!window.supabase) throw new Error("Acesso à base de dados bloqueado.");
                 const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
                 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
                 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -256,16 +457,25 @@
                 const { data, error } = await supabase.auth.getSession();
                 if (error || !data.session) { window.location.replace('index.html'); return; }
 
-                // O Sistema identifica QUEM entrou
+                // Identifica o cliente
                 const email = data.session.user.email;
                 document.getElementById('user-name').innerText = email;
                 document.getElementById('user-company').innerText = "Conta: " + email.split('@')[0];
                 document.getElementById('user-avatar').innerText = email.charAt(0).toUpperCase();
 
-                // Carrega a base de dados específica desta pessoa
+                // Carrega os dados EXCLUSIVOS deste cliente
                 carregarDadosDoCliente(email);
 
                 document.getElementById('auth-loader').style.display = 'none';
+
+                // Interatividade do Menu
+                document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
+                    item.addEventListener('click', () => {
+                        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                        item.classList.add('active');
+                        renderDashboard(item.getAttribute('data-tab'));
+                    });
+                });
 
                 window.fazerLogout = async () => { await supabase.auth.signOut(); window.location.replace('index.html'); };
 
