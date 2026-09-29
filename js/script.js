@@ -1,9 +1,6 @@
-// ==========================================
-// MOTOR DA LANDING PAGE E LOGIN
-// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. PRELOADER INFALÍVEL
+    // 1. PRELOADER
     const preloader = document.getElementById('preloader');
     if (preloader) {
         setTimeout(() => {
@@ -21,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
     }
 
-    // 3. SISTEMA DE LOGIN E REDIRECIONAMENTO
+    // 3. SISTEMA DE LOGIN SEGURO
     const loginForm = document.getElementById('login-form');
     if(loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -35,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnSubmit.style.opacity = "0.8";
 
             if(!supabase) {
-                alert("Erro: O seu navegador está a bloquear a ligação ao banco de dados.");
+                alert("Erro: O seu navegador está a bloquear a ligação à base de dados.");
                 btnSubmit.innerText = "Tentar Novamente";
                 return;
             }
@@ -53,13 +50,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnSubmit.style.background = "#059669";
                 btnSubmit.style.opacity = "1";
                 
-                // Redireciona para o Cofre
+                // Redireciona
                 setTimeout(() => {
                     window.location.href = "dashboard.html";
                 }, 1000);
 
             } catch (err) {
-                // Erro de senha
+                // Erro
                 btnSubmit.innerText = "✖ Credenciais Inválidas";
                 btnSubmit.style.background = "#ef4444";
                 
@@ -84,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// 5. JANELAS FLUTUANTES (MODAIS GLOBAIS)
+// 5. FUNÇÕES GLOBAIS DE INTERFACE (JANELAS E PREÇOS)
 window.abrirLogin = () => {
     document.getElementById('loginModal').classList.add('ativo');
     document.getElementById('login-scanner').classList.add('active');
@@ -100,4 +97,14 @@ window.abrirLogin = () => {
 
 window.fecharLogin = () => {
     document.getElementById('loginModal').classList.remove('ativo');
+};
+
+window.togglePricing = () => {
+    const isAnual = document.getElementById('billing-toggle').checked;
+    document.getElementById('label-mensal').style.color = isAnual ? 'var(--text-muted)' : 'white';
+    document.getElementById('label-anual').style.color = isAnual ? 'white' : 'var(--text-muted)';
+    
+    document.querySelectorAll('.price-val').forEach(p => {
+        p.innerText = isAnual ? p.getAttribute('data-anual') : p.getAttribute('data-mensal');
+    });
 };
