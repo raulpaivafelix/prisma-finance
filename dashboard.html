@@ -18,7 +18,7 @@
         .custom-toast { background: var(--surface); border: 1px solid var(--primary); color: white; padding: 15px 20px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; }
         .custom-toast.show { transform: translateX(0); }
 
-        /* SIDEBAR */
+        /* SIDEBAR E GERAL */
         .sidebar { width: 280px; background-color: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; }
         .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border); font-size: 1.2rem; font-weight: 800; color: white;}
         .menu-nav { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow-y: auto;}
@@ -39,7 +39,6 @@
         .btn-action { background: var(--primary); color: white; border: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; font-family: inherit; cursor: pointer; transition: 0.3s; font-size: 1rem;}
         .btn-action:hover { background: #047857; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(5,150,105,0.2); }
 
-        /* KPIS E GRIDS */
         .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
         .kpi-card { background: var(--bg-surface); padding: 25px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
         .kpi-title { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between;}
@@ -57,7 +56,6 @@
         .t-info p { font-size: 0.75rem; color: var(--text-muted);}
         .t-amount.negative { color: var(--danger); font-weight: 800;}
 
-        /* MODAL E LOADER */
         #auth-loader { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 800; letter-spacing: 2px; text-align: center;}
         .spinner { width: 50px; height: 50px; border: 4px solid rgba(5,150,105,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;}
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -71,7 +69,6 @@
         .modal-header h3 { font-size: 1.3rem; }
         .btn-close { background: transparent; border: none; color: var(--text-muted); font-size: 2rem; cursor: pointer; }
         .modal-body { padding: 30px 25px; }
-        
         .input-group { margin-bottom: 20px; }
         .input-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;}
         .form-input { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: white; outline: none; font-family: inherit; font-size: 1rem; transition: 0.2s;}
@@ -105,7 +102,7 @@
             <a class="menu-item">🧾 Emissão de NFs</a>
             <a class="menu-item">📈 DRE em Tempo Real</a>
             
-            <span class="menu-section">Gestão de Equipa</span>
+            <span class="menu-section">Gestão de Equipe (RH)</span>
             <a class="menu-item" onclick="mostrarToastRH()">👥 Consultoria de RH</a>
             <a class="menu-item" onclick="mostrarToastRH()">💼 Folha de Pagamento</a>
         </nav>
@@ -120,7 +117,6 @@
     </aside>
 
     <main class="main-content">
-        <!-- Cabeçalho Principal -->
         <header class="header">
             <div class="header-title">
                 <h1 id="page-title">Visão Executiva</h1>
@@ -129,54 +125,23 @@
             <button class="btn-action" onclick="abrirModalNovaTransacao()">+ Nova Transação</button>
         </header>
 
-        <!-- KPIS -->
         <section class="kpi-grid">
-            <div class="kpi-card">
-                <p class="kpi-title">Saldo Disponível</p>
-                <h2 class="kpi-value">R$ 145.250,00</h2>
-                <span class="kpi-subtitle">Contas sincronizadas</span>
-            </div>
-            <div class="kpi-card">
-                <p class="kpi-title">Faturamento (Mês)</p>
-                <h2 class="kpi-value">R$ 68.400,00</h2>
-                <span class="kpi-subtitle">↑ +12% vs anterior</span>
-            </div>
-            <div class="kpi-card">
-                <p class="kpi-title">Despesa & Folha</p>
-                <h2 class="kpi-value" style="color:var(--danger)">R$ 18.200,00</h2>
-                <span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Dentro do limite</span>
-            </div>
-            <div class="kpi-card">
-                <p class="kpi-title">Lucro Operacional</p>
-                <h2 class="kpi-value">R$ 50.200,00</h2>
-                <span class="kpi-subtitle">Margem Saudável</span>
-            </div>
+            <div class="kpi-card"><p class="kpi-title">Saldo Disponível</p><h2 class="kpi-value">R$ 145.250,00</h2><span class="kpi-subtitle">Contas sincronizadas</span></div>
+            <div class="kpi-card"><p class="kpi-title">Faturamento (Mês)</p><h2 class="kpi-value">R$ 68.400,00</h2><span class="kpi-subtitle">↑ +12% vs anterior</span></div>
+            <div class="kpi-card"><p class="kpi-title">Despesa & Folha</p><h2 class="kpi-value" style="color:var(--danger)">R$ 18.200,00</h2><span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Dentro do limite</span></div>
+            <div class="kpi-card"><p class="kpi-title">Lucro Operacional</p><h2 class="kpi-value">R$ 50.200,00</h2><span class="kpi-subtitle">Margem Saudável</span></div>
         </section>
 
-        <!-- Painéis -->
         <section class="dashboard-grid">
             <div class="panel">
-                <div class="panel-header">
-                    <h3>Projeção de Fluxo de Caixa</h3>
-                    <p>Previsão inteligente da Prisma IA para os próximos 7 dias.</p>
-                </div>
+                <div class="panel-header"><h3>Projeção de Fluxo de Caixa</h3><p>Previsão inteligente da Prisma IA para os próximos 7 dias.</p></div>
                 <canvas id="cashflowChart" height="250"></canvas>
             </div>
-            
             <div class="panel">
-                <div class="panel-header">
-                    <h3>Aprovações Pendentes</h3>
-                    <p>Despesas prontas para o banco.</p>
-                </div>
+                <div class="panel-header"><h3>Aprovações Pendentes</h3><p>Despesas prontas para o banco.</p></div>
                 <div id="lista-pendencias">
-                    <div class="transaction-item">
-                        <div class="t-info"><h4>Amazon Web Services</h4><p>Infraestrutura • Vence Hoje</p></div>
-                        <div class="t-amount negative">- R$ 1.250,00</div>
-                    </div>
-                    <div class="transaction-item">
-                        <div class="t-info"><h4>Impostos Federais (DAS)</h4><p>Tributário • Vence Amanhã</p></div>
-                        <div class="t-amount negative">- R$ 3.480,00</div>
-                    </div>
+                    <div class="transaction-item"><div class="t-info"><h4>Amazon Web Services</h4><p>Infraestrutura • Vence Hoje</p></div><div class="t-amount negative">- R$ 1.250,00</div></div>
+                    <div class="transaction-item"><div class="t-info"><h4>Impostos Federais (DAS)</h4><p>Tributário • Vence Amanhã</p></div><div class="t-amount negative">- R$ 3.480,00</div></div>
                 </div>
                 <button class="btn-action" id="btn-aprovar-lote" style="width: 100%; margin-top: 15px;">Aprovar e Pagar (R$ 4.730,00)</button>
             </div>
@@ -185,14 +150,9 @@
         <!-- MODAL DE TRANSAÇÃO -->
         <div id="modal-transacao" class="modal-overlay">
             <div class="modal-box">
-                <div class="modal-header">
-                    <h3>Anexar Documento</h3>
-                    <button onclick="fecharModalNovaTransacao()" class="btn-close">&times;</button>
-                </div>
+                <div class="modal-header"><h3>Anexar Documento</h3><button onclick="fecharModalNovaTransacao()" class="btn-close">&times;</button></div>
                 <div class="modal-body">
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
-                        A nossa Inteligência Artificial extrairá todos os dados automaticamente.
-                    </p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">A nossa Inteligência Artificial extrairá todos os dados automaticamente.</p>
                     <div class="input-group">
                         <label>Classificação</label>
                         <div class="type-toggles">
@@ -211,7 +171,7 @@
     </main>
 
     <script>
-        // Função Global de Toast para o Dashboard
+        // FUNÇÃO DE TOAST REPETIDA AQUI PARA O DASHBOARD NÃO DEPENDER DO SCRIPT EXTERNO
         window.mostrarToastRH = () => {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -224,7 +184,6 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // SEGURANÇA SUPABASE
                 if (!window.supabase) throw new Error("Acesso à base de dados bloqueado pela rede.");
                 const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
                 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
@@ -237,7 +196,6 @@
                 document.getElementById('user-name').innerText = data.session.user.email;
                 document.getElementById('user-avatar').innerText = data.session.user.email.charAt(0).toUpperCase();
 
-                // NAVEGAÇÃO
                 const conteudos = {
                     '📊 Visão Executiva': { titulo: 'Visão Executiva', sub: 'O panorama atualizado ao milissegundo pela IA.' },
                     '💸 Fluxo de Caixa': { titulo: 'Gestão de Fluxo', sub: 'Monitorize todas as entradas e saídas.' },
@@ -248,73 +206,43 @@
                 document.querySelectorAll('.menu-item').forEach(item => {
                     item.addEventListener('click', () => {
                         if(item.innerText.includes('RH') || item.innerText.includes('Folha')) return;
-                        
                         document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
                         item.classList.add('active');
                         const dados = conteudos[item.innerText];
-                        if (dados) {
-                            document.getElementById('page-title').innerText = dados.titulo;
-                            document.getElementById('page-subtitle').innerText = dados.sub;
-                        }
+                        if (dados) { document.getElementById('page-title').innerText = dados.titulo; document.getElementById('page-subtitle').innerText = dados.sub; }
                     });
                 });
 
-                // APROVAR PAGAMENTOS
                 const btnAprovar = document.getElementById('btn-aprovar-lote');
                 if(btnAprovar) {
                     btnAprovar.addEventListener('click', () => {
                         btnAprovar.innerHTML = "<span class='spinner-small'></span> Sincronizando Bank API...";
                         btnAprovar.style.opacity = '0.8';
                         setTimeout(() => {
-                            document.querySelectorAll('.transaction-item').forEach(el => {
-                                el.style.opacity = '0'; el.style.transform = 'translateX(30px)';
-                            });
-                            btnAprovar.innerText = "✓ Lote Aprovado e Pago";
-                            btnAprovar.style.background = "#059669";
-                            btnAprovar.style.pointerEvents = "none";
+                            document.querySelectorAll('.transaction-item').forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateX(30px)'; });
+                            btnAprovar.innerText = "✓ Lote Aprovado e Pago"; btnAprovar.style.background = "#059669"; btnAprovar.style.pointerEvents = "none";
                         }, 1500);
                     });
                 }
 
-                // MODAL E FATURA
                 const modal = document.getElementById('modal-transacao');
                 window.abrirModalNovaTransacao = () => modal.classList.add('ativo');
                 window.fecharModalNovaTransacao = () => modal.classList.remove('ativo');
 
                 window.processarFatura = () => {
                     const btnProc = document.getElementById('btn-processar-ia');
-                    btnProc.innerHTML = "<span class='spinner-small'></span> A ler documento...";
-                    btnProc.style.opacity = '0.8';
+                    btnProc.innerHTML = "<span class='spinner-small'></span> A ler documento..."; btnProc.style.opacity = '0.8';
                     setTimeout(() => {
-                        btnProc.innerText = "✓ Documento Registado!";
-                        btnProc.style.background = "#059669";
-                        setTimeout(() => {
-                            fecharModalNovaTransacao();
-                            btnProc.innerText = "Processar via IA";
-                            btnProc.style.background = "";
-                            btnProc.style.opacity = '1';
-                        }, 2000);
+                        btnProc.innerText = "✓ Documento Registado!"; btnProc.style.background = "#059669";
+                        setTimeout(() => { fecharModalNovaTransacao(); btnProc.innerText = "Processar via IA"; btnProc.style.background = ""; btnProc.style.opacity = '1'; }, 2000);
                     }, 2000);
                 };
 
-                // GRÁFICO CHART.JS
                 if(typeof Chart !== 'undefined') {
                     const ctx = document.getElementById('cashflowChart').getContext('2d');
                     let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                    gradient.addColorStop(0, 'rgba(5, 150, 105, 0.4)'); 
-                    gradient.addColorStop(1, 'rgba(5, 150, 105, 0.0)'); 
-                    new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: ['Hoje', 'Amanhã', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-                            datasets: [{
-                                label: 'Saldo Projetado',
-                                data: [145250, 141770, 148500, 146000, 160000, 158000, 158000],
-                                borderColor: '#059669', backgroundColor: gradient, borderWidth: 3, fill: true, tension: 0.4
-                            }]
-                        },
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } } }
-                    });
+                    gradient.addColorStop(0, 'rgba(5, 150, 105, 0.4)'); gradient.addColorStop(1, 'rgba(5, 150, 105, 0.0)'); 
+                    new Chart(ctx, { type: 'line', data: { labels: ['Hoje', 'Amanhã', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], datasets: [{ label: 'Saldo Projetado', data: [145250, 141770, 148500, 146000, 160000, 158000, 158000], borderColor: '#059669', backgroundColor: gradient, borderWidth: 3, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } } } });
                 }
 
                 window.fazerLogout = async () => { await supabase.auth.signOut(); window.location.replace('index.html'); };
