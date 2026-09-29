@@ -1,18 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. PRELOADER INFALÍVEL E SEGURO
     const preloader = document.getElementById('preloader');
     if (preloader) {
         setTimeout(() => { preloader.style.opacity = '0'; setTimeout(() => { preloader.style.display = 'none'; }, 500); }, 1500);
     }
 
-    // 2. CONFIGURAÇÃO SUPABASE
     const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
     let supabase = null;
     if (window.supabase) supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    // 3. LOGIN COM BLINDAGEM VISUAL
     const loginForm = document.getElementById('login-form');
     if(loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -42,14 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnSubmit.innerText = "✖ Acesso Negado";
                 btnSubmit.style.background = "#ef4444";
                 setTimeout(() => {
-                    btnSubmit.innerText = "Aceder aos Dados Seguros";
+                    btnSubmit.innerText = "Acessar Dados Seguros";
                     btnSubmit.style.background = ""; btnSubmit.style.opacity = "1";
                 }, 2000);
             }
         });
     }
 
-    // 4. CALCULADORA ROI (Ajustada para BPO + RH)
     const range = document.getElementById('faturamento');
     if(range) {
         range.addEventListener('input', (e) => {
@@ -61,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// 5. FUNÇÕES GLOBAIS
 window.abrirLogin = () => {
     document.getElementById('loginModal').classList.add('ativo');
     document.getElementById('login-scanner').classList.add('active');
@@ -84,7 +79,7 @@ window.togglePricing = () => {
     document.querySelectorAll('.price-val').forEach(p => { p.innerText = isAnual ? p.getAttribute('data-anual') : p.getAttribute('data-mensal'); });
 };
 
-// 6. SISTEMA DE TOAST (BOTÕES 100% VIVOS E ELEGANTES)
+// TOAST - Notificações para os botões da página
 window.simularAcao = (mensagem, isError = false) => {
     const container = document.getElementById('toast-container');
     if(!container) return;
@@ -94,11 +89,7 @@ window.simularAcao = (mensagem, isError = false) => {
     toast.innerHTML = `<span style="margin-right:8px;">${isError ? '⚠️' : '✨'}</span> ${mensagem}`;
     
     container.appendChild(toast);
-    
-    // Anima a entrada
     setTimeout(() => toast.classList.add('show'), 10);
-    
-    // Remove após 3.5 segundos
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
