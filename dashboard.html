@@ -23,6 +23,11 @@
         .sidebar { width: 280px; background-color: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; transition: 0.3s;}
         .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border); font-size: 1.2rem; font-weight: 800; color: white;}
         .menu-nav { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow-y: auto;}
+        
+        /* SCROLLBAR INVISÍVEL NO MENU */
+        .menu-nav::-webkit-scrollbar { width: 5px; }
+        .menu-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
         .menu-section { color: var(--text-muted); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin: 15px 0 5px 15px; letter-spacing: 1px;}
         .menu-item { display: flex; align-items: center; padding: 12px 15px; color: var(--text-muted); text-decoration: none; border-radius: 8px; font-weight: 600; transition: 0.3s; cursor: pointer; font-size: 0.95rem;}
         .menu-item:hover, .menu-item.active { background-color: rgba(5, 150, 105, 0.1); color: var(--primary); border-left: 4px solid var(--primary); }
@@ -60,28 +65,23 @@
         .t-info h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 3px;}
         .t-info p { font-size: 0.75rem; color: var(--text-muted);}
         .t-amount { font-weight: 800; color: var(--danger);}
-        .t-amount.positive { color: var(--primary); }
 
         #auth-loader { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 800; letter-spacing: 2px; text-align: center;}
         .spinner { width: 50px; height: 50px; border: 4px solid rgba(5,150,105,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;}
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner-small { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px;}
 
-        /* MODAL DE NOVA TRANSAÇÃO APRIMORADO */
+        /* MODAL TRANSAÇÃO */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
         .modal-overlay.ativo { opacity: 1; visibility: visible; }
-        .modal-box { background: var(--bg-surface); width: 90%; max-width: 480px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.8); transform: translateY(30px); transition: 0.4s; }
+        .modal-box { background: var(--bg-surface); width: 90%; max-width: 480px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.8); padding: 30px; transform: translateY(30px); transition: 0.4s;}
         .modal-overlay.ativo .modal-box { transform: translateY(0); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 25px; border-bottom: 1px solid var(--border); }
-        .modal-header h3 { font-size: 1.3rem; }
-        .btn-close { background: transparent; border: none; color: var(--text-muted); font-size: 2rem; cursor: pointer; }
-        .modal-body { padding: 30px 25px; }
-        
         .input-group { margin-bottom: 20px; display: flex; gap: 15px; }
         .input-box { flex: 1; }
         .input-box label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;}
-        .form-input { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: white; outline: none; font-family: inherit; font-size: 1rem; transition: 0.2s;}
+        .form-input { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: white; outline: none; font-size: 1rem; transition: 0.2s;}
         .form-input:focus { border-color: var(--primary); background: rgba(5,150,105,0.05);}
+        .btn-close { float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
         .type-toggles { display: flex; gap: 10px; margin-bottom: 20px;}
         .type-btn { flex: 1; padding: 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;}
         .type-btn.active { background: rgba(5,150,105,0.1); color: var(--primary); border-color: var(--primary); }
@@ -115,18 +115,24 @@
         <span style="font-size: 0.8rem; color: #9ca3af; margin-top: 10px;">RLS Secure Protocol Ativo</span>
     </div>
 
-    <!-- MENU LATERAL -->
+    <!-- O NOVO MENU LATERAL COMPLETO E ROBUSTO -->
     <aside class="sidebar">
         <div class="logo-area"><h2>PRISMA OS</h2></div>
         <nav class="menu-nav">
             <span class="menu-section">Financeiro BPO</span>
             <a class="menu-item active" data-tab="visao">📊 Visão Executiva</a>
+            <a class="menu-item" onclick="simularAcao('A abrir extratos e conciliação bancária...')">💸 Fluxo de Caixa</a>
             <a class="menu-item" data-tab="dre">📈 DRE & Resultados</a>
-            <a class="menu-item" onclick="simularAcao('A redirecionar para a Central de Notas...')">🧾 Emissão de NFs</a>
+            <a class="menu-item" onclick="simularAcao('A ligar ao portal da SEFAZ e Prefeituras...')">🧾 Emissão de NFs</a>
             
             <span class="menu-section">Recursos Humanos</span>
             <a class="menu-item" data-tab="rh">👥 Equipa & Folha</a>
-            <a class="menu-item" onclick="simularAcao('Módulo de Recrutamento em atualização...')">🎯 Gestão de Talentos</a>
+            <a class="menu-item" onclick="simularAcao('A aceder ao banco de talentos e entrevistas...')">🎯 Gestão de Talentos</a>
+            <a class="menu-item" onclick="simularAcao('A carregar painel de Planos de Saúde e VR...')">🎁 Benefícios Flexíveis</a>
+
+            <span class="menu-section">Sistema & Gestão</span>
+            <a class="menu-item" onclick="simularAcao('A verificar chaves de API e Open Finance...')">⚙️ Integrações (Bancos)</a>
+            <a class="menu-item" onclick="simularAcao('A iniciar chat encriptado com o seu CFO Virtual...')">💬 Suporte C-Level</a>
         </nav>
         <div class="user-profile">
             <div class="avatar" id="user-avatar">?</div>
@@ -185,39 +191,35 @@
         <!-- MODAL DE TRANSAÇÃO (COM INPUTS E UPLOAD) -->
         <div id="modal-transacao" class="modal-overlay">
             <div class="modal-box">
-                <div class="modal-header">
-                    <h3>Anexar Documento</h3>
-                    <button onclick="fecharModalNovaTransacao()" class="btn-close">&times;</button>
+                <button onclick="fecharModalNovaTransacao()" class="btn-close">&times;</button>
+                <h3 style="margin-bottom: 20px;">Anexar Documento</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+                    Digite o valor ou anexe o documento. A nossa Inteligência Artificial fará a conciliação automática.
+                </p>
+
+                <div class="input-group">
+                    <div class="input-box">
+                        <label>Descrição / Fornecedor</label>
+                        <input type="text" id="t-desc" class="form-input" placeholder="Ex: Impostos DAS">
+                    </div>
+                    <div class="input-box">
+                        <label>Valor (R$)</label>
+                        <input type="number" id="t-valor" class="form-input" placeholder="1500.00">
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
-                        Digite o valor ou anexe o documento. A nossa Inteligência Artificial fará a conciliação automática.
-                    </p>
 
-                    <div class="input-group">
-                        <div class="input-box">
-                            <label>Descrição / Fornecedor</label>
-                            <input type="text" id="t-desc" class="form-input" placeholder="Ex: Impostos DAS">
-                        </div>
-                        <div class="input-box">
-                            <label>Valor (R$)</label>
-                            <input type="number" id="t-valor" class="form-input" placeholder="1500.00">
-                        </div>
-                    </div>
-
-                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Classificação Contábil</label>
-                    <div class="type-toggles">
-                        <button class="type-btn active" id="btn-tipo-despesa" onclick="document.getElementById('btn-tipo-despesa').classList.add('active'); document.getElementById('btn-tipo-rh').classList.remove('active');">Despesa Financeira</button>
-                        <button class="type-btn" id="btn-tipo-rh" onclick="document.getElementById('btn-tipo-rh').classList.add('active'); document.getElementById('btn-tipo-despesa').classList.remove('active');">Custo de Pessoal (RH)</button>
-                    </div>
-
-                    <div class="upload-area">
-                        <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📄</span>
-                        <strong style="color: white;">Clique ou arraste a Fatura (Opcional)</strong>
-                    </div>
-
-                    <button class="btn-action" id="btn-processar-ia" style="width: 100%; margin-top: 25px;" onclick="processarFaturaReal()">Processar Documento via IA</button>
+                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Classificação Contábil</label>
+                <div class="type-toggles">
+                    <button class="type-btn active" id="btn-tipo-despesa" onclick="document.getElementById('btn-tipo-despesa').classList.add('active'); document.getElementById('btn-tipo-rh').classList.remove('active');">Despesa Financeira</button>
+                    <button class="type-btn" id="btn-tipo-rh" onclick="document.getElementById('btn-tipo-rh').classList.add('active'); document.getElementById('btn-tipo-despesa').classList.remove('active');">Custo de Pessoal (RH)</button>
                 </div>
+
+                <div class="upload-area">
+                    <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">📄</span>
+                    <strong style="color: white;">Clique ou arraste a Fatura (Opcional)</strong>
+                </div>
+
+                <button class="btn-action" id="btn-processar-ia" style="width: 100%; margin-top: 25px;" onclick="processarFaturaReal()">Processar Documento via IA</button>
             </div>
         </div>
     </main>
@@ -324,10 +326,10 @@
             
             } else if (tab === 'rh') {
                 document.getElementById('page-title').innerText = "Departamento Pessoal & RH";
-                document.getElementById('page-subtitle').innerText = "Gestão inteligente da sua equipa e custos de folha.";
+                document.getElementById('page-subtitle').innerText = "Gestão inteligente da sua equipe e custos de folha.";
                 
                 kpiHTML = `
-                    <div class="kpi-card"><p class="kpi-title">Headcount (Equipa)</p><h2 class="kpi-value">${userData.rh_headcount} Colab.</h2><span class="kpi-subtitle">Ativos</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Headcount (Equipe)</p><h2 class="kpi-value">${userData.rh_headcount} Colab.</h2><span class="kpi-subtitle">Ativos</span></div>
                     <div class="kpi-card"><p class="kpi-title">Custo Folha Salarial</p><h2 class="kpi-value">${formatoBRL(userData.rh_folha)}</h2><span class="kpi-subtitle">Mês atual</span></div>
                     <div class="kpi-card"><p class="kpi-title">Encargos (INSS/FGTS)</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.rh_folha * 0.30)}</h2><span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Provisão</span></div>
                     <div class="kpi-card"><p class="kpi-title">Custo Benefícios</p><h2 class="kpi-value">${formatoBRL(userData.rh_beneficios)}</h2><span class="kpi-subtitle">VR/VA/Plano</span></div>
@@ -377,7 +379,7 @@
         }
 
         // ==========================================
-        // 4. LÓGICA DE FATURAS E APROVAÇÃO (A MAGIA DO SAAS)
+        // 4. LÓGICA DE FATURAS E APROVAÇÃO
         // ==========================================
         const modal = document.getElementById('modal-transacao');
         window.abrirModalNovaTransacao = () => modal.classList.add('ativo');
@@ -395,7 +397,7 @@
             btnProc.style.opacity = '0.8';
             
             setTimeout(() => {
-                // Matemática real na conta do cliente
+                // Lógica Financeira do Cliente
                 userData.saldo -= valor;
                 if(isRH) {
                     userData.rh_folha += valor;
@@ -431,7 +433,6 @@
             setTimeout(() => {
                 document.querySelectorAll('.transaction-item').forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateX(30px)'; });
                 
-                // Limpa o histórico de pendências do cliente
                 userData.transacoes = [];
                 salvarBancoDeDados();
 
@@ -445,7 +446,7 @@
         };
 
         // ==========================================
-        // 5. INICIALIZAÇÃO SUPABASE
+        // 5. INICIALIZAÇÃO E MENUS
         // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
             try {
@@ -463,17 +464,19 @@
                 document.getElementById('user-company').innerText = "Conta: " + email.split('@')[0];
                 document.getElementById('user-avatar').innerText = email.charAt(0).toUpperCase();
 
-                // Carrega os dados EXCLUSIVOS deste cliente
                 carregarDadosDoCliente(email);
-
                 document.getElementById('auth-loader').style.display = 'none';
 
-                // Interatividade do Menu
-                document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
+                // Lógica de Cliques no Menu Lateral
+                document.querySelectorAll('.menu-item').forEach(item => {
                     item.addEventListener('click', () => {
-                        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-                        item.classList.add('active');
-                        renderDashboard(item.getAttribute('data-tab'));
+                        // Se for uma aba real com dados (visao, dre, rh)
+                        if(item.hasAttribute('data-tab')) {
+                            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                            item.classList.add('active');
+                            renderDashboard(item.getAttribute('data-tab'));
+                        }
+                        // Os botões sem data-tab (ex: Fluxo de Caixa, NFs) acionam apenas o simularAcao que está no HTML (onclick)
                     });
                 });
 
