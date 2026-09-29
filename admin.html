@@ -8,12 +8,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        :root { --bg-dark: #030712; --bg-surface: #111827; --primary: #3b82f6; /* Azul Admin */ --danger: #ef4444; --success: #059669; --text-main: #f9fafb; --text-muted: #9ca3af; --border: rgba(255, 255, 255, 0.05); }
+        :root { --bg-dark: #030712; --bg-surface: #111827; --primary: #3b82f6; --danger: #ef4444; --success: #059669; --text-main: #f9fafb; --text-muted: #9ca3af; --border: rgba(255, 255, 255, 0.05); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
         .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100000; display: flex; flex-direction: column; gap: 10px; }
-        .custom-toast { background: var(--surface); border: 1px solid var(--primary); color: white; padding: 15px 20px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; }
+        .custom-toast { background: var(--bg-surface); border: 1px solid var(--primary); color: white; padding: 15px 20px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; }
         .custom-toast.show { transform: translateX(0); }
 
         .sidebar { width: 280px; background-color: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; transition: 0.3s;}
@@ -44,7 +44,6 @@
         .panel-header h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 5px;}
         .panel-header p { font-size: 0.85rem; color: var(--text-muted); }
 
-        /* TABELA DE CLIENTES (CRM) */
         table { width: 100%; border-collapse: collapse; margin-top: 10px;}
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
         th { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;}
@@ -54,13 +53,23 @@
         .btn-acessar:hover { background: var(--primary); color: white;}
         .status-badge { background: rgba(5, 150, 105, 0.1); color: var(--success); padding: 4px 10px; border-radius: 50px; font-size: 0.75rem;}
 
+        /* MODAL ADMIN */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .modal-overlay.ativo { opacity: 1; visibility: visible; }
+        .modal-box { background: var(--bg-surface); width: 90%; max-width: 480px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.8); padding: 30px; transform: translateY(30px); transition: 0.4s;}
+        .modal-overlay.ativo .modal-box { transform: translateY(0); }
+
         #auth-loader { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 800; letter-spacing: 2px; text-align: center;}
         .spinner { width: 50px; height: 50px; border: 4px solid rgba(59, 130, 246, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;}
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <!-- MODAL DE NOVO CLIENTE (USO EXCLUSIVO DO ADMIN) -->
+
+    <div id="toast-container" class="toast-container"></div>
+    <div id="auth-loader"><div class="spinner"></div><p>A CARREGAR PAINEL MASTER...</p></div>
+
+    <!-- MODAL DE PROVISIONAMENTO DE NOVO CLIENTE -->
     <div id="modal-novo-cliente" class="modal-overlay">
         <div class="modal-box" style="border-top: 5px solid var(--primary);">
             <button onclick="fecharModalNovoCliente()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -83,9 +92,6 @@
         </div>
     </div>
 
-    <div id="toast-container" class="toast-container"></div>
-    <div id="auth-loader"><div class="spinner"></div><p>A CARREGAR PAINEL MASTER...</p></div>
-
     <aside class="sidebar">
         <div class="logo-area"><h2>PRISMA <span style="color:var(--primary);">MASTER</span></h2></div>
         <nav class="menu-nav">
@@ -95,7 +101,7 @@
             
             <span class="menu-section">Operação Interna</span>
             <a class="menu-item" onclick="simularAcao('A analisar rentabilidade dos contratos...')">💰 Faturamento Prisma</a>
-            <a class="menu-item" onclick="simularAcao('A aceder ao painel de Analistas Financeiros...')">👔 Equipa de Analistas</a>
+            <a class="menu-item" onclick="simularAcao('A aceder ao painel de Analistas Financeiros...')">👔 Equipe de Analistas</a>
         </nav>
         <div class="user-profile">
             <div class="avatar" id="user-avatar">A</div>
@@ -142,9 +148,7 @@
                                 <th>Ação Master</th>
                             </tr>
                         </thead>
-                        <tbody id="lista-clientes">
-                            <!-- Preenchido via JavaScript -->
-                        </tbody>
+                        <tbody id="lista-clientes"></tbody>
                     </table>
                 </div>
             </div>
@@ -164,22 +168,44 @@
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
         };
 
-        // A MAGIA DO ADMIN: Vasculhar o navegador em busca de todos os clientes registados
+        const modalAdmin = document.getElementById('modal-novo-cliente');
+        window.abrirModalNovoCliente = () => modalAdmin.classList.add('ativo');
+        window.fecharModalNovoCliente = () => modalAdmin.classList.remove('ativo');
+
+        window.salvarNovoCliente = () => {
+            const email = document.getElementById('admin-cad-email').value;
+            const nome = document.getElementById('admin-cad-nome').value;
+            const cnpj = document.getElementById('admin-cad-cnpj').value;
+
+            if(!email || !nome || !cnpj) { simularAcao("Preencha todos os campos."); return; }
+
+            localStorage.setItem('prisma_vinculo_' + email, JSON.stringify({ nome: nome, cnpj: cnpj }));
+            
+            const cofreInicial = {
+                saldo: 0, faturamento: 0, custos: 0, impostos: 0,
+                rh_headcount: 0, rh_folha: 0, rh_beneficios: 0, transacoes: []
+            };
+            localStorage.setItem('prisma_cofre_' + cnpj, JSON.stringify(cofreInicial));
+
+            simularAcao(`Cofre criado com sucesso para ${cnpj}! O cliente já pode aceder.`);
+            fecharModalNovoCliente();
+            carregarTodosOsClientes();
+            
+            document.getElementById('admin-cad-email').value = '';
+            document.getElementById('admin-cad-nome').value = '';
+            document.getElementById('admin-cad-cnpj').value = '';
+        };
+
         function carregarTodosOsClientes() {
             const clientes = [];
             let volumeTotal = 0;
             let faturamentoGlobal = 0;
 
-            // Percorre toda a base de dados (localStorage)
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                
-                // Encontra os vínculos (E-mail -> CNPJ)
                 if (key.startsWith('prisma_vinculo_')) {
                     const email = key.replace('prisma_vinculo_', '');
                     const vinculo = JSON.parse(localStorage.getItem(key));
-                    
-                    // Vai buscar o cofre desse CNPJ específico
                     const cofreKey = 'prisma_cofre_' + vinculo.cnpj;
                     const cofreData = JSON.parse(localStorage.getItem(cofreKey));
 
@@ -191,24 +217,21 @@
                             saldo: cofreData.saldo,
                             faturamento: cofreData.faturamento
                         });
-
                         volumeTotal += cofreData.saldo;
                         faturamentoGlobal += cofreData.faturamento;
                     }
                 }
             }
 
-            // Atualiza KPIs
             document.getElementById('kpi-clientes').innerText = clientes.length;
             document.getElementById('kpi-volume').innerText = formatoBRL(volumeTotal);
             document.getElementById('kpi-faturamento').innerText = formatoBRL(faturamentoGlobal);
 
-            // Monta a Tabela
             const tbody = document.getElementById('lista-clientes');
             tbody.innerHTML = '';
 
             if (clientes.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding: 30px;">Nenhum cliente registado ainda. Faça login como cliente primeiro para criar um cofre.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding: 30px;">Nenhum cliente registado ainda. Clique em "+ Novo Cliente" acima para provisionar o primeiro cofre.</td></tr>`;
                 return;
             }
 
@@ -242,12 +265,9 @@
                 if (error || !data.session) { window.location.replace('index.html'); return; }
 
                 const email = data.session.user.email;
-                
-                // MODO ADMIN: O visual é azul e focado na gestão!
                 document.getElementById('user-name').innerText = email;
                 document.getElementById('auth-loader').style.display = 'none';
 
-                // Varre e monta a lista de todos os clientes cadastrados
                 carregarTodosOsClientes();
 
                 window.fazerLogout = async () => { await supabase.auth.signOut(); window.location.replace('index.html'); };
