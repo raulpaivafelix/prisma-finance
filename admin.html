@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Admin | Prisma OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root { --bg-dark: #030712; --bg-surface: #111827; --primary: #3b82f6; /* Azul Admin */ --danger: #ef4444; --success: #059669; --text-main: #f9fafb; --text-muted: #9ca3af; --border: rgba(255, 255, 255, 0.05); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100000; display: flex; flex-direction: column; gap: 10px; }
+        .custom-toast { background: var(--surface); border: 1px solid var(--primary); color: white; padding: 15px 20px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; }
+        .custom-toast.show { transform: translateX(0); }
+
+        .sidebar { width: 280px; background-color: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; transition: 0.3s;}
+        .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border); font-size: 1.2rem; font-weight: 800; color: white;}
+        .menu-nav { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow-y: auto;}
+        .menu-section { color: var(--text-muted); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin: 15px 0 5px 15px; letter-spacing: 1px;}
+        .menu-item { display: flex; align-items: center; padding: 12px 15px; color: var(--text-muted); text-decoration: none; border-radius: 8px; font-weight: 600; transition: 0.3s; cursor: pointer; font-size: 0.95rem;}
+        .menu-item:hover, .menu-item.active { background-color: rgba(59, 130, 246, 0.1); color: var(--primary); border-left: 4px solid var(--primary); }
+        
+        .user-profile { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border); margin-top: auto; border-top: 2px solid var(--primary);}
+        .avatar { width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; }
+        .user-info p { font-size: 0.9rem; font-weight: 600; line-height: 1.2;}
+        .user-info span { font-size: 0.75rem; color: var(--primary); font-weight: 800; text-transform: uppercase;}
+        .btn-logout { background: none; border: none; color: var(--danger); cursor: pointer; font-weight: 600; margin-left: auto; }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 40px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;}
+        .header-title h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; color: var(--primary);}
+        .header-title p { color: var(--text-muted); font-size: 1rem; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .kpi-card { background: var(--bg-surface); padding: 25px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: 0.4s;}
+        .kpi-title { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between;}
+        .kpi-value { font-size: 2rem; font-weight: 800; color: white; margin-bottom: 5px;}
+        
+        .panel { background: var(--bg-surface); padding: 30px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
+        .panel-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;}
+        .panel-header h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 5px;}
+        .panel-header p { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* TABELA DE CLIENTES (CRM) */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px;}
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;}
+        td { font-size: 0.95rem; font-weight: 600; }
+        .td-cnpj { color: var(--text-muted); font-size: 0.85rem; font-family: monospace;}
+        .btn-acessar { background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s;}
+        .btn-acessar:hover { background: var(--primary); color: white;}
+        .status-badge { background: rgba(5, 150, 105, 0.1); color: var(--success); padding: 4px 10px; border-radius: 50px; font-size: 0.75rem;}
+
+        #auth-loader { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 800; letter-spacing: 2px; text-align: center;}
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(59, 130, 246, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;}
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container" class="toast-container"></div>
+    <div id="auth-loader"><div class="spinner"></div><p>A CARREGAR PAINEL MASTER...</p></div>
+
+    <aside class="sidebar">
+        <div class="logo-area"><h2>PRISMA <span style="color:var(--primary);">MASTER</span></h2></div>
+        <nav class="menu-nav">
+            <span class="menu-section">Gestão Geral</span>
+            <a class="menu-item active">📈 Visão Sistémica</a>
+            <a class="menu-item" onclick="simularAcao('A redirecionar para CRM...')">👥 Carteira de Clientes</a>
+            
+            <span class="menu-section">Operação Interna</span>
+            <a class="menu-item" onclick="simularAcao('A analisar rentabilidade dos contratos...')">💰 Faturamento Prisma</a>
+            <a class="menu-item" onclick="simularAcao('A aceder ao painel de Analistas Financeiros...')">👔 Equipa de Analistas</a>
+        </nav>
+        <div class="user-profile">
+            <div class="avatar" id="user-avatar">A</div>
+            <div class="user-info">
+                <p id="user-name">Administrador</p>
+                <span>Acesso Master (Deus)</span>
+            </div>
+            <button class="btn-logout" onclick="window.fazerLogout()">Sair</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="header-title">
+                <h1>Painel de Comando Central</h1>
+                <p>Monitorização de todos os CNPJs, saldos e clientes sob gestão da Prisma Finance.</p>
+            </div>
+            <button class="btn-acessar" style="background:var(--primary); color:white;" onclick="simularAcao('Integração com Receita Federal para novos cadastros ativa.')">+ Novo Cliente</button>
+        </header>
+
+        <section class="kpi-grid">
+            <div class="kpi-card"><p class="kpi-title">Total de Clientes</p><h2 class="kpi-value" id="kpi-clientes">0</h2><span class="kpi-subtitle" style="color:var(--primary); background:rgba(59,130,246,0.1);">Empresas Ativas</span></div>
+            <div class="kpi-card"><p class="kpi-title">Volume sob Gestão (Saldo)</p><h2 class="kpi-value" id="kpi-volume">R$ 0,00</h2><span class="kpi-subtitle" style="color:var(--success); background:rgba(5,150,105,0.1);">Total em Contas</span></div>
+            <div class="kpi-card"><p class="kpi-title">Receita Total de Clientes</p><h2 class="kpi-value" id="kpi-faturamento">R$ 0,00</h2><span class="kpi-subtitle" style="color:var(--text-muted); background:rgba(255,255,255,0.05);">Faturamento Global</span></div>
+        </section>
+
+        <section class="dashboard-grid" style="grid-template-columns: 1fr;">
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>Carteira de Clientes (CRM)</h3>
+                        <p>Lista de todos os CNPJs com Cofres Digitais ativos no sistema.</p>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Empresa / E-mail Responsável</th>
+                                <th>CNPJ</th>
+                                <th>Status</th>
+                                <th>Saldo em Conta</th>
+                                <th>Faturamento (Mês)</th>
+                                <th>Ação Master</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-clientes">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+
+        window.simularAcao = (mensagem) => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.innerHTML = `<span style="margin-right:8px;">⚡</span> ${mensagem}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
+        };
+
+        // A MAGIA DO ADMIN: Vasculhar o navegador em busca de todos os clientes registados
+        function carregarTodosOsClientes() {
+            const clientes = [];
+            let volumeTotal = 0;
+            let faturamentoGlobal = 0;
+
+            // Percorre toda a base de dados (localStorage)
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                
+                // Encontra os vínculos (E-mail -> CNPJ)
+                if (key.startsWith('prisma_vinculo_')) {
+                    const email = key.replace('prisma_vinculo_', '');
+                    const vinculo = JSON.parse(localStorage.getItem(key));
+                    
+                    // Vai buscar o cofre desse CNPJ específico
+                    const cofreKey = 'prisma_cofre_' + vinculo.cnpj;
+                    const cofreData = JSON.parse(localStorage.getItem(cofreKey));
+
+                    if (cofreData) {
+                        clientes.push({
+                            email: email,
+                            nome: vinculo.nome,
+                            cnpj: vinculo.cnpj,
+                            saldo: cofreData.saldo,
+                            faturamento: cofreData.faturamento
+                        });
+
+                        volumeTotal += cofreData.saldo;
+                        faturamentoGlobal += cofreData.faturamento;
+                    }
+                }
+            }
+
+            // Atualiza KPIs
+            document.getElementById('kpi-clientes').innerText = clientes.length;
+            document.getElementById('kpi-volume').innerText = formatoBRL(volumeTotal);
+            document.getElementById('kpi-faturamento').innerText = formatoBRL(faturamentoGlobal);
+
+            // Monta a Tabela
+            const tbody = document.getElementById('lista-clientes');
+            tbody.innerHTML = '';
+
+            if (clientes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding: 30px;">Nenhum cliente registado ainda. Faça login como cliente primeiro para criar um cofre.</td></tr>`;
+                return;
+            }
+
+            clientes.forEach(cliente => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>
+                            <div style="font-weight: 800; color: white;">${cliente.nome}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">${cliente.email}</div>
+                        </td>
+                        <td class="td-cnpj">${cliente.cnpj}</td>
+                        <td><span class="status-badge">Ativo / Seguro</span></td>
+                        <td style="color: var(--success);">${formatoBRL(cliente.saldo)}</td>
+                        <td>${formatoBRL(cliente.faturamento)}</td>
+                        <td>
+                            <button class="btn-acessar" onclick="simularAcao('A auditar o Cofre Digital de ${cliente.cnpj}...')">Inspecionar Cofre</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                if (!window.supabase) throw new Error("API Offline");
+                const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
+                const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+                const { data, error } = await supabase.auth.getSession();
+                if (error || !data.session) { window.location.replace('index.html'); return; }
+
+                const email = data.session.user.email;
+                
+                // MODO ADMIN: O visual é azul e focado na gestão!
+                document.getElementById('user-name').innerText = email;
+                document.getElementById('auth-loader').style.display = 'none';
+
+                // Varre e monta a lista de todos os clientes cadastrados
+                carregarTodosOsClientes();
+
+                window.fazerLogout = async () => { await supabase.auth.signOut(); window.location.replace('index.html'); };
+
+            } catch (err) {
+                window.location.replace('index.html');
+            }
+        });
+    </script>
+</body>
+</html>
