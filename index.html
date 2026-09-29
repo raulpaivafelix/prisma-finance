@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prisma Finance | Sistema Operacional Financeiro</title>
-    <meta name="description" content="A Prisma Finance conecta os seus bancos e automatiza rotinas financeiras.">
+    <title>Prisma Finance | O Sistema Operacional Financeiro e RH</title>
+    <meta name="description" content="A Prisma Finance conecta os seus bancos, automatiza rotinas financeiras e gere o seu RH.">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
+    <!-- NOTIFICAÇÕES TOAST (Elegância nos botões) -->
+    <div id="toast-container" class="toast-container"></div>
 
     <!-- PRELOADER -->
     <div id="preloader">
         <div class="preloader-content">
             <img src="assets/prisma-brasao.svg" alt="Prisma Finance" class="preloader-logo">
             <div class="loading-bar"><div class="loading-progress"></div></div>
-            <p>Carregando Workspace...</p>
+            <p>Carregando Ecossistema Criptografado...</p>
         </div>
     </div>
 
@@ -26,80 +29,103 @@
             <span>PRISMA FINANCE</span>
         </div>
         <nav class="nav-links">
-            <a href="#beneficios">Como Ajuda</a>
-            <a href="#tecnologia">Tecnologia</a>
+            <a href="#solucoes">Soluções & RH</a>
+            <a href="#tecnologia">Segurança</a>
             <a href="#roi">Calculadora</a>
             <a href="#planos">Planos</a>
         </nav>
         <div class="header-actions">
             <button class="btn-login" onclick="window.abrirLogin()">Acesso Cliente</button>
-            <button class="btn-nav aura-glow-btn">Diagnóstico Grátis</button>
+            <button class="btn-nav aura-glow-btn" onclick="window.simularAcao('A redirecionar para a agenda do nosso Especialista...')">Diagnóstico Grátis</button>
         </div>
     </header>
 
     <main>
         <!-- HERO -->
         <section class="hero mesh-bg">
-            <div class="hero-badge">Automação financeira BPO</div>
-            <h1 class="gradient-text">O seu financeiro no piloto automático. O seu foco no crescimento.</h1>
-            <p class="hero-subtext">Conectamos os seus bancos e entregamos a visão de um CFO em tempo real, para que possa focar-se no que realmente importa.</p>
-            <button onclick="window.abrirLogin()" class="btn-primary">Aceder ao Cofre Digital →</button>
+            <div class="hero-badge">🔒 100% Seguro | Automação BPO & RH</div>
+            <h1 class="gradient-text">O seu financeiro e RH no piloto automático. O seu foco no crescimento.</h1>
+            <p class="hero-subtext">Não somos apenas um software. Somos o seu departamento corporativo completo. Conectamos bancos, gerimos a sua equipa, processamos faturas com IA e entregamos a visão de um CEO em tempo real.</p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="window.abrirLogin()" class="btn-primary">Aceder ao Cofre Digital →</button>
+                <button onclick="window.simularAcao('A iniciar chat seguro no WhatsApp Oficial...')" class="btn-secondary" style="width: auto; padding: 16px 32px;">Agendar Demonstração</button>
+            </div>
         </section>
 
-        <!-- CARROSSEL DE CONFIANÇA -->
-        <div class="trust-carousel">
-            <div class="carousel-track integration-track">
-                <span>✦ Integração Nubank</span><span>✦ Banco do Brasil</span><span>✦ Itaú</span><span>✦ Bradesco</span><span>✦ Omie ERP</span><span>✦ ContaAzul</span><span>✦ Bling</span>
-                <span>✦ Integração Nubank</span><span>✦ Banco do Brasil</span><span>✦ Itaú</span><span>✦ Bradesco</span><span>✦ Omie ERP</span><span>✦ ContaAzul</span><span>✦ Bling</span>
-            </div>
-        </div>
-
-        <!-- COMO AJUDA NO DIA A DIA -->
-        <section id="beneficios" class="section-padding">
+        <!-- O QUE OFERECEMOS (ECOSSISTEMA EXPANDIDO) -->
+        <section id="solucoes" class="section-padding">
             <div class="section-header">
-                <h2>Como a Prisma revoluciona o seu dia a dia</h2>
-                <p>Esqueça as planilhas manuais e as horas perdidas a conciliar extratos.</p>
+                <h2>Ecossistema Corporativo Completo</h2>
+                <p>Muito mais do que BPO. Uma plataforma robusta desenhada para escalar o seu financeiro e os seus recursos humanos.</p>
             </div>
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div class="b-icon">🤖</div>
-                    <h3>Inteligência Artificial</h3>
-                    <p>Basta anexar a fatura. A nossa IA lê o fornecedor, o valor e a data de vencimento e agenda o pagamento automaticamente.</p>
+            <div class="solutions-grid">
+                <!-- Financeiro -->
+                <div class="solution-card">
+                    <div class="s-icon">🏦</div>
+                    <h3>Conciliação Bancária IA</h3>
+                    <p>Cruzamos os seus extratos bancários com as notas fiscais de forma automática e segura em milissegundos.</p>
                 </div>
-                <div class="benefit-card highlight-card aura-glow">
-                    <div class="b-icon">📊</div>
-                    <h3>DRE em Tempo Real</h3>
-                    <p>Saiba se a sua empresa deu lucro ou prejuízo este mês com um painel executivo atualizado ao milissegundo.</p>
+                <div class="solution-card">
+                    <div class="s-icon">🧾</div>
+                    <h3>Contas (Pagar/Receber)</h3>
+                    <p>O sistema extrai os dados via OCR, agenda no seu banco e notifica-o apenas para aprovar.</p>
                 </div>
-                <div class="benefit-card">
-                    <div class="b-icon">🧾</div>
-                    <h3>Emissão de Notas Fiscais</h3>
-                    <p>Emitimos as suas notas fiscais de serviço e enviamos diretamente para os seus clientes de forma 100% automatizada.</p>
+                <div class="solution-card">
+                    <div class="s-icon">📈</div>
+                    <h3>DRE & Dashboards</h3>
+                    <p>Tenha gráficos de rentabilidade, lucro operacional e fluxo de caixa projetado atualizados ao vivo.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="s-icon">🛡️</div>
+                    <h3>Gestão de Inadimplência</h3>
+                    <p>Régua de cobrança automática com envio de lembretes amigáveis por WhatsApp e E-mail.</p>
+                </div>
+                
+                <!-- Novos: RH e Contabilidade -->
+                <div class="solution-card highlight-card aura-glow">
+                    <div class="s-icon">👥</div>
+                    <h3>Consultoria de RH</h3>
+                    <p>Recrutamento estratégico, gestão de talentos, avaliações de desempenho e retenção da sua equipa.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="s-icon">💼</div>
+                    <h3>Departamento Pessoal</h3>
+                    <p>Processamento de folhas de pagamento, admissões, demissões, férias e gestão de benefícios.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="s-icon">📝</div>
+                    <h3>Emissão de NFs</h3>
+                    <p>Ligação direta com as prefeituras e SEFAZ. Notas emitidas automaticamente no fecho do serviço.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="s-icon">🤝</div>
+                    <h3>Virtual CFO</h3>
+                    <p>O nosso time analisa os seus dados financeiros e de RH e realiza reuniões mensais de estratégia.</p>
                 </div>
             </div>
         </section>
 
-        <!-- TECNOLOGIA QUE SE TOCA -->
+        <!-- SEGURANÇA E TECNOLOGIA -->
         <section id="tecnologia" class="section-padding bg-alt">
             <div class="deep-feature">
                 <div class="feature-text">
-                    <h2 style="font-size: 2.2rem; margin-bottom: 20px;">O que a Prisma Oferece</h2>
-                    <p style="margin-bottom: 20px; color: var(--text-muted);">A experiência Prisma vai além do ecrã. Tenha o controlo financeiro absoluto nas suas mãos.</p>
+                    <h2 style="font-size: 2.2rem; margin-bottom: 20px;">Segurança de Nível Bancário</h2>
+                    <p style="margin-bottom: 20px; color: var(--text-muted);">Os dados financeiros e os dados dos seus funcionários exigem a blindagem máxima. O Prisma OS é impenetrável.</p>
                     <ul class="check-list">
-                        <li>✔ Conciliação Bancária em milissegundos</li>
-                        <li>✔ Agendamento de Contas a Pagar</li>
-                        <li>✔ Reuniões Mensais de Consultoria C-Level</li>
-                        <li>✔ Cartão Corporativo Inteligente (Sincronizado com o DRE)</li>
+                        <li>✔ Criptografia de Ponta-a-Ponta (AES-256)</li>
+                        <li>✔ Infraestrutura em Nuvem (AWS & Supabase)</li>
+                        <li>✔ Total conformidade com a LGPD</li>
+                        <li>✔ Autenticação Biométrica e RLS (Row Level Security)</li>
                     </ul>
                 </div>
                 <div class="hologram-wrapper">
                     <div class="prisma-card">
-                        <div class="card-logo">PRISMA</div>
-                        <div class="card-chip"></div>
-                        <div class="card-number">•••• •••• •••• 2026</div>
+                        <div class="card-logo">PRISMA SAFE</div>
+                        <div class="card-chip" style="background: linear-gradient(135deg, #4ade80, #166534);"></div>
+                        <div class="card-number" style="font-size:1.1rem">SECURE VAULT ACTIVE</div>
                         <div class="card-bottom">
-                            <span>CEO DA EMPRESA</span>
-                            <span class="card-type">CORPORATE</span>
+                            <span>PROTEÇÃO DE DADOS</span>
+                            <span class="card-type">256-BIT</span>
                         </div>
                     </div>
                 </div>
@@ -110,7 +136,7 @@
         <section id="roi" class="section-padding">
             <div class="section-header">
                 <h2>Calcule o seu Retorno (ROI)</h2>
-                <p>Descubra quanto tempo e dinheiro a Prisma poupa à sua empresa todos os meses.</p>
+                <p>Veja quanto tempo e dinheiro devolvemos à sua empresa ao automatizar o Financeiro e o RH.</p>
             </div>
             <div class="roi-container aura-glow">
                 <div class="roi-content">
@@ -124,22 +150,22 @@
                     <div class="roi-results">
                         <div class="roi-box">
                             <h4 style="color: var(--text-muted); font-size: 0.9rem;">Tempo Poupado</h4>
-                            <h3 id="tempo-poupado" style="font-size: 2.2rem;">25h / mês</h3>
+                            <h3 id="tempo-poupado" style="font-size: 2.2rem;">35h / mês</h3>
                         </div>
                         <div class="roi-box highlight">
                             <h4 style="color: var(--text-muted); font-size: 0.9rem;">Economia Estimada</h4>
-                            <h3 id="dinheiro-poupado" style="font-size: 2.2rem;">R$ 2.250</h3>
+                            <h3 id="dinheiro-poupado" style="font-size: 2.2rem;">R$ 3.250</h3>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- VALORES E SERVIÇOS -->
+        <!-- PLANOS (4 NÍVEIS) -->
         <section id="planos" class="section-padding bg-alt">
             <div class="section-header">
-                <h2>Valores de cada Serviço</h2>
-                <p>Escolha o nível de gestão financeira que a sua empresa precisa para escalar.</p>
+                <h2>Planos e Investimento</h2>
+                <p>Escolha a robustez que a sua operação exige hoje, e faça o upgrade conforme cresce.</p>
                 
                 <div class="pricing-toggle">
                     <span id="label-mensal" class="active">Mensal</span>
@@ -149,54 +175,88 @@
             </div>
 
             <div class="pricing-grid">
+                <!-- Plano 1 -->
                 <div class="pricing-card">
                     <h3>Essential</h3>
-                    <p class="plan-desc">Para empresas a iniciar a organização.</p>
+                    <p class="plan-desc">O básico financeiro perfeito.</p>
                     <div class="price">R$ <span class="price-val" data-mensal="597" data-anual="477">597</span><span class="period">/mês</span></div>
                     <ul class="features-list">
-                        <li>✔ Acesso ao Prisma App</li>
-                        <li>✔ Conciliação Bancária Básico</li>
+                        <li>✔ Conciliação Bancária</li>
                         <li>✔ Dashboards Financeiros</li>
+                        <li>✔ Contas a Pagar/Receber IA</li>
                     </ul>
-                    <button onclick="window.abrirLogin()" class="btn-secondary">Selecionar</button>
+                    <button onclick="window.simularAcao('Processando assinatura Essential...')" class="btn-secondary">Selecionar</button>
                 </div>
 
+                <!-- Plano 2 -->
                 <div class="pricing-card featured aura-glow">
                     <div class="popular-badge">Mais Escolhido</div>
                     <div class="pricing-content-inner">
                         <h3>Advanced</h3>
-                        <p class="plan-desc">A solução BPO Financeira completa.</p>
+                        <p class="plan-desc">BPO Financeiro completo.</p>
                         <div class="price">R$ <span class="price-val" data-mensal="997" data-anual="797">997</span><span class="period">/mês</span></div>
                         <ul class="features-list">
                             <li>✔ Tudo do Essential</li>
                             <li>✔ Emissão de NFs Automática</li>
-                            <li>✔ Contas a Pagar e Receber</li>
+                            <li>✔ Régua de Cobrança (WhatsApp)</li>
                             <li>✔ Reunião de Resultados Mensal</li>
                         </ul>
-                        <button onclick="window.abrirLogin()" class="btn-primary" style="width: 100%;">Automatizar Empresa</button>
+                        <button onclick="window.simularAcao('Processando assinatura Advanced...')" class="btn-primary" style="width: 100%;">Automatizar</button>
                     </div>
                 </div>
 
-                <div class="pricing-card">
-                    <h3>Virtual CFO</h3>
-                    <p class="plan-desc">Diretoria financeira para grandes operações.</p>
-                    <div class="price" style="font-size: 1.6rem; padding: 12px 0;">Sob Consulta</div>
+                <!-- Plano 3 (NOVO - RH) -->
+                <div class="pricing-card" style="border-color: rgba(5,150,105,0.4);">
+                    <div style="color: var(--primary); font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase;">⭐ Financeiro + RH</div>
+                    <h3>Premium</h3>
+                    <p class="plan-desc">Gestão total da empresa.</p>
+                    <div class="price">R$ <span class="price-val" data-mensal="1497" data-anual="1197">1497</span><span class="period">/mês</span></div>
                     <ul class="features-list">
                         <li>✔ Tudo do Advanced</li>
+                        <li>✔ Consultoria de RH (Recrutamento)</li>
+                        <li>✔ Departamento Pessoal (Folha)</li>
+                        <li>✔ Gestão de Benefícios</li>
+                    </ul>
+                    <button onclick="window.simularAcao('Processando assinatura Premium (RH inclusivo)...')" class="btn-secondary" style="border-color: var(--primary);">Selecionar Premium</button>
+                </div>
+
+                <!-- Plano 4 -->
+                <div class="pricing-card">
+                    <h3>Virtual CFO</h3>
+                    <p class="plan-desc">Para grandes operações.</p>
+                    <div class="price" style="font-size: 1.6rem; padding: 12px 0;">Sob Consulta</div>
+                    <ul class="features-list">
+                        <li>✔ Tudo do Premium</li>
                         <li>✔ Planeamento Tributário</li>
                         <li>✔ Gestão Multi-CNPJ</li>
-                        <li>✔ Prisma Black Card</li>
+                        <li>✔ Analista Dedicado</li>
                     </ul>
-                    <button onclick="window.abrirLogin()" class="btn-secondary">Falar com Consultor</button>
+                    <button onclick="window.simularAcao('A redirecionar para a nossa equipa C-Level...')" class="btn-secondary">Falar com Especialista</button>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- RODAPÉ -->
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2026 Prisma Finance. Todos os direitos reservados. Sistema AES-256 Encrypted.</p>
+    <!-- MEGA FOOTER CORPORATIVO -->
+    <footer class="mega-footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo" style="margin-bottom: 20px;">
+                    <img src="assets/prisma-brasao.svg" class="brand-crest grayscale" alt="Prisma Finance">
+                    <span>PRISMA FINANCE</span>
+                </div>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">A inteligência corporativa que a sua empresa merece. BPO Financeiro e Gestão de Recursos Humanos blindados com tecnologia de ponta.</p>
+                <div class="security-badges">
+                    <span class="badge-mini">🔒 AES-256</span>
+                    <span class="badge-mini">🛡️ LGPD Compliant</span>
+                    <span class="badge-mini">☁️ AWS Cloud</span>
+                </div>
+            </div>
+            <!-- Links do Footer mantidos iguais à versão anterior -->
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Prisma Finance Technology. Todos os direitos reservados.</p>
+            <div class="system-status"><span class="status-dot"></span> Sistemas Seguros e Operacionais</div>
         </div>
     </footer>
 
@@ -205,27 +265,16 @@
         <div class="modal-box aura-glow">
             <div class="diag-inner-content">
                 <button onclick="window.fecharLogin()" class="btn-fechar">&times;</button>
-                
                 <div id="login-scanner" class="scanner-screen active">
-                    <div class="fingerprint-icon">
-                        <div class="laser-line"></div>
-                        <img src="assets/prisma-brasao.svg" width="50" style="opacity: 0.5;">
-                    </div>
-                    <h3 style="margin-top: 20px;">Autenticação Biométrica</h3>
-                    <p style="color: var(--primary); font-size: 0.85rem;" id="scan-text">Aguardando leitura...</p>
+                    <div class="fingerprint-icon"><div class="laser-line"></div><img src="assets/prisma-brasao.svg" width="50" style="opacity: 0.5;"></div>
+                    <h3 style="margin-top: 20px;">Autenticação Segura</h3>
+                    <p style="color: var(--primary); font-size: 0.85rem;" id="scan-text">Aguardando chave...</p>
                 </div>
-
                 <form id="login-form" class="login-form" style="display: none;">
                     <h2 style="margin-bottom: 25px; text-align: center;">Cofre Digital</h2>
-                    <div class="input-group">
-                        <label>E-mail Corporativo</label>
-                        <input type="email" placeholder="ceo@empresa.com" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Senha Privada</label>
-                        <input type="password" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" class="btn-primary" style="width: 100%;">Entrar no Sistema</button>
+                    <div class="input-group"><label>E-mail Corporativo</label><input type="email" placeholder="ceo@empresa.com" required></div>
+                    <div class="input-group"><label>Senha Privada</label><input type="password" placeholder="••••••••" required></div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Aceder aos Dados Seguros</button>
                 </form>
             </div>
         </div>
