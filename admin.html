@@ -18,6 +18,10 @@
         .custom-toast.show { transform: translateX(0); }
         .custom-toast.error { border-color: var(--danger); color: #fca5a5; }
 
+        /* TELA DE LOGIN MASTER */
+        #admin-login-screen { position: fixed; inset: 0; background: var(--bg-dark); z-index: 200000; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: 0.5s; }
+        .login-box { background: var(--bg-surface); padding: 40px; border-radius: 16px; border: 1px solid rgba(59, 130, 246, 0.3); text-align: center; width: 90%; max-width: 420px; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
+
         .sidebar { width: 280px; background-color: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; transition: 0.3s;}
         .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border); font-size: 1.2rem; font-weight: 800; color: white;}
         .menu-nav { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow-y: auto;}
@@ -72,48 +76,54 @@
         input, select { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: white; outline: none; font-family: inherit;}
         input:focus, select:focus { border-color: var(--primary); }
 
-        #auth-loader { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 800; letter-spacing: 2px; text-align: center;}
-        .spinner { width: 50px; height: 50px; border: 4px solid rgba(59, 130, 246, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;}
-        .spinner-small { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px;}
-        @keyframes spin { to { transform: rotate(360deg); } }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <div id="toast-container" class="toast-container"></div>
-    <div id="auth-loader"><div class="spinner"></div><p>A CARREGAR PAINEL MASTER...</p></div>
 
-    <!-- MODAIS -->
+    <!-- TELA DE LOGIN MASTER ATUALIZADA -->
+    <div id="admin-login-screen">
+        <img src="assets/prisma-brasao.svg" width="60" style="margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));">
+        <div class="login-box">
+            <h2 style="color: white; margin-bottom: 5px;">Acesso Restrito</h2>
+            <p style="color: var(--primary); font-size: 0.85rem; margin-bottom: 25px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Master Admin</p>
+            
+            <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; text-align: left;">E-mail Corporativo</label>
+            <input type="email" id="master-email" style="text-align: left; font-size: 1rem; margin-bottom: 15px;" placeholder="ceo@prismafinance.com.br" onkeypress="if(event.key === 'Enter') document.getElementById('master-pwd').focus()">
 
-    <!-- 1. MODAL NOVO CLIENTE -->
+            <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; text-align: left;">Chave de Acesso (Senha)</label>
+            <input type="password" id="master-pwd" style="text-align: center; font-size: 1.2rem; letter-spacing: 5px; margin-bottom: 25px;" placeholder="••••••••" onkeypress="if(event.key === 'Enter') verificarMaster()">
+            
+            <button onclick="verificarMaster()" style="background: var(--primary); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 1rem; transition: 0.3s;">Autenticar Sistema</button>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 30px;">Prisma OS • Acesso Criptografado</p>
+    </div>
+
+    <!-- MODAIS DO SISTEMA -->
     <div id="modal-novo-cliente" class="modal-overlay">
         <div class="modal-box" style="border-top: 5px solid var(--primary);">
             <button onclick="fecharModalNovoCliente()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
             <h2 style="margin-bottom: 20px;">Provisionar Novo Cofre</h2>
             <div style="margin-bottom: 15px;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">E-mail do Gestor Principal (CEO)</label><input type="email" id="admin-cad-email" placeholder="ceo@cliente.com.br"></div>
             <div style="margin-bottom: 15px;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Nome da Empresa</label><input type="text" id="admin-cad-nome" placeholder="Empresa LTDA"></div>
-            
             <div style="display: flex; gap: 15px; margin-bottom: 15px;">
                 <div style="flex: 2;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">CNPJ</label><input type="text" id="admin-cad-cnpj" placeholder="00.000.000/0001-00"></div>
                 <div style="flex: 1;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Usuários (Máx 15)</label><input type="number" id="admin-cad-limite" min="1" max="15" value="5" style="text-align: center;"></div>
             </div>
-
             <div style="margin-bottom: 25px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: white; font-size: 0.85rem; font-weight: 600;"><input type="checkbox" id="admin-cad-demo" checked style="width: 18px; height: 18px; accent-color: var(--primary);"> Preencher com Dados Fictícios (Pitch de Vendas)</label></div>
             <button onclick="salvarNovoCliente()" style="background: var(--primary); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 600; cursor: pointer;">Criar Cofre e Liberar Acesso</button>
         </div>
     </div>
 
-    <!-- 2. MODAL GESTÃO DE ACESSOS (RBAC + LIMITE) -->
     <div id="modal-acessos" class="modal-overlay">
         <div class="modal-box" style="border-top: 5px solid var(--warning);">
             <button onclick="fecharModalAcessos()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
             <h2 style="margin-bottom: 5px;">Controlo de Acessos</h2>
             <p id="acessos-empresa" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;"></p>
-            
-            <input type="hidden" id="acessos-cnpj">
-            <input type="hidden" id="acessos-nome">
-
-            <!-- Lista de Usuários Autorizados -->
+            <input type="hidden" id="acessos-cnpj"><input type="hidden" id="acessos-nome">
             <div style="background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--border); padding: 15px; margin-bottom: 25px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
                     <h4 style="font-size: 0.9rem; margin: 0;">Autorizados (<span id="contagem-acessos">0</span>/<span id="limite-acessos-display">5</span>)</h4>
@@ -123,12 +133,8 @@
                         <button onclick="salvarNovoLimite()" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; font-weight: 600;">Salvar</button>
                     </div>
                 </div>
-                <div id="lista-usuarios-cnpj" style="display: flex; flex-direction: column; gap: 10px;">
-                    <!-- Preenchido via JS -->
-                </div>
+                <div id="lista-usuarios-cnpj" style="display: flex; flex-direction: column; gap: 10px;"></div>
             </div>
-
-            <!-- Formulário Adicionar Novo -->
             <div style="border-top: 1px dashed var(--border); padding-top: 20px;">
                 <h4 style="margin-bottom: 15px; font-size: 0.95rem;">+ Conceder Novo Acesso</h4>
                 <div style="display: flex; gap: 15px; margin-bottom: 15px;">
@@ -148,7 +154,6 @@
         </div>
     </div>
 
-    <!-- 3. MODAL INJEÇÃO DE FATURAS -->
     <div id="modal-injetar" class="modal-overlay">
         <div class="modal-box" style="border-top: 5px solid var(--success);">
             <button onclick="fecharModalInjetar()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -166,7 +171,6 @@
         </div>
     </div>
 
-    <!-- 4. MODAL AUDITORIA -->
     <div id="modal-inspecionar" class="modal-overlay">
         <div class="modal-box" style="max-width: 600px; border-top: 5px solid var(--primary);">
             <button onclick="fecharModalInspecionar()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -182,7 +186,7 @@
     </div>
 
 
-    <!-- MENU LATERAL -->
+    <!-- MENU LATERAL DA APLICAÇÃO -->
     <aside class="sidebar">
         <div class="logo-area"><img src="assets/prisma-brasao.svg" width="25"> <h2>PRISMA <span style="color:var(--primary);">MASTER</span></h2></div>
         <nav class="menu-nav">
@@ -195,12 +199,12 @@
             <a class="menu-item" data-tab="equipe">👔 Equipe de Analistas</a>
         </nav>
         <div class="user-profile">
-            <div class="avatar" id="user-avatar">A</div>
+            <div class="avatar">MA</div>
             <div class="user-info">
-                <p id="user-name">Administrador</p>
+                <p>Equipe Prisma</p>
                 <span>Acesso Master (Deus)</span>
             </div>
-            <button class="btn-logout" onclick="window.fazerLogout()">Sair</button>
+            <button class="btn-logout" onclick="fazerLogoutMaster()">Sair</button>
         </div>
     </aside>
 
@@ -213,7 +217,6 @@
             <button class="btn-acessar" style="background:var(--primary); color:white; border:none; padding: 12px 20px;" onclick="abrirModalNovoCliente()">+ Novo Cliente</button>
         </header>
 
-        <!-- ABA 1: VISÃO SISTÉMICA (KPIs Limpos) -->
         <div id="tab-visao" class="tab-content">
             <section class="kpi-grid">
                 <div class="kpi-card"><p class="kpi-title">Total de Empresas</p><h2 class="kpi-value" id="kpi-clientes">0</h2><span class="kpi-subtitle" style="color:var(--primary); background:rgba(59,130,246,0.1);">Sob Gestão Ativa</span></div>
@@ -222,7 +225,6 @@
             </section>
         </div>
 
-        <!-- ABA 2: CARTEIRA DE CLIENTES (CRM Agrupado por CNPJ) -->
         <div id="tab-carteira" class="tab-content" style="display:none;">
             <section class="dashboard-grid" style="grid-template-columns: 1fr;">
                 <div class="panel">
@@ -237,7 +239,6 @@
             </section>
         </div>
 
-        <!-- ABA 3: FATURAMENTO PRISMA -->
         <div id="tab-faturamento" class="tab-content" style="display:none;">
             <div class="panel">
                 <div class="panel-header"><div><h3>Faturamento Prisma</h3><p>Receitas geradas pelos honorários de BPO Financeiro.</p></div></div>
@@ -249,7 +250,6 @@
             </div>
         </div>
 
-        <!-- ABA 4: EQUIPE DE ANALISTAS -->
         <div id="tab-equipe" class="tab-content" style="display:none;">
             <div class="panel">
                 <div class="panel-header"><div><h3>Equipe de Analistas</h3><p>Controle de acessos internos da Prisma.</p></div></div>
@@ -262,7 +262,6 @@
                 </table>
             </div>
         </div>
-
     </main>
 
     <script>
@@ -278,15 +277,35 @@
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
         };
 
+        // LÓGICA DE LOGIN MASTER (E-MAIL E SENHA)
+        window.verificarMaster = () => {
+            const email = document.getElementById('master-email').value.trim().toLowerCase();
+            const pwd = document.getElementById('master-pwd').value;
+            
+            if(email === 'ceo@prismafinance.com.br' && pwd === 'prisma2026') {
+                sessionStorage.setItem('prisma_admin_auth', 'true');
+                document.getElementById('admin-login-screen').style.opacity = '0';
+                setTimeout(() => { document.getElementById('admin-login-screen').style.display = 'none'; }, 500);
+                carregarTodosOsClientes();
+                simularAcao("Acesso Master Concedido.");
+            } else {
+                simularAcao('E-mail ou Chave de Acesso incorretos!', true);
+                document.getElementById('master-pwd').value = '';
+            }
+        };
+
+        window.fazerLogoutMaster = () => {
+            sessionStorage.removeItem('prisma_admin_auth');
+            window.location.reload();
+        };
+
         // SISTEMA DE ABAS (TABS)
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', () => {
                 const tabId = item.getAttribute('data-tab');
                 if(!tabId) return;
-
                 document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
-
                 document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
                 document.getElementById('tab-' + tabId).style.display = 'block';
 
@@ -306,7 +325,7 @@
             });
         });
 
-        // 1. PROVISIONAMENTO DE CLIENTE (Com limite dinâmico max 15)
+        // 1. PROVISIONAMENTO DE CLIENTE
         const modalAdmin = document.getElementById('modal-novo-cliente');
         window.abrirModalNovoCliente = () => modalAdmin.classList.add('ativo');
         window.fecharModalNovoCliente = () => modalAdmin.classList.remove('ativo');
@@ -319,12 +338,10 @@
 
             if(!email || !nome || !cnpj) { simularAcao("Preencha todos os campos.", true); return; }
             if(isNaN(limiteMax) || limiteMax < 1) limiteMax = 1;
-            if(limiteMax > 15) limiteMax = 15; // Proteção extra (Máx 15)
+            if(limiteMax > 15) limiteMax = 15; 
 
-            // Salva o vínculo com a permissão Master padrão para o CEO
             localStorage.setItem('prisma_vinculo_' + email, JSON.stringify({ nome: nome, cnpj: cnpj, permissao: 'Master (Full)' }));
             
-            // Só cria o cofre se ele não existir ainda, salvando também o limite
             if(!localStorage.getItem('prisma_cofre_' + cnpj)) {
                 let cofreData = { limite_usuarios: limiteMax, saldo: 0, faturamento: 0, custos: 0, impostos: 0, rh_headcount: 0, rh_folha: 0, rh_beneficios: 0, transacoes: [] };
                 if (document.getElementById('admin-cad-demo').checked) {
@@ -335,15 +352,14 @@
                 localStorage.setItem('prisma_cofre_' + cnpj, JSON.stringify(cofreData));
             }
             
-            simularAcao(`Cofre criado com sucesso para ${cnpj}! Limite: ${limiteMax} acessos.`);
+            simularAcao(`Cofre criado com sucesso para ${cnpj}!`);
             fecharModalNovoCliente();
             carregarTodosOsClientes();
             
             document.getElementById('admin-cad-email').value = ''; document.getElementById('admin-cad-nome').value = ''; document.getElementById('admin-cad-cnpj').value = '';
-            document.getElementById('admin-cad-limite').value = '5'; // Reseta pro default do input
         };
 
-        // 2. GESTÃO DE ACESSOS (RBAC + LIMITES MÁXIMOS)
+        // 2. GESTÃO DE ACESSOS (RBAC)
         const modalAcessos = document.getElementById('modal-acessos');
         window.abrirModalAcessos = (cnpj, nomeEmpresa) => {
             document.getElementById('acessos-cnpj').value = cnpj;
@@ -354,26 +370,21 @@
         };
         window.fecharModalAcessos = () => modalAcessos.classList.remove('ativo');
 
-        // Atualizar o Limite pelo Painel de Acessos
         window.salvarNovoLimite = () => {
             const cnpj = document.getElementById('acessos-cnpj').value;
             let novoLimite = parseInt(document.getElementById('ajuste-limite-input').value);
             
             if(isNaN(novoLimite) || novoLimite < 1) novoLimite = 1;
-            if(novoLimite > 15) {
-                simularAcao("O limite máximo do sistema é de 15 acessos por CNPJ.", true);
-                novoLimite = 15;
-            }
+            if(novoLimite > 15) { simularAcao("O limite máximo do sistema é 15.", true); novoLimite = 15; }
             
             const cofreData = JSON.parse(localStorage.getItem('prisma_cofre_' + cnpj));
             if(cofreData) {
                 cofreData.limite_usuarios = novoLimite;
                 localStorage.setItem('prisma_cofre_' + cnpj, JSON.stringify(cofreData));
-                
                 document.getElementById('limite-acessos-display').innerText = novoLimite;
                 document.getElementById('ajuste-limite-input').value = novoLimite;
-                simularAcao(`Plano de acessos atualizado para ${novoLimite} utilizadores.`);
-                carregarTodosOsClientes(); // Atualiza a tag amarela na tabela traseira
+                simularAcao(`Plano de acessos atualizado para ${novoLimite}.`);
+                carregarTodosOsClientes(); 
             }
         };
 
@@ -382,9 +393,8 @@
             divLista.innerHTML = '';
             let contagem = 0;
 
-            // Carrega o limite real do banco de dados
             const cofreData = JSON.parse(localStorage.getItem('prisma_cofre_' + cnpjBase));
-            const limiteAtual = (cofreData && cofreData.limite_usuarios) ? cofreData.limite_usuarios : 8; // Fallback se for antigo
+            const limiteAtual = (cofreData && cofreData.limite_usuarios) ? cofreData.limite_usuarios : 8; 
             
             document.getElementById('limite-acessos-display').innerText = limiteAtual;
             document.getElementById('ajuste-limite-input').value = limiteAtual;
@@ -403,13 +413,9 @@
 
                         divLista.innerHTML += `
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
-                                <div>
-                                    <div style="font-weight: 600; font-size: 0.9rem; color: white;">${email}</div>
-                                    <div style="font-size: 0.75rem; color: ${corPerm}; font-weight: 800;">${perm}</div>
-                                </div>
+                                <div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${email}</div><div style="font-size: 0.75rem; color: ${corPerm}; font-weight: 800;">${perm}</div></div>
                                 <button onclick="removerAcesso('${email}', '${cnpjBase}')" class="btn-danger">Revogar</button>
-                            </div>
-                        `;
+                            </div>`;
                         contagem++;
                     }
                 }
@@ -424,21 +430,17 @@
             const nome = document.getElementById('acessos-nome').value;
 
             if(!email) { simularAcao('Digite o e-mail do colaborador.', true); return; }
-            
             const limiteMax = parseInt(document.getElementById('limite-acessos-display').innerText);
             const atual = parseInt(document.getElementById('contagem-acessos').innerText);
             
-            if(atual >= limiteMax) {
-                simularAcao(`O limite do plano desta empresa é de ${limiteMax} acessos. Atualize o limite para adicionar mais.`, true); 
-                return;
-            }
+            if(atual >= limiteMax) { simularAcao(`Limite de ${limiteMax} acessos atingido.`, true); return; }
 
             localStorage.setItem('prisma_vinculo_' + email, JSON.stringify({ nome: nome, cnpj: cnpj, permissao: nivel }));
             simularAcao(`Permissão de [${nivel}] concedida para ${email}.`);
             
             document.getElementById('novo-acesso-email').value = '';
             renderizarListaAcessos(cnpj);
-            carregarTodosOsClientes(); // Atualiza a tabela principal
+            carregarTodosOsClientes(); 
         };
 
         window.removerAcesso = (email, cnpj) => {
@@ -509,31 +511,28 @@
         };
         window.fecharModalInspecionar = () => modalInspecionar.classList.remove('ativo');
 
-        // FUNÇÃO DE CARREGAMENTO PRINCIPAL (AGRUPADA POR EMPRESA/CNPJ)
         function carregarTodosOsClientes() {
-            const empresas = {}; // Dicionário agrupado por CNPJ
+            const empresas = {}; 
             let volumeTotal = 0; let faturamentoGlobal = 0;
 
-            // 1. Pega os Cofres (Empresas)
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key.startsWith('prisma_cofre_')) {
                     const cnpj = key.replace('prisma_cofre_', '');
                     const cofreData = JSON.parse(localStorage.getItem(key));
-                    const limitMax = cofreData.limite_usuarios || 8; // Resgate do limite
+                    const limitMax = cofreData.limite_usuarios || 8; 
                     empresas[cnpj] = { cnpj: cnpj, saldo: cofreData.saldo, faturamento: cofreData.faturamento, usuarios: [], nome: "Empresa Não Nomeada", max_users: limitMax };
                     volumeTotal += cofreData.saldo; faturamentoGlobal += cofreData.faturamento;
                 }
             }
 
-            // 2. Pega os Vínculos (Usuários) e agrupa nas empresas
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key.startsWith('prisma_vinculo_')) {
                     const email = key.replace('prisma_vinculo_', '');
                     const vinculo = JSON.parse(localStorage.getItem(key));
                     if(empresas[vinculo.cnpj]) {
-                        empresas[vinculo.cnpj].nome = vinculo.nome; // Define o nome da empresa
+                        empresas[vinculo.cnpj].nome = vinculo.nome; 
                         empresas[vinculo.cnpj].usuarios.push(email);
                     }
                 }
@@ -568,22 +567,14 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                if (!window.supabase) throw new Error("API Offline");
-                const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
-                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
-                const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-                const { data, error } = await supabase.auth.getSession();
-                if (error || !data.session) { window.location.replace('index.html'); return; }
-
-                document.getElementById('user-name').innerText = data.session.user.email;
-                document.getElementById('auth-loader').style.display = 'none';
-
+        // INIT C/ VERIFICAÇÃO MASTER
+        document.addEventListener('DOMContentLoaded', () => {
+            if(sessionStorage.getItem('prisma_admin_auth') === 'true') {
+                document.getElementById('admin-login-screen').style.display = 'none';
                 carregarTodosOsClientes();
-                window.fazerLogout = async () => { await supabase.auth.signOut(); window.location.replace('index.html'); };
-            } catch (err) { window.location.replace('index.html'); }
+            } else {
+                document.getElementById('admin-login-screen').style.display = 'flex';
+            }
         });
     </script>
 </body>
