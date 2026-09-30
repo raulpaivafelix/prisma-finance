@@ -573,6 +573,24 @@
         };
 
         window.conectarBanco = (btn, nomeBanco) => {
+            if (btn.innerText.includes('Conectado')) return; // Evita clicar duas vezes
+
+            // Inicia o estado de carregamento
+            btn.innerHTML = "<span class='spinner-small'></span> A ligar...";
+            btn.style.opacity = '0.8';
+            btn.style.pointerEvents = 'none';
+
+            // Simula o tempo de ligação de 2 segundos à API do banco
+            setTimeout(() => {
+                btn.innerHTML = "✓ Conectado";
+                btn.style.background = "#374151"; // Muda para cor escura (inativo)
+                btn.style.color = "#9ca3af";
+                btn.style.borderColor = "#374151";
+                simularAcao(`Ligação com ${nomeBanco} estabelecida com sucesso!`);
+            }, 2000);
+        };
+
+        window.conectarBanco = (btn, nomeBanco) => {
             if (btn.innerText.includes('Conectado')) return; 
 
             btn.innerHTML = "<span class='spinner-small'></span> A ligar...";
