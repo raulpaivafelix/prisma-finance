@@ -124,16 +124,16 @@
             <a class="menu-item active" data-tab="visao">📊 Visão Executiva</a>
             <a class="menu-item" data-tab="fluxo">💸 Fluxo de Caixa</a>
             <a class="menu-item" data-tab="dre">📈 DRE & Resultados</a>
-            <a class="menu-item" onclick="simularAcao('A ligar ao portal da SEFAZ e Prefeituras...')">🧾 Emissão de NFs</a>
+            <a class="menu-item" data-tab="nfs">📄 Emissão de NFs</a>
             
             <span class="menu-section">Recursos Humanos</span>
             <a class="menu-item" data-tab="rh">👥 Equipe & Folha</a>
             <a class="menu-item" onclick="simularAcao('A aceder ao banco de talentos e entrevistas...')">🎯 Gestão de Talentos</a>
-            <a class="menu-item" onclick="simularAcao('A carregar painel de Planos de Saúde e VR...')">🎁 Benefícios Flexíveis</a>
+            <a class="menu-item" data-tab="beneficios">🎁 Benefícios Flexíveis</a>
 
             <span class="menu-section">Sistema & Gestão</span>
-            <a class="menu-item" onclick="simularAcao('A verificar chaves de API e Open Finance...')">⚙ Integrações (Bancos)</a>
-            <a class="menu-item" onclick="simularAcao('A iniciar chat encriptado com o seu CFO Virtual...')">💬 Suporte C-Level</a>
+            <a class="menu-item" data-tab="integracoes">⚙️ Integrações (Bancos)</a>
+            <a class="menu-item" data-tab="suporte">💬 Suporte C-Level</a>
         </nav>
         <div class="user-profile">
             <div class="avatar" id="user-avatar">?</div>
@@ -224,7 +224,7 @@
 
         const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
         
-        // 2. FUNÇÕES DE UTILIDADE E UI
+        // 2. FUNÇÕES DE UI (Notificações e PDF)
         window.simularAcao = (mensagem, isError = false) => {
             const container = document.getElementById('toast-container');
             if(!container) return;
@@ -244,14 +244,13 @@
             }, 1500);
         };
 
-        // VARIÁVEIS GLOBAIS DE SESSÃO
         let currentUserEmail = "";
         let currentCNPJ = "";
         let userData = { saldo: 0, faturamento: 0, custos: 0, impostos: 0, rh_headcount: 0, rh_folha: 0, rh_beneficios: 0, transacoes: [] };
         let myChart = null;
         let currentTab = 'visao';
 
-        // 3. VALIDAÇÃO E SINCRONIZAÇÃO DE DADOS
+        // 3. SINCRONIZAÇÃO COM A BASE DE DADOS
         async function verificarVozDoCliente(email) {
             currentUserEmail = email;
             try {
@@ -301,11 +300,11 @@
             renderDashboard(currentTab);
         }
 
-        // 4. MOTOR DE NAVEGAÇÃO E GRÁFICOS (Render Dashboard)
+        // 4. MOTOR DO DASHBOARD (Todas as Abas Ativadas)
         function renderDashboard(tab) {
             currentTab = tab;
             
-            // Oculta/Mostra o botão de Nova Transação baseado na aba
+            // Oculta/Mostra o botão de Nova Transação apenas no Fluxo de Caixa
             const btnTransacao = document.getElementById('btn-nova-transacao');
             if (btnTransacao) {
                 btnTransacao.style.display = (tab === 'fluxo') ? 'block' : 'none';
@@ -350,6 +349,16 @@
                 `;
                 chartData = { type: 'line', labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], data: [25000, 40000, 38000, 50000, 68000, userData.faturamento] };
             
+            } else if (tab === 'nfs') {
+                document.getElementById('page-title').innerText = "Emissão de Notas Fiscais";
+                document.getElementById('page-subtitle').innerText = "Gestão e emissão automática integrada com a SEFAZ e Prefeituras.";
+                kpiHTML = `
+                    <div class="kpi-card"><p class="kpi-title">NFs Emitidas (Mês)</p><h2 class="kpi-value">0</h2><span class="kpi-subtitle">Autorizadas</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Total Faturado</p><h2 class="kpi-value">${formatoBRL(userData.faturamento)}</h2><span class="kpi-subtitle">Base de cálculo</span></div>
+                `;
+                document.getElementById('chart-title').innerText = "Volume de Emissões";
+                chartData = { type: 'line', labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'], data: [0, 0, 0, 0] };
+                
             } else if (tab === 'rh') {
                 document.getElementById('page-title').innerText = "Departamento Pessoal & RH";
                 document.getElementById('page-subtitle').innerText = "Gestão da sua equipe e custos de folha.";
@@ -360,6 +369,36 @@
                     <div class="kpi-card"><p class="kpi-title">Benefícios</p><h2 class="kpi-value">${formatoBRL(userData.rh_beneficios)}</h2><span class="kpi-subtitle">VR/VA/Plano</span></div>
                 `;
                 chartData = { type: 'bar', labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], data: [38000, 38000, 39500, 39500, 42500, userData.rh_folha] };
+            
+            } else if (tab === 'beneficios') {
+                document.getElementById('page-title').innerText = "Benefícios Flexíveis";
+                document.getElementById('page-subtitle').innerText = "Gestão de planos de saúde, vales e parcerias para a sua equipa.";
+                kpiHTML = `
+                    <div class="kpi-card"><p class="kpi-title">Vidas Ativas</p><h2 class="kpi-value">${userData.rh_headcount}</h2><span class="kpi-subtitle">Colaboradores</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Custo Total (Mês)</p><h2 class="kpi-value">${formatoBRL(userData.rh_beneficios)}</h2><span class="kpi-subtitle">Fechamento</span></div>
+                `;
+                document.getElementById('chart-title').innerText = "Evolução do Custo com Benefícios";
+                chartData = { type: 'bar', labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Mês Atual'], data: [0, 0, 0, 0, 0, userData.rh_beneficios] };
+            
+            } else if (tab === 'integracoes') {
+                document.getElementById('page-title').innerText = "Integrações & Open Finance";
+                document.getElementById('page-subtitle').innerText = "Conexões seguras (AES-256) com as suas instituições financeiras.";
+                kpiHTML = `
+                    <div class="kpi-card"><p class="kpi-title">Status da Conexão</p><h2 class="kpi-value" style="color:var(--success)">Online</h2><span class="kpi-subtitle">API Bancária</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Última Sincronização</p><h2 class="kpi-value">Agora</h2><span class="kpi-subtitle">Tempo Real</span></div>
+                `;
+                document.getElementById('chart-title').innerText = "Tráfego de Dados Bancários";
+                chartData = { type: 'line', labels: ['00:00', '06:00', '12:00', '18:00', 'Agora'], data: [10, 25, 40, 15, 30] };
+            
+            } else if (tab === 'suporte') {
+                document.getElementById('page-title').innerText = "Suporte C-Level & CFO Virtual";
+                document.getElementById('page-subtitle').innerText = "Canal direto, seguro e exclusivo com o seu consultor financeiro estratégico.";
+                kpiHTML = `
+                    <div class="kpi-card"><p class="kpi-title">CFO Responsável</p><h2 class="kpi-value" style="color:var(--primary)">Disponível</h2><span class="kpi-subtitle">Pronto para chat</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Consultorias (Mês)</p><h2 class="kpi-value">1</h2><span class="kpi-subtitle">Sessão Agendada</span></div>
+                `;
+                document.getElementById('chart-title').innerText = "Histórico de Chamados";
+                chartData = { type: 'bar', labels: ['Abertos', 'Em Análise', 'Resolvidos'], data: [0, 0, 12] };
             }
 
             if(kpiContainer) kpiContainer.innerHTML = kpiHTML;
@@ -442,6 +481,24 @@
             }
         };
 
+        window.aprovarLote = () => {
+            const btnAprovar = document.getElementById('btn-aprovar-lote');
+            if(!btnAprovar) return;
+            btnAprovar.innerHTML = "<span class='spinner-small'></span> Sincronizando com Banco...";
+            btnAprovar.style.opacity = '0.8';
+            setTimeout(() => {
+                btnAprovar.innerText = "✓ Lote Sincronizado e Pago"; 
+                btnAprovar.style.background = "#059669"; 
+                btnAprovar.style.pointerEvents = "none";
+                simularAcao("Comprovantes bancários gerados para este CNPJ!");
+                setTimeout(() => {
+                    btnAprovar.innerText = "Aprovar e Enviar ao Banco"; 
+                    btnAprovar.style.background = ""; 
+                    btnAprovar.style.pointerEvents = "auto";
+                }, 4000);
+            }, 2000);
+        };
+
         // 6. INICIALIZAÇÃO DA PÁGINA E CLIQUES NO MENU
         document.addEventListener('DOMContentLoaded', async () => {
             try {
@@ -453,8 +510,8 @@
                 // Ativa a mudança de abas ao clicar no menu
                 document.querySelectorAll('.menu-item').forEach(item => {
                     item.addEventListener('click', (e) => {
-                        e.preventDefault(); // Previne que a página salte para o topo
                         if(item.hasAttribute('data-tab')) {
+                            e.preventDefault();
                             document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
                             item.classList.add('active');
                             renderDashboard(item.getAttribute('data-tab'));
