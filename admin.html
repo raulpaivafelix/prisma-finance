@@ -319,22 +319,29 @@
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
         };
 
-        // LOGIN MASTER
-        window.verificarMaster = () => {
-            const email = document.getElementById('master-email').value.trim().toLowerCase();
-            const pwd = document.getElementById('master-pwd').value;
-            
-            if(email === 'ceo@prismafinance.com.br' && pwd === 'prisma2026') {
-                sessionStorage.setItem('prisma_admin_auth', 'true');
-                document.getElementById('admin-login-screen').style.opacity = '0';
-                setTimeout(() => { document.getElementById('admin-login-screen').style.display = 'none'; }, 500);
-                carregarDadosSistema();
-                simularAcao("Acesso Master Concedido.");
-            } else {
-                simularAcao('E-mail ou Chave de Acesso incorretos!', true);
-                document.getElementById('master-pwd').value = '';
-            }
-        };
+        // LOGIN DE PRODUÇÃO (VERIFICA NA BASE DE DADOS DO SUPABASE)
+window.verificarMaster = async () => {
+    const email = document.getElementById('master-email').value.trim().toLowerCase();
+    const pwd = document.getElementById('master-pwd').value;
+    const btn = document.querySelector('.login-box button');
+
+    if(!email || !pwd) { simularAcao("Preencha e-mail e senha.", true); return; }
+    if(btn) { btn.innerText = "A autenticar..."; btn.disabled = true; }
+
+    // Comunica com o Supabase Auth de forma segura
+    const { data, error } = await supabase.auth.signInWithPassword({ email: email, password: pwd });
+
+    if (error) {
+        simularAcao('Credenciais inválidas ou e-mail não cadastrado.', true);
+        document.getElementById('master-pwd').value = '';
+        if(btn) { btn.innerText = "Autenticar no Sistema"; btn.disabled = false; }
+    } else {
+        document.getElementById('admin-login-screen').style.opacity = '0';
+        setTimeout(() => { document.getElementById('admin-login-screen').style.display = 'none'; }, 500);
+        carregarDadosSistema();
+        simularAcao("Acesso de Produção Concedido.");
+    }
+};
 
         window.fazerLogoutMaster = () => {
             sessionStorage.removeItem('prisma_admin_auth');
