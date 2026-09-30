@@ -435,38 +435,71 @@
             `;
         } 
         else if (tab === 'nfs') {
-            if(tituloLista) tituloLista.innerText = "Emissão de Documentos";
-            if(subtituloLista) subtituloLista.innerText = "Gere recibos de pagamento e prévias de NFs.";
+            if(tituloLista) tituloLista.innerText = "Emissão de Documentos Fiscais";
+            if(subtituloLista) subtituloLista.innerText = "Emita Notas Fiscais de Serviço (NFS-e) para prefeituras de todo o Brasil.";
             
             lista.innerHTML = `
                 <div class="card" style="padding: 20px; background: transparent; border: none;">
                     <form id="form-emissao" onsubmit="gerarDocumento(event)" style="display: flex; flex-direction: column; gap: 15px;">
+                        
+                        <!-- TIPO DE DOCUMENTO -->
                         <div>
-                            <label style="color: #9ca3af; font-size: 0.85rem;">Tipo de Documento</label>
+                            <label style="color: #9ca3af; font-size: 0.85rem;">Natureza da Operação</label>
                             <select id="doc-tipo" style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;">
-                                <option value="Recibo de Pagamento">Recibo de Pagamento</option>
-                                <option value="Nota Fiscal de Serviço (Prévia)">Nota Fiscal de Serviço (Prévia)</option>
+                                <option value="Nota Fiscal de Serviço (NFS-e)">NFS-e (Padrão Nacional - Web Service)</option>
+                                <option value="Recibo de Pagamento">Recibo Simples (Sem valor fiscal)</option>
                             </select>
                         </div>
-                        <div>
-                            <label style="color: #9ca3af; font-size: 0.85rem;">Nome do Cliente / Empresa</label>
-                            <input type="text" id="doc-cliente" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="Ex: Empresa XYZ Ltda">
-                        </div>
-                        <div style="display: flex; gap: 15px;">
-                            <div style="flex: 1;">
-                                <label style="color: #9ca3af; font-size: 0.85rem;">CPF / CNPJ</label>
-                                <input type="text" id="doc-doc" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="00.000.000/0001-00">
+
+                        <!-- DADOS DO CLIENTE (TOMADOR) -->
+                        <div style="border-bottom: 1px solid #374151; padding-bottom: 15px; margin-top: 10px;">
+                            <h4 style="color: #f9fafb; margin: 0 0 10px 0;">1. Dados do Cliente (Tomador)</h4>
+                            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                                <div style="flex: 2;">
+                                    <label style="color: #9ca3af; font-size: 0.85rem;">Nome / Razão Social</label>
+                                    <input type="text" id="doc-cliente" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="Ex: Cliente XYZ Ltda">
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="color: #9ca3af; font-size: 0.85rem;">CPF / CNPJ</label>
+                                    <input type="text" id="doc-doc" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="00.000.000/0001-00">
+                                </div>
                             </div>
-                            <div style="flex: 1;">
-                                <label style="color: #9ca3af; font-size: 0.85rem;">Valor (R$)</label>
-                                <input type="number" id="doc-valor" step="0.01" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="1500.00">
+                            <div style="display: flex; gap: 15px;">
+                                <div style="flex: 1;">
+                                    <label style="color: #9ca3af; font-size: 0.85rem;">CEP</label>
+                                    <input type="text" id="doc-cep" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="00000-000">
+                                </div>
+                                <div style="flex: 2;">
+                                    <label style="color: #9ca3af; font-size: 0.85rem;">Cidade / UF</label>
+                                    <input type="text" id="doc-cidade" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="Ex: São Paulo / SP">
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <label style="color: #9ca3af; font-size: 0.85rem;">Descrição do Serviço</label>
-                            <textarea id="doc-desc" required rows="3" style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px; resize: none;" placeholder="Consultoria financeira, Gestão de BPO..."></textarea>
+
+                        <!-- DADOS DO SERVIÇO E TRIBUTAÇÃO -->
+                        <div style="padding-bottom: 10px; margin-top: 5px;">
+                            <h4 style="color: #f9fafb; margin: 0 0 10px 0;">2. Dados do Serviço e Tributação</h4>
+                            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                                <div style="flex: 1;">
+                                    <label style="color: #9ca3af; font-size: 0.85rem;">Valor do Serviço (R$)</label>
+                                    <input type="number" id="doc-valor" step="0.01" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="1500.00">
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="color: #9ca3af; font-size: 0.85rem;">Cód. Serviço (LC 116)</label>
+                                    <input type="text" id="doc-cod-servico" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" value="17.02" title="17.02 - Datilografia, digitação, estenografia, expediente, secretaria em geral, resposta audível, redação, edição, interpretação, revisão, tradução, apoio e infraestrutura administrativa e congêneres.">
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="color: #9ca3af; font-size: 0.85rem;">Alíquota ISS (%)</label>
+                                    <input type="number" id="doc-iss" step="0.01" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" value="2.0">
+                                </div>
+                            </div>
+                            <div>
+                                <label style="color: #9ca3af; font-size: 0.85rem;">Descrição do Serviço (Sairá na NFS-e)</label>
+                                <textarea id="doc-desc" required rows="3" style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px; resize: none;" placeholder="Serviços de BPO Financeiro e Gestão Administrativa referentes ao período..."></textarea>
+                            </div>
                         </div>
-                        <button type="submit" style="background: #059669; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1rem;">Gerar Documento Oficial</button>
+
+                        <button type="submit" style="background: #059669; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1rem;">Gerar Documento / Simular Emissão</button>
                     </form>
                 </div>
             `;
