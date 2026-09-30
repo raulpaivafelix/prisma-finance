@@ -8,6 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.pluggy.ai/pluggy-connect/v1.1.0/pluggy-connect.js"></script>
 
     <style>
         :root { --bg-dark: #030712; --bg-surface: #111827; --primary: #059669; --danger: #ef4444; --text-main: #f9fafb; --text-muted: #9ca3af; --border: rgba(255, 255, 255, 0.05); }
@@ -572,38 +575,68 @@
             }, 2000);
         };
 
-        window.conectarBanco = (btn, nomeBanco) => {
-            if (btn.innerText.includes('Conectado')) return; // Evita clicar duas vezes
+        window.conectarBanco = async (btn, nomeBanco) => {
+            if (btn.innerText.includes('Conectado')) return;
 
-            // Inicia o estado de carregamento
-            btn.innerHTML = "<span class='spinner-small'></span> A ligar...";
+            // COLOQUE AS SUAS CHAVES AQUI (Dentro das aspas)
+            const CLIENT_ID = 'b904b09b-4ad3-444a-a896-8cb963125dd4';
+            const CLIENT_SECRET = 'pmotBXTtFhcyVXdV7GhqbrPnWG-peSBRepOcl39jzS0';
+
+            btn.innerHTML = "<span class='spinner-small'></span> A abrir...";
             btn.style.opacity = '0.8';
             btn.style.pointerEvents = 'none';
 
-            // Simula o tempo de ligação de 2 segundos à API do banco
-            setTimeout(() => {
-                btn.innerHTML = "✓ Conectado";
-                btn.style.background = "#374151"; // Muda para cor escura (inativo)
-                btn.style.color = "#9ca3af";
-                btn.style.borderColor = "#374151";
-                simularAcao(`Ligação com ${nomeBanco} estabelecida com sucesso!`);
-            }, 2000);
-        };
+            try {
+                // 1. Pede autorização à Pluggy
+                const authRes = await fetch('https://api.pluggy.ai/auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET })
+                });
+                const authData = await authRes.json();
 
-        window.conectarBanco = (btn, nomeBanco) => {
-            if (btn.innerText.includes('Conectado')) return; 
+                // 2. Cria um token de sessão único para o seu cliente
+                const tokenRes = await fetch('https://api.pluggy.ai/connect_token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-API-KEY': authData.apiKey }
+                });
+                const tokenData = await tokenRes.json();
 
-            btn.innerHTML = "<span class='spinner-small'></span> A ligar...";
-            btn.style.opacity = '0.8';
-            btn.style.pointerEvents = 'none';
+                // 3. Abre a janela oficial e segura de conexão bancária
+                const pluggyWidget = new PluggyConnect({
+                    connectToken: tokenData.accessToken,
+                    onSuccess: (dadosBancarios) => {
+                        // O CLIENTE CONECTOU COM SUCESSO!
+                        console.log("Dados da conexão:", dadosBancarios);
+                        btn.innerHTML = "✓ Conectado (Real)";
+                        btn.style.background = "#059669"; 
+                        btn.style.color = "white";
+                        btn.style.borderColor = "#059669";
+                        
+                        const descricaoBanco = btn.parentElement.querySelector('div > p');
+                        if (descricaoBanco) {
+                            descricaoBanco.innerHTML = `<span style="color: #059669;">● Open Finance Ativo</span> • Sincronizado`;
+                        }
+                        simularAcao(`Integração bancária concluída com sucesso!`);
+                    },
+                    onError: (erro) => {
+                        // O CLIENTE FECHOU A JANELA OU ERROU A SENHA
+                        btn.innerHTML = "Conectar";
+                        btn.style.opacity = '1';
+                        btn.style.pointerEvents = 'auto';
+                        simularAcao("Conexão cancelada.", true);
+                    }
+                });
 
-            setTimeout(() => {
-                btn.innerHTML = "✓ Conectado";
-                btn.style.background = "#374151"; 
-                btn.style.color = "#9ca3af";
-                btn.style.borderColor = "#374151";
-                simularAcao(`Ligação com ${nomeBanco} estabelecida com sucesso!`);
-            }, 2000);
+                pluggyWidget.init();
+
+            } catch (error) {
+                console.error("Erro na API:", error);
+                btn.innerHTML = "Erro - Tentar Novamente";
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                simularAcao("Falha ao contactar os servidores bancários.", true);
+            }
         };
 
         // 6. INICIALIZAÇÃO DA PÁGINA E CLIQUES NO MENU
