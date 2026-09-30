@@ -403,22 +403,62 @@
 
             if(kpiContainer) kpiContainer.innerHTML = kpiHTML;
 
-            // Renderiza Lista de Movimentações
+            // Renderiza Lista de Movimentações ou Bancos
             const lista = document.getElementById('lista-pendencias');
+            const tituloLista = document.getElementById('list-title');
+            const subtituloLista = document.getElementById('list-subtitle');
+            
             if(lista) {
                 lista.innerHTML = "";
-                if(userData.transacoes.length === 0) {
-                    lista.innerHTML = "<p style='color: #9ca3af; font-size: 0.9rem;'>Sem movimentações registadas.</p>";
+                
+                if (tab === 'integracoes') {
+                    // MODO BANCOS (Ativado só na aba de Integrações)
+                    if(tituloLista) tituloLista.innerText = "Bancos e Instituições";
+                    if(subtituloLista) subtituloLista.innerText = "Conecte as suas contas para conciliação automática via Open Finance.";
+                    
+                    lista.innerHTML = `
+                        <div class="transaction-item" style="justify-content: space-between; padding: 15px;">
+                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
+                                <div style="background: #8A05BE; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">NU</div>
+                                <div><h4 style="margin: 0; color: #f9fafb;">Nubank PJ</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Open Finance ativo</p></div>
+                            </div>
+                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="simularAcao('A redirecionar para o portal do Nubank...')">Conectar</button>
+                        </div>
+
+                        <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
+                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
+                                <div style="background: #EC7000; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">IT</div>
+                                <div><h4 style="margin: 0; color: #f9fafb;">Itaú Empresas</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Requer chave de API</p></div>
+                            </div>
+                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="simularAcao('A iniciar conexão segura AES-256 com Itaú...')">Conectar</button>
+                        </div>
+
+                        <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
+                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
+                                <div style="background: #fe3c6b; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">CO</div>
+                                <div><h4 style="margin: 0; color: #f9fafb;">Cora Bank</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Integração nativa Prisma OS</p></div>
+                            </div>
+                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="simularAcao('A autenticar token do Cora Bank...')">Conectar</button>
+                        </div>
+                    `;
                 } else {
-                    userData.transacoes.forEach(t => {
-                        const sinal = t.tipo === "Receita" ? "+" : "-";
-                        const cssClass = t.tipo === "Receita" ? "positive" : "negative";
-                        lista.innerHTML += `
-                            <div class="transaction-item">
-                                <div class="t-info"><h4>${t.desc}</h4><p>${t.tipo || 'Despesa'} • ${t.data}</p></div>
-                                <div class="t-amount ${cssClass}">${sinal} ${formatoBRL(t.valor)}</div>
-                            </div>`;
-                    });
+                    // MODO TRANSAÇÕES (Padrão para as outras abas)
+                    if(tituloLista) tituloLista.innerText = "Movimentações Recentes";
+                    if(subtituloLista) subtituloLista.innerText = "Documentos e lançamentos registados.";
+
+                    if(userData.transacoes.length === 0) {
+                        lista.innerHTML = "<p style='color: #9ca3af; font-size: 0.9rem;'>Sem movimentações registadas.</p>";
+                    } else {
+                        userData.transacoes.forEach(t => {
+                            const sinal = t.tipo === "Receita" ? "+" : "-";
+                            const cssClass = t.tipo === "Receita" ? "positive" : "negative";
+                            lista.innerHTML += `
+                                <div class="transaction-item">
+                                    <div class="t-info"><h4>${t.desc}</h4><p>${t.tipo || 'Despesa'} • ${t.data}</p></div>
+                                    <div class="t-amount ${cssClass}">${sinal} ${formatoBRL(t.valor)}</div>
+                                </div>`;
+                        });
+                    }
                 }
             }
 
