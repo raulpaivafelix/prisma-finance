@@ -18,7 +18,6 @@
         .custom-toast.show { transform: translateX(0); }
         .custom-toast.error { border-color: var(--danger); color: #fca5a5; }
 
-        /* TELA DE LOGIN MASTER */
         #admin-login-screen { position: fixed; inset: 0; background: var(--bg-dark); z-index: 200000; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: 0.5s; }
         .login-box { background: var(--bg-surface); padding: 40px; border-radius: 16px; border: 1px solid rgba(59, 130, 246, 0.3); text-align: center; width: 90%; max-width: 420px; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
 
@@ -99,10 +98,8 @@
             
             <button onclick="verificarMaster()" style="background: var(--primary); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 1rem; transition: 0.3s;">Autenticar Sistema</button>
         </div>
-        <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 30px;">Prisma OS • Acesso Criptografado</p>
+        <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 30px;">Prisma OS • Acesso Criptografado • Cloud DB</p>
     </div>
-
-    <!-- MODAIS DO SISTEMA -->
 
     <!-- 1. NOVO CLIENTE -->
     <div id="modal-novo-cliente" class="modal-overlay">
@@ -116,11 +113,11 @@
                 <div style="flex: 1;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Usuários (Máx 15)</label><input type="number" id="admin-cad-limite" min="1" max="15" value="5" style="text-align: center;"></div>
             </div>
             <div style="margin-bottom: 25px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: white; font-size: 0.85rem; font-weight: 600;"><input type="checkbox" id="admin-cad-demo" checked style="width: 18px; height: 18px; accent-color: var(--primary);"> Preencher com Dados Fictícios (Pitch de Vendas)</label></div>
-            <button onclick="salvarNovoCliente()" style="background: var(--primary); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 600; cursor: pointer;">Criar Cofre e Liberar Acesso</button>
+            <button id="btn-salvar-cliente" onclick="salvarNovoCliente()" style="background: var(--primary); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 600; cursor: pointer;">Criar Cofre e Liberar Acesso</button>
         </div>
     </div>
 
-    <!-- 2. NOVO ANALISTA / EQUIPE PRISMA -->
+    <!-- 2. NOVO ANALISTA -->
     <div id="modal-novo-analista" class="modal-overlay">
         <div class="modal-box" style="border-top: 5px solid var(--success);">
             <button onclick="fecharModalNovoAnalista()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -143,11 +140,11 @@
                 </select>
             </div>
             <div style="margin-bottom: 25px;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Clientes Alocados</label><input type="text" id="prisma-analista-clientes" placeholder="Ex: Todos ou Carteira Sul"></div>
-            <button onclick="salvarNovoAnalista()" style="background: var(--success); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 600; cursor: pointer;">Cadastrar Colaborador</button>
+            <button id="btn-salvar-analista" onclick="salvarNovoAnalista()" style="background: var(--success); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 600; cursor: pointer;">Cadastrar Colaborador</button>
         </div>
     </div>
 
-    <!-- 3. CONTROLO DE ACESSOS DE CLIENTES -->
+    <!-- 3. CONTROLO DE ACESSOS -->
     <div id="modal-acessos" class="modal-overlay">
         <div class="modal-box" style="border-top: 5px solid var(--warning);">
             <button onclick="fecharModalAcessos()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -179,7 +176,7 @@
                         <option value="Master (Full)">Master (Acesso Total)</option>
                     </select>
                 </div>
-                <button onclick="adicionarNovoAcesso()" style="background: var(--warning); color: #000; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 800; cursor: pointer;">Autorizar Novo Usuário</button>
+                <button id="btn-add-acesso" onclick="adicionarNovoAcesso()" style="background: var(--warning); color: #000; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 800; cursor: pointer;">Autorizar Novo Usuário</button>
             </div>
         </div>
     </div>
@@ -244,14 +241,13 @@
         <header class="header">
             <div class="header-title">
                 <h1 id="painel-titulo">Painel de Comando Central</h1>
-                <p id="painel-subtitulo">Monitorização global da operação.</p>
+                <p id="painel-subtitulo">Monitorização global da operação (Supabase Cloud).</p>
             </div>
             <div id="header-btn-area">
                 <button class="btn-acessar" style="background:var(--primary); color:white; border:none; padding: 12px 20px;" onclick="abrirModalNovoCliente()">+ Novo Cliente</button>
             </div>
         </header>
 
-        <!-- ABA 1: VISÃO SISTÉMICA -->
         <div id="tab-visao" class="tab-content">
             <section class="kpi-grid">
                 <div class="kpi-card"><p class="kpi-title">Total de Empresas</p><h2 class="kpi-value" id="kpi-clientes">0</h2><span class="kpi-subtitle" style="color:var(--primary); background:rgba(59,130,246,0.1);">Sob Gestão Ativa</span></div>
@@ -260,7 +256,6 @@
             </section>
         </div>
 
-        <!-- ABA 2: CARTEIRA DE CLIENTES -->
         <div id="tab-carteira" class="tab-content" style="display:none;">
             <section class="dashboard-grid" style="grid-template-columns: 1fr;">
                 <div class="panel">
@@ -275,7 +270,6 @@
             </section>
         </div>
 
-        <!-- ABA 3: FATURAMENTO PRISMA -->
         <div id="tab-faturamento" class="tab-content" style="display:none;">
             <section class="dashboard-grid" style="grid-template-columns: 1fr;">
                 <div class="panel">
@@ -289,7 +283,6 @@
             </section>
         </div>
 
-        <!-- ABA 4: EQUIPE DE ANALISTAS -->
         <div id="tab-equipe" class="tab-content" style="display:none;">
             <section class="dashboard-grid" style="grid-template-columns: 1fr;">
                 <div class="panel">
@@ -309,9 +302,11 @@
     </main>
 
     <script>
-        // ----------------------------------------------------
-        // UTILITÁRIOS GLOBAIS E TRATAMENTO DE ERROS (SISTEMA ANTI-QUEBRA)
-        // ----------------------------------------------------
+        // CONFIGURAÇÃO SUPABASE GLOBAL
+        const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
         const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 
         window.simularAcao = (mensagem, isError = false) => {
@@ -324,30 +319,7 @@
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
         };
 
-        // Função de Segurança: Lê dados do LocalStorage sem causar erros fatais
-        const lerBancoLocal = (chave, valorPadrao = null) => {
-            try {
-                const dado = localStorage.getItem(chave);
-                return dado ? JSON.parse(dado) : valorPadrao;
-            } catch (error) {
-                console.error(`[Prevenção de Erro] Falha ao ler '${chave}':`, error);
-                return valorPadrao;
-            }
-        };
-
-        // Função de Segurança: Guarda dados no LocalStorage em segurança
-        const guardarBancoLocal = (chave, dados) => {
-            try {
-                localStorage.setItem(chave, JSON.stringify(dados));
-            } catch (error) {
-                console.error(`[Prevenção de Erro] Falha ao gravar '${chave}':`, error);
-                simularAcao("Erro de memória do navegador.", true);
-            }
-        };
-
-        // ----------------------------------------------------
-        // LÓGICA DE LOGIN MASTER
-        // ----------------------------------------------------
+        // LOGIN MASTER
         window.verificarMaster = () => {
             const email = document.getElementById('master-email').value.trim().toLowerCase();
             const pwd = document.getElementById('master-pwd').value;
@@ -369,9 +341,7 @@
             window.location.reload();
         };
 
-        // ----------------------------------------------------
-        // SISTEMA DE ABAS (TABS)
-        // ----------------------------------------------------
+        // ABAS
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', () => {
                 const tabId = item.getAttribute('data-tab');
@@ -384,7 +354,7 @@
                 const btnArea = document.getElementById('header-btn-area');
                 if(tabId === 'visao' || tabId === 'carteira') {
                     document.getElementById('painel-titulo').innerText = tabId === 'visao' ? "Painel de Comando Central" : "Gestão de CRM";
-                    document.getElementById('painel-subtitulo').innerText = "Monitorização global da operação.";
+                    document.getElementById('painel-subtitulo').innerText = "Monitorização global da operação (Supabase Cloud).";
                     btnArea.innerHTML = `<button class="btn-acessar" style="background:var(--primary); color:white; border:none; padding: 12px 20px;" onclick="abrirModalNovoCliente()">+ Novo Cliente</button>`;
                 } else if(tabId === 'faturamento') {
                     document.getElementById('painel-titulo').innerText = "Financeiro Interno";
@@ -398,145 +368,155 @@
             });
         });
 
-        // ----------------------------------------------------
-        // MÓDULO 1: PROVISIONAMENTO DE CLIENTE
-        // ----------------------------------------------------
+        // 1. PROVISIONAR CLIENTE (SUPABASE)
         const modalAdmin = document.getElementById('modal-novo-cliente');
         window.abrirModalNovoCliente = () => modalAdmin.classList.add('ativo');
         window.fecharModalNovoCliente = () => modalAdmin.classList.remove('ativo');
 
-        window.salvarNovoCliente = () => {
+        window.salvarNovoCliente = async () => {
             const email = document.getElementById('admin-cad-email').value;
             const nome = document.getElementById('admin-cad-nome').value;
             const cnpj = document.getElementById('admin-cad-cnpj').value;
-            let limiteMax = parseInt(document.getElementById('admin-cad-limite').value);
+            const isDemo = document.getElementById('admin-cad-demo').checked;
+            let limiteMax = parseInt(document.getElementById('admin-cad-limite').value) || 5;
 
             if(!email || !nome || !cnpj) { simularAcao("Preencha todos os campos.", true); return; }
-            if(isNaN(limiteMax) || limiteMax < 1) limiteMax = 1;
-            if(limiteMax > 15) limiteMax = 15; 
+            const btn = document.getElementById('btn-salvar-cliente');
+            btn.innerHTML = "A enviar para a Cloud..."; btn.disabled = true;
 
-            guardarBancoLocal('prisma_vinculo_' + email, { nome: nome, cnpj: cnpj, permissao: 'Master (Full)' });
-            
-            if(!localStorage.getItem('prisma_cofre_' + cnpj)) {
-                let cofreData = { limite_usuarios: limiteMax, saldo: 0, faturamento: 0, custos: 0, impostos: 0, rh_headcount: 0, rh_folha: 0, rh_beneficios: 0, transacoes: [] };
-                if (document.getElementById('admin-cad-demo').checked) {
-                    cofreData = { limite_usuarios: limiteMax, saldo: 145250, faturamento: 68400, custos: 18200, impostos: 11050, rh_headcount: 14, rh_folha: 42500, rh_beneficios: 5200,
-                        transacoes: [{ desc: "Receita de Vendas (Lote)", valor: 25000, data: "Hoje", tipo: "Receita" }, { desc: "Impostos Federais (DAS)", valor: 3480, data: "Ontem", tipo: "Despesa" }]
-                    };
+            try {
+                // Insere Empresa
+                await supabase.from('empresas').insert([{
+                    cnpj: cnpj, nome: nome, 
+                    saldo: isDemo ? 145250 : 0, 
+                    faturamento: isDemo ? 68400 : 0, 
+                    custos: isDemo ? 18200 : 0, 
+                    limite_usuarios: limiteMax
+                }]);
+
+                // Insere Acesso Master
+                await supabase.from('acessos_clientes').insert([{
+                    email: email, cnpj: cnpj, nome: nome, permissao: 'Master (Full)'
+                }]);
+
+                // Insere Transações Demo
+                if(isDemo) {
+                    await supabase.from('transacoes').insert([
+                        { cnpj: cnpj, descricao: "Receita de Vendas (Lote)", valor: 25000, tipo: "Receita", data_lancamento: "Hoje" },
+                        { cnpj: cnpj, descricao: "Impostos Federais (DAS)", valor: 3480, tipo: "Despesa", data_lancamento: "Ontem" }
+                    ]);
                 }
-                guardarBancoLocal('prisma_cofre_' + cnpj, cofreData);
+
+                simularAcao(`Cofre cloud criado com sucesso para ${cnpj}!`);
+                fecharModalNovoCliente();
+                await carregarDadosSistema();
+            } catch(e) {
+                console.error(e);
+                simularAcao("Erro de gravação. Tabelas criadas no Supabase?", true);
             }
-            
-            simularAcao(`Cofre criado com sucesso para ${cnpj}!`);
-            fecharModalNovoCliente();
-            carregarDadosSistema();
-            
+
+            btn.innerHTML = "Criar Cofre e Liberar Acesso"; btn.disabled = false;
             document.getElementById('admin-cad-email').value = ''; document.getElementById('admin-cad-nome').value = ''; document.getElementById('admin-cad-cnpj').value = '';
         };
 
-        // ----------------------------------------------------
-        // MÓDULO 2: ADICIONAR EQUIPA PRISMA (CORRIGIDO E OTIMIZADO)
-        // ----------------------------------------------------
+        // 2. NOVA EQUIPA PRISMA (SUPABASE)
         const modalAnalista = document.getElementById('modal-novo-analista');
         window.abrirModalNovoAnalista = () => modalAnalista.classList.add('ativo');
         window.fecharModalNovoAnalista = () => modalAnalista.classList.remove('ativo');
 
-        window.salvarNovoAnalista = () => {
+        window.salvarNovoAnalista = async () => {
             const nome = document.getElementById('prisma-analista-nome').value;
             const email = document.getElementById('prisma-analista-email').value;
             const cargo = document.getElementById('prisma-analista-cargo').value;
-            const clientes = document.getElementById('prisma-analista-clientes').value;
+            const clientes = document.getElementById('prisma-analista-clientes').value || 'Geral';
 
             if(!nome || !email) { simularAcao("Preencha o Nome e o E-mail.", true); return; }
+            const btn = document.getElementById('btn-salvar-analista');
+            btn.innerHTML = "A guardar na Cloud..."; btn.disabled = true;
 
-            let equipe = lerBancoLocal('prisma_equipe_interna', [
-                { nome: "Raul Lima", email: "ceo@prismafinance.com.br", cargo: "Master Admin / CEO", clientes: "Todos", status: "Online" }
-            ]);
+            try {
+                await supabase.from('equipe_prisma').insert([{
+                    email: email, nome: nome, cargo: cargo, clientes_alocados: clientes, status: 'Ativo'
+                }]);
+                simularAcao(`Colaborador ${nome} adicionado com sucesso!`);
+                fecharModalNovoAnalista();
+                await renderizarEquipePrisma();
+            } catch (e) {
+                simularAcao("Falha ao salvar colaborador na cloud.", true);
+            }
 
-            equipe.push({ nome, email, cargo, clientes: clientes || 'Geral', status: 'Ativo' });
-            guardarBancoLocal('prisma_equipe_interna', equipe);
-
-            simularAcao(`Colaborador ${nome} adicionado com sucesso!`);
-            fecharModalNovoAnalista();
-            renderizarEquipePrisma();
-
-            document.getElementById('prisma-analista-nome').value = '';
-            document.getElementById('prisma-analista-email').value = '';
-            document.getElementById('prisma-analista-clientes').value = '';
+            btn.innerHTML = "Cadastrar Colaborador"; btn.disabled = false;
+            document.getElementById('prisma-analista-nome').value = ''; document.getElementById('prisma-analista-email').value = ''; document.getElementById('prisma-analista-clientes').value = '';
         };
 
-        function renderizarEquipePrisma() {
-            let equipe = lerBancoLocal('prisma_equipe_interna', [
-                { nome: "Raul Lima", email: "ceo@prismafinance.com.br", cargo: "Master Admin / CEO", clientes: "Todos", status: "Online" }
-            ]);
-
+        async function renderizarEquipePrisma() {
             const tbody = document.getElementById('lista-equipe-prisma');
-            let htmlEquipa = '';
-
-            equipe.forEach(colab => {
-                htmlEquipa += `
+            try {
+                const { data: equipe } = await supabase.from('equipe_prisma').select('*');
+                let htmlEquipa = `
                     <tr>
-                        <td><div style="font-weight: 800; color: white;">${colab.nome}</div></td>
-                        <td class="td-cnpj">${colab.email}</td>
-                        <td><span class="role-badge" style="background:var(--primary); color:white;">${colab.cargo}</span></td>
-                        <td>${colab.clientes}</td>
-                        <td><span class="status-badge">${colab.status}</span></td>
+                        <td><div style="font-weight: 800; color: white;">Raul Lima</div></td>
+                        <td class="td-cnpj">ceo@prismafinance.com.br</td>
+                        <td><span class="role-badge" style="background:var(--primary); color:white;">Master Admin / CEO</span></td>
+                        <td>Todos</td>
+                        <td><span class="status-badge">Online</span></td>
                     </tr>`;
-            });
-            
-            // Injeção única (Alta Performance)
-            tbody.innerHTML = htmlEquipa;
+
+                if(equipe) {
+                    equipe.forEach(colab => {
+                        htmlEquipa += `
+                            <tr>
+                                <td><div style="font-weight: 800; color: white;">${colab.nome}</div></td>
+                                <td class="td-cnpj">${colab.email}</td>
+                                <td><span class="role-badge" style="background:var(--primary); color:white;">${colab.cargo}</span></td>
+                                <td>${colab.clientes_alocados}</td>
+                                <td><span class="status-badge">${colab.status}</span></td>
+                            </tr>`;
+                    });
+                }
+                tbody.innerHTML = htmlEquipa;
+            } catch(e) { console.error(e); }
         }
 
-        // ----------------------------------------------------
-        // MÓDULO 3: GESTÃO DE ACESSOS DE CLIENTES
-        // ----------------------------------------------------
+        // 3. GESTÃO DE ACESSOS (SUPABASE)
         const modalAcessos = document.getElementById('modal-acessos');
-        window.abrirModalAcessos = (cnpj, nomeEmpresa) => {
+        window.abrirModalAcessos = async (cnpj, nomeEmpresa) => {
             document.getElementById('acessos-cnpj').value = cnpj;
             document.getElementById('acessos-nome').value = nomeEmpresa;
             document.getElementById('acessos-empresa').innerText = `${nomeEmpresa} (CNPJ: ${cnpj})`;
-            renderizarListaAcessos(cnpj);
+            await renderizarListaAcessos(cnpj);
             modalAcessos.classList.add('ativo');
         };
         window.fecharModalAcessos = () => modalAcessos.classList.remove('ativo');
 
-        window.salvarNovoLimite = () => {
+        window.salvarNovoLimite = async () => {
             const cnpj = document.getElementById('acessos-cnpj').value;
-            let novoLimite = parseInt(document.getElementById('ajuste-limite-input').value);
+            let novoLimite = parseInt(document.getElementById('ajuste-limite-input').value) || 8;
+            if(novoLimite > 15) { novoLimite = 15; }
             
-            if(isNaN(novoLimite) || novoLimite < 1) novoLimite = 1;
-            if(novoLimite > 15) { simularAcao("O limite máximo do sistema é 15.", true); novoLimite = 15; }
-            
-            const cofreData = lerBancoLocal('prisma_cofre_' + cnpj);
-            if(cofreData) {
-                cofreData.limite_usuarios = novoLimite;
-                guardarBancoLocal('prisma_cofre_' + cnpj, cofreData);
+            try {
+                await supabase.from('empresas').update({ limite_usuarios: novoLimite }).eq('cnpj', cnpj);
                 document.getElementById('limite-acessos-display').innerText = novoLimite;
-                document.getElementById('ajuste-limite-input').value = novoLimite;
                 simularAcao(`Plano de acessos atualizado para ${novoLimite}.`);
-                carregarDadosSistema(); 
-            }
+                await carregarDadosSistema(); 
+            } catch(e) { simularAcao("Erro ao atualizar limite.", true); }
         };
 
-        function renderizarListaAcessos(cnpjBase) {
+        async function renderizarListaAcessos(cnpjBase) {
             const divLista = document.getElementById('lista-usuarios-cnpj');
-            let htmlUsuarios = '';
-            let contagem = 0;
+            try {
+                const { data: empresa } = await supabase.from('empresas').select('limite_usuarios').eq('cnpj', cnpjBase).single();
+                const limiteAtual = empresa ? empresa.limite_usuarios : 8; 
+                document.getElementById('limite-acessos-display').innerText = limiteAtual;
+                document.getElementById('ajuste-limite-input').value = limiteAtual;
 
-            const cofreData = lerBancoLocal('prisma_cofre_' + cnpjBase, {});
-            const limiteAtual = cofreData.limite_usuarios || 8; 
-            
-            document.getElementById('limite-acessos-display').innerText = limiteAtual;
-            document.getElementById('ajuste-limite-input').value = limiteAtual;
+                const { data: acessos } = await supabase.from('acessos_clientes').select('*').eq('cnpj', cnpjBase);
+                let htmlUsuarios = '';
+                let contagem = 0;
 
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('prisma_vinculo_')) {
-                    const vinculo = lerBancoLocal(key);
-                    if (vinculo && vinculo.cnpj === cnpjBase) {
-                        const email = key.replace('prisma_vinculo_', '');
-                        const perm = vinculo.permissao || 'Master (Full)';
+                if(acessos) {
+                    acessos.forEach(acc => {
+                        const perm = acc.permissao || 'Master (Full)';
                         let corPerm = 'var(--text-muted)';
                         if(perm.includes('Financeiro')) corPerm = 'var(--success)';
                         if(perm.includes('RH')) corPerm = 'var(--warning)';
@@ -544,186 +524,178 @@
 
                         htmlUsuarios += `
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
-                                <div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${email}</div><div style="font-size: 0.75rem; color: ${corPerm}; font-weight: 800;">${perm}</div></div>
-                                <button onclick="removerAcesso('${email}', '${cnpjBase}')" class="btn-danger">Revogar</button>
+                                <div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${acc.email}</div><div style="font-size: 0.75rem; color: ${corPerm}; font-weight: 800;">${perm}</div></div>
+                                <button onclick="removerAcesso('${acc.email}', '${cnpjBase}')" class="btn-danger">Revogar</button>
                             </div>`;
                         contagem++;
-                    }
+                    });
                 }
-            }
-            // Injeção única (Alta Performance)
-            divLista.innerHTML = htmlUsuarios;
-            document.getElementById('contagem-acessos').innerText = contagem;
+                divLista.innerHTML = htmlUsuarios;
+                document.getElementById('contagem-acessos').innerText = contagem;
+            } catch(e) { console.error(e); }
         }
 
-        window.adicionarNovoAcesso = () => {
+        window.adicionarNovoAcesso = async () => {
             const email = document.getElementById('novo-acesso-email').value;
             const nivel = document.getElementById('novo-acesso-nivel').value;
             const cnpj = document.getElementById('acessos-cnpj').value;
             const nome = document.getElementById('acessos-nome').value;
 
-            if(!email) { simularAcao('Digite o e-mail do colaborador.', true); return; }
+            if(!email) { simularAcao('Digite o e-mail.', true); return; }
             const limiteMax = parseInt(document.getElementById('limite-acessos-display').innerText);
             const atual = parseInt(document.getElementById('contagem-acessos').innerText);
             
-            if(atual >= limiteMax) { simularAcao(`Limite de ${limiteMax} acessos atingido.`, true); return; }
+            if(atual >= limiteMax) { simularAcao(`Limite atingido.`, true); return; }
 
-            guardarBancoLocal('prisma_vinculo_' + email, { nome: nome, cnpj: cnpj, permissao: nivel });
-            simularAcao(`Permissão de [${nivel}] concedida para ${email}.`);
-            
-            document.getElementById('novo-acesso-email').value = '';
-            renderizarListaAcessos(cnpj);
-            carregarDadosSistema(); 
+            const btn = document.getElementById('btn-add-acesso');
+            btn.innerHTML = "..."; btn.disabled = true;
+
+            try {
+                await supabase.from('acessos_clientes').insert([{ email: email, cnpj: cnpj, nome: nome, permissao: nivel }]);
+                simularAcao(`Permissão concedida para ${email}.`);
+                document.getElementById('novo-acesso-email').value = '';
+                await renderizarListaAcessos(cnpj);
+                await carregarDadosSistema(); 
+            } catch(e) { simularAcao("Erro ao adicionar acesso.", true); }
+            btn.innerHTML = "Autorizar Novo Usuário"; btn.disabled = false;
         };
 
-        window.removerAcesso = (email, cnpj) => {
-            localStorage.removeItem('prisma_vinculo_' + email);
-            simularAcao(`Acesso revogado para ${email}.`);
-            renderizarListaAcessos(cnpj);
-            carregarDadosSistema();
+        window.removerAcesso = async (email, cnpj) => {
+            try {
+                await supabase.from('acessos_clientes').delete().eq('email', email);
+                simularAcao(`Acesso revogado.`);
+                await renderizarListaAcessos(cnpj);
+                await carregarDadosSistema();
+            } catch(e) {}
         };
 
-        // ----------------------------------------------------
-        // MÓDULO 4: INJEÇÃO DE FATURA
-        // ----------------------------------------------------
+        // 4. INJEÇÃO DE FATURA (SUPABASE)
         const modalInjetar = document.getElementById('modal-injetar');
         window.abrirModalInjetar = (cnpj) => { document.getElementById('injetar-cnpj').value = cnpj; modalInjetar.classList.add('ativo'); };
         window.fecharModalInjetar = () => modalInjetar.classList.remove('ativo');
 
-        window.salvarInjecao = () => {
+        window.salvarInjecao = async () => {
             const cnpj = document.getElementById('injetar-cnpj').value;
             const desc = document.getElementById('injetar-desc').value;
             const valor = parseFloat(document.getElementById('injetar-valor').value);
             const tipo = document.getElementById('injetar-tipo').value;
-            const arquivo = document.getElementById('injetar-arquivo').files[0];
-            const btnSubmit = document.getElementById('btn-submit-injecao');
+            const btn = document.getElementById('btn-submit-injecao');
 
             if(!desc || !valor) { simularAcao("Preencha a descrição e o valor.", true); return; }
+            btn.innerHTML = "<span class='spinner-small'></span> Enviando..."; btn.disabled = true;
 
-            btnSubmit.innerHTML = "<span class='spinner-small'></span> Processando..."; btnSubmit.style.opacity = '0.8';
+            try {
+                // Pega a empresa atual
+                const { data: emp } = await supabase.from('empresas').select('*').eq('cnpj', cnpj).single();
+                if(emp) {
+                    let novoSaldo = parseFloat(emp.saldo) || 0;
+                    let novoFat = parseFloat(emp.faturamento) || 0;
+                    let novoCusto = parseFloat(emp.custos) || 0;
 
-            setTimeout(() => {
-                const cofreKey = 'prisma_cofre_' + cnpj;
-                const cofreData = lerBancoLocal(cofreKey);
-                if(cofreData) {
-                    if(tipo === 'Receita') { cofreData.saldo += valor; cofreData.faturamento += valor; } 
-                    else { cofreData.saldo -= valor; cofreData.custos += valor; }
+                    if(tipo === 'Receita') { novoSaldo += valor; novoFat += valor; } 
+                    else { novoSaldo -= valor; novoCusto += valor; }
+
+                    // Atualiza a empresa
+                    await supabase.from('empresas').update({ saldo: novoSaldo, faturamento: novoFat, custos: novoCusto }).eq('cnpj', cnpj);
                     
-                    let descFinal = desc; if(arquivo) descFinal += ' 📎';
-                    cofreData.transacoes.unshift({ desc: descFinal, valor: valor, data: "Lançamento Admin", tipo: tipo });
-                    guardarBancoLocal(cofreKey, cofreData);
-                    
-                    simularAcao(arquivo ? `PDF anexado e valor injetado no cofre!` : `Lançamento injetado no cofre do cliente!`);
-                    carregarDadosSistema();
+                    // Insere transação
+                    await supabase.from('transacoes').insert([{ cnpj: cnpj, descricao: desc, valor: valor, tipo: tipo, data_lancamento: "Lançamento Admin" }]);
+
+                    simularAcao(`Lançamento injetado na Cloud!`);
+                    await carregarDadosSistema();
                     fecharModalInjetar();
-                    document.getElementById('injetar-desc').value = ''; document.getElementById('injetar-valor').value = ''; document.getElementById('injetar-arquivo').value = ''; document.getElementById('injetar-nome-arquivo').innerText = 'Clique ou arraste o PDF aqui';
-                    btnSubmit.innerHTML = "Injetar no Cofre do Cliente"; btnSubmit.style.opacity = '1';
+                    document.getElementById('injetar-desc').value = ''; document.getElementById('injetar-valor').value = '';
                 }
-            }, 800);
+            } catch (e) { simularAcao("Erro de injeção na cloud.", true); }
+
+            btn.innerHTML = "Injetar no Cofre do Cliente"; btn.disabled = false;
         };
 
-        // ----------------------------------------------------
-        // MÓDULO 5: AUDITORIA
-        // ----------------------------------------------------
+        // 5. AUDITORIA (SUPABASE)
         const modalInspecionar = document.getElementById('modal-inspecionar');
-        window.abrirModalInspecionar = (cnpj) => {
-            const cofre = lerBancoLocal('prisma_cofre_' + cnpj);
-            if(!cofre) return;
-            document.getElementById('insp-cnpj').innerText = "Identificador Legal: " + cnpj;
-            document.getElementById('insp-saldo').innerText = formatoBRL(cofre.saldo);
-            document.getElementById('insp-receitas').innerText = formatoBRL(cofre.faturamento);
-            document.getElementById('insp-despesas').innerText = formatoBRL(cofre.custos);
-            
-            const extratoDiv = document.getElementById('insp-extrato');
-            let htmlExtrato = '';
+        window.abrirModalInspecionar = async (cnpj) => {
+            try {
+                const { data: emp } = await supabase.from('empresas').select('*').eq('cnpj', cnpj).single();
+                if(!emp) return;
 
-            if(cofre.transacoes.length === 0) { 
-                htmlExtrato = '<p style="text-align:center; color:var(--text-muted); padding: 15px;">Sem movimentações.</p>'; 
-            } else {
-                cofre.transacoes.forEach(t => {
-                    const cor = t.tipo === 'Receita' ? 'var(--success)' : 'var(--danger)';
-                    const sinal = t.tipo === 'Receita' ? '+' : '-';
-                    htmlExtrato += `<div style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid var(--border);"><div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${t.desc}</div><div style="font-size: 0.75rem; color: var(--text-muted);">${t.data} • ${t.tipo}</div></div><div style="font-weight: 800; color: ${cor};">${sinal} ${formatoBRL(t.valor)}</div></div>`;
-                });
-            }
-            // Injeção única (Alta Performance)
-            extratoDiv.innerHTML = htmlExtrato;
-            modalInspecionar.classList.add('ativo');
+                document.getElementById('insp-cnpj').innerText = "Identificador Legal: " + cnpj;
+                document.getElementById('insp-saldo').innerText = formatoBRL(emp.saldo);
+                document.getElementById('insp-receitas').innerText = formatoBRL(emp.faturamento);
+                document.getElementById('insp-despesas').innerText = formatoBRL(emp.custos);
+                
+                const { data: transacoes } = await supabase.from('transacoes').select('*').eq('cnpj', cnpj).order('id', { ascending: false });
+                const extratoDiv = document.getElementById('insp-extrato');
+                let htmlExtrato = '';
+
+                if(!transacoes || transacoes.length === 0) { 
+                    htmlExtrato = '<p style="text-align:center; color:var(--text-muted); padding: 15px;">Sem movimentações na Cloud.</p>'; 
+                } else {
+                    transacoes.forEach(t => {
+                        const cor = t.tipo === 'Receita' ? 'var(--success)' : 'var(--danger)';
+                        const sinal = t.tipo === 'Receita' ? '+' : '-';
+                        htmlExtrato += `<div style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid var(--border);"><div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${t.descricao}</div><div style="font-size: 0.75rem; color: var(--text-muted);">${t.data_lancamento} • ${t.tipo}</div></div><div style="font-weight: 800; color: ${cor};">${sinal} ${formatoBRL(t.valor)}</div></div>`;
+                    });
+                }
+                extratoDiv.innerHTML = htmlExtrato;
+                modalInspecionar.classList.add('ativo');
+            } catch(e) { console.error(e); simularAcao("Erro ao carregar auditoria.", true); }
         };
         window.fecharModalInspecionar = () => modalInspecionar.classList.remove('ativo');
 
-        // ----------------------------------------------------
-        // CARREGAMENTO PRINCIPAL (OTIMIZADO)
-        // ----------------------------------------------------
-        function carregarDadosSistema() {
-            const empresas = {}; 
-            let volumeTotal = 0; let faturamentoGlobal = 0;
+        // CARREGAMENTO GLOBAL ASSÍNCRONO DA CLOUD
+        async function carregarDadosSistema() {
+            try {
+                const { data: empresasData } = await supabase.from('empresas').select('*');
+                const { data: acessosData } = await supabase.from('acessos_clientes').select('*');
+                
+                const empresas = {}; 
+                let volumeTotal = 0; let faturamentoGlobal = 0;
 
-            // Leitura Segura de Cofres
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('prisma_cofre_')) {
-                    const cnpj = key.replace('prisma_cofre_', '');
-                    const cofreData = lerBancoLocal(key, {});
-                    
-                    const saldo = parseFloat(cofreData.saldo) || 0;
-                    const faturamento = parseFloat(cofreData.faturamento) || 0;
-                    const limitMax = parseInt(cofreData.limite_usuarios) || 8; 
-
-                    empresas[cnpj] = { cnpj: cnpj, saldo: saldo, faturamento: faturamento, usuarios: [], nome: "Empresa Não Nomeada", max_users: limitMax };
-                    volumeTotal += saldo; faturamentoGlobal += faturamento;
-                }
-            }
-
-            // Leitura Segura de Usuários/Vínculos
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('prisma_vinculo_')) {
-                    const email = key.replace('prisma_vinculo_', '');
-                    const vinculo = lerBancoLocal(key);
-                    if(vinculo && vinculo.cnpj && empresas[vinculo.cnpj]) {
-                        empresas[vinculo.cnpj].nome = vinculo.nome || "Empresa Sem Nome"; 
-                        empresas[vinculo.cnpj].usuarios.push(email);
-                    }
-                }
-            }
-
-            const listaEmpresas = Object.values(empresas);
-            document.getElementById('kpi-clientes').innerText = listaEmpresas.length;
-            document.getElementById('kpi-volume').innerText = formatoBRL(volumeTotal);
-            document.getElementById('kpi-faturamento').innerText = formatoBRL(faturamentoGlobal);
-
-            const tbody = document.getElementById('lista-clientes');
-            let htmlClientes = '';
-            
-            if (listaEmpresas.length === 0) {
-                htmlClientes = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 30px;">Nenhuma empresa registada. Clique em "+ Novo Cliente" para começar.</td></tr>`;
-            } else {
-                listaEmpresas.forEach(emp => {
-                    const contagemUsr = emp.usuarios.length;
-                    htmlClientes += `
-                        <tr>
-                            <td><div style="font-weight: 800; color: white; font-size: 1.05rem;">${emp.nome}</div></td>
-                            <td class="td-cnpj">${emp.cnpj}</td>
-                            <td><span class="role-badge" style="background:var(--warning); color:#000;">${contagemUsr}/${emp.max_users} Acessos</span></td>
-                            <td style="color: var(--success); font-weight: 800;">${formatoBRL(emp.saldo)}</td>
-                            <td style="display:flex; gap: 10px;">
-                                <button class="btn-acessar" style="border-color:var(--warning); color:var(--warning);" onclick="abrirModalAcessos('${emp.cnpj}', '${emp.nome}')">🔑 Acessos</button>
-                                <button class="btn-acessar" style="border-color:var(--success); color:var(--success);" onclick="abrirModalInjetar('${emp.cnpj}')">+ Fatura</button>
-                                <button class="btn-acessar" onclick="abrirModalInspecionar('${emp.cnpj}')">Auditar</button>
-                            </td>
-                        </tr>`;
+                (empresasData || []).forEach(emp => {
+                    empresas[emp.cnpj] = { cnpj: emp.cnpj, saldo: emp.saldo, faturamento: emp.faturamento, usuarios: [], nome: emp.nome || "Sem Nome", max_users: emp.limite_usuarios };
+                    volumeTotal += parseFloat(emp.saldo) || 0; faturamentoGlobal += parseFloat(emp.faturamento) || 0;
                 });
-            }
-            // Injeção Única (Alta Performance)
-            tbody.innerHTML = htmlClientes;
 
-            renderizarEquipePrisma();
+                (acessosData || []).forEach(acc => {
+                    if(empresas[acc.cnpj]) { empresas[acc.cnpj].usuarios.push(acc.email); }
+                });
+
+                const listaEmpresas = Object.values(empresas);
+                document.getElementById('kpi-clientes').innerText = listaEmpresas.length;
+                document.getElementById('kpi-volume').innerText = formatoBRL(volumeTotal);
+                document.getElementById('kpi-faturamento').innerText = formatoBRL(faturamentoGlobal);
+
+                const tbody = document.getElementById('lista-clientes');
+                let htmlClientes = '';
+                
+                if (listaEmpresas.length === 0) {
+                    htmlClientes = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 30px;">Cloud Vazia. Clique em "+ Novo Cliente".</td></tr>`;
+                } else {
+                    listaEmpresas.forEach(emp => {
+                        const contagemUsr = emp.usuarios.length;
+                        htmlClientes += `
+                            <tr>
+                                <td><div style="font-weight: 800; color: white; font-size: 1.05rem;">${emp.nome}</div></td>
+                                <td class="td-cnpj">${emp.cnpj}</td>
+                                <td><span class="role-badge" style="background:var(--warning); color:#000;">${contagemUsr}/${emp.max_users} Acessos</span></td>
+                                <td style="color: var(--success); font-weight: 800;">${formatoBRL(emp.saldo)}</td>
+                                <td style="display:flex; gap: 10px;">
+                                    <button class="btn-acessar" style="border-color:var(--warning); color:var(--warning);" onclick="abrirModalAcessos('${emp.cnpj}', '${emp.nome}')">🔑 Acessos</button>
+                                    <button class="btn-acessar" style="border-color:var(--success); color:var(--success);" onclick="abrirModalInjetar('${emp.cnpj}')">+ Fatura</button>
+                                    <button class="btn-acessar" onclick="abrirModalInspecionar('${emp.cnpj}')">Auditar</button>
+                                </td>
+                            </tr>`;
+                    });
+                }
+                tbody.innerHTML = htmlClientes;
+                await renderizarEquipePrisma();
+            } catch (e) {
+                console.error(e);
+                simularAcao("Falha ao ligar ao Supabase. Tabelas SQL criadas?", true);
+            }
         }
 
-        // ----------------------------------------------------
         // INIT C/ VERIFICAÇÃO MASTER
-        // ----------------------------------------------------
         document.addEventListener('DOMContentLoaded', () => {
             if(sessionStorage.getItem('prisma_admin_auth') === 'true') {
                 document.getElementById('admin-login-screen').style.display = 'none';
