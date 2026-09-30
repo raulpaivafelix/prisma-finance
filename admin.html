@@ -74,7 +74,7 @@
     <div id="toast-container" class="toast-container"></div>
     <div id="auth-loader"><div class="spinner"></div><p>A CARREGAR PAINEL MASTER...</p></div>
 
-    <!-- MODAIS DE AÇÃO -->
+    <!-- MODAL DE NOVO CLIENTE -->
     <div id="modal-novo-cliente" class="modal-overlay">
         <div class="modal-box" style="border-top: 5px solid var(--primary);">
             <button onclick="fecharModalNovoCliente()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -87,6 +87,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE INJEÇÃO REMOTA -->
     <div id="modal-injetar" class="modal-overlay">
         <div class="modal-box" style="border-top: 5px solid var(--success);">
             <button onclick="fecharModalInjetar()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -104,6 +105,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE AUDITORIA -->
     <div id="modal-inspecionar" class="modal-overlay">
         <div class="modal-box" style="max-width: 600px; border-top: 5px solid var(--primary);">
             <button onclick="fecharModalInspecionar()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -118,7 +120,7 @@
         </div>
     </div>
 
-    <!-- MENU LATERAL COM ABAS SEPARADAS -->
+    <!-- MENU LATERAL -->
     <aside class="sidebar">
         <div class="logo-area"><img src="assets/prisma-brasao.svg" width="25"> <h2>PRISMA <span style="color:var(--primary);">MASTER</span></h2></div>
         <nav class="menu-nav">
@@ -144,23 +146,38 @@
         <header class="header">
             <div class="header-title">
                 <h1 id="painel-titulo">Painel de Comando Central</h1>
-                <p id="painel-subtitulo">Monitorização de todos os CNPJs, saldos e clientes sob gestão.</p>
+                <p id="painel-subtitulo">Monitorização de permissões, acessos e panorama global.</p>
             </div>
             <button class="btn-acessar" style="background:var(--primary); color:white; border:none;" onclick="abrirModalNovoCliente()">+ Novo Cliente</button>
         </header>
 
-        <!-- ABA 1: VISÃO SISTÉMICA (Apenas os Resumos/KPIs) -->
+        <!-- ABA 1: VISÃO SISTÉMICA (Agora com Botões de Autorização) -->
         <div id="tab-visao" class="tab-content">
             <section class="kpi-grid">
+                <!-- CARTÃO 1: TOTAL DE CLIENTES -->
                 <div class="kpi-card">
                     <p class="kpi-title">Total de Clientes</p>
                     <h2 class="kpi-value" id="kpi-clientes">0</h2>
                     <span class="kpi-subtitle" style="color:var(--primary); background:rgba(59,130,246,0.1);">Empresas Ativas</span>
                 </div>
+                
+                <!-- CARTÃO 2: BOTÃO AUTORIZAR FINANCEIRO -->
+                <div class="kpi-card" style="display: flex; flex-direction: column; justify-content: center; border-color: rgba(59, 130, 246, 0.3);">
+                    <p class="kpi-title" style="color: white; margin-bottom: 5px;">Módulo Financeiro</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">Autorize os clientes a lançar faturas e movimentações manuais.</p>
+                    <button class="btn-acessar" style="width: 100%; text-align: center; padding: 12px; font-size: 0.9rem;" onclick="simularAcao('Permissão concedida: Clientes agora podem fazer Entradas e Saídas.')">🔓 Autorizar Entradas e Saídas</button>
+                </div>
+
+                <!-- CARTÃO 3: BOTÃO AUTORIZAR RH -->
+                <div class="kpi-card" style="display: flex; flex-direction: column; justify-content: center; border-color: rgba(5, 150, 105, 0.3);">
+                    <p class="kpi-title" style="color: white; margin-bottom: 5px;">Módulo de RH</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">Libere a gestão de folha, adição de colaboradores e benefícios.</p>
+                    <button class="btn-acessar" style="width: 100%; text-align: center; padding: 12px; font-size: 0.9rem; color: var(--success); border-color: var(--success); background: rgba(5, 150, 105, 0.1);" onclick="simularAcao('Permissão concedida: Módulo de RH (Colaboradores/Benefícios) liberado.')">🔓 Autorizar Gestão de RH</button>
+                </div>
             </section>
         </div>
 
-        <!-- ABA 2: CARTEIRA DE CLIENTES (Apenas a Tabela) -->
+        <!-- ABA 2: CARTEIRA DE CLIENTES (A Tabela Completa) -->
         <div id="tab-carteira" class="tab-content" style="display:none;">
             <section class="dashboard-grid" style="grid-template-columns: 1fr;">
                 <div class="panel">
@@ -230,7 +247,7 @@
 
                 if(tabId === 'visao') {
                     document.getElementById('painel-titulo').innerText = "Painel de Comando Central";
-                    document.getElementById('painel-subtitulo').innerText = "Monitorização de todos os CNPJs, saldos e clientes sob gestão.";
+                    document.getElementById('painel-subtitulo').innerText = "Monitorização de permissões, acessos e panorama global.";
                 } else if(tabId === 'carteira') {
                     document.getElementById('painel-titulo').innerText = "Gestão de CRM";
                     document.getElementById('painel-subtitulo').innerText = "Acesse detalhadamente cada cofre digital dos seus clientes.";
