@@ -314,6 +314,18 @@
         // 3. RENDERIZAÇÃO DOS GRÁFICOS E KPIs
         function renderDashboard(tab) {
             currentTab = tab;
+            
+            // A MÁGICA ACONTECE AQUI: Controla a visibilidade do botão
+            const btnTransacao = document.getElementById('btn-nova-transacao');
+            if (btnTransacao) {
+                // Se estiver na aba 'visao', esconde. Se estiver noutra, mostra.
+                if (tab === 'visao') {
+                    btnTransacao.style.display = 'none';
+                } else {
+                    btnTransacao.style.display = ''; // Volta ao normal
+                }
+            }
+
             const kpiContainer = document.getElementById('kpi-container');
             let kpiHTML = '';
             let chartData = {};
@@ -380,6 +392,21 @@
                     });
                 }
             }
+
+            if (myChart) myChart.destroy();
+            const canvas = document.getElementById('mainChart');
+            if(canvas) {
+                const ctx = canvas.getContext('2d');
+                let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(5, 150, 105, 0.4)'); gradient.addColorStop(1, 'rgba(5, 150, 105, 0.0)'); 
+                
+                myChart = new Chart(ctx, { 
+                    type: chartData.type, 
+                    data: { labels: chartData.labels, datasets: [{ label: 'Valor (R$)', data: chartData.data, borderColor: '#059669', backgroundColor: chartData.type === 'line' ? gradient : '#059669', borderWidth: 3, fill: true, tension: 0.4, borderRadius: 4 }] }, 
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } } } 
+                });
+            }
+        }
 
             if (myChart) myChart.destroy();
             const canvas = document.getElementById('mainChart');
