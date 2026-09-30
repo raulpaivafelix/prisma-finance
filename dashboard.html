@@ -315,14 +315,13 @@
         function renderDashboard(tab) {
             currentTab = tab;
             
-            // A MÁGICA ACONTECE AQUI: Controla a visibilidade do botão
+            // 1. MÁGICA DO BOTÃO: Mostra apenas se a aba for 'fluxo'
             const btnTransacao = document.getElementById('btn-nova-transacao');
             if (btnTransacao) {
-                // Se estiver na aba 'visao', esconde. Se estiver noutra, mostra.
-                if (tab === 'visao') {
-                    btnTransacao.style.display = 'none';
+                if (tab === 'fluxo') {
+                    btnTransacao.style.display = 'block'; // Mostra o botão
                 } else {
-                    btnTransacao.style.display = ''; // Volta ao normal
+                    btnTransacao.style.display = 'none'; // Esconde na Visão Executiva, DRE, etc.
                 }
             }
 
@@ -345,6 +344,19 @@
                 `;
                 document.getElementById('chart-title').innerText = "Projeção de Fluxo de Caixa";
                 chartData = { type: 'line', labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], data: [userData.saldo, userData.saldo+1000, userData.saldo-2000, userData.saldo-500, userData.saldo+4000, userData.saldo+4000, userData.saldo+4000] };
+            
+            } else if (tab === 'fluxo') {
+                // PROGRAMAÇÃO DA NOVA ABA: FLUXO DE CAIXA
+                document.getElementById('page-title').innerText = "Gestão de Fluxo de Caixa";
+                document.getElementById('page-subtitle').innerText = "Controle diário de entradas, saídas e previsões.";
+                
+                kpiHTML = `
+                    <div class="kpi-card"><p class="kpi-title">Total de Entradas</p><h2 class="kpi-value" style="color:var(--success)">${formatoBRL(userData.faturamento)}</h2><span class="kpi-subtitle">Recebimentos</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Total de Saídas</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.custos)}</h2><span class="kpi-subtitle">Pagamentos efetuados</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Saldo Real</p><h2 class="kpi-value">${formatoBRL(userData.saldo)}</h2><span class="kpi-subtitle">Disponível em Caixa</span></div>
+                `;
+                document.getElementById('chart-title').innerText = "Movimentação do Caixa (Semanal)";
+                chartData = { type: 'line', labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], data: [userData.saldo, userData.saldo, userData.saldo, userData.saldo, userData.saldo, userData.saldo, userData.saldo] };
             
             } else if (tab === 'dre') {
                 document.getElementById('page-title').innerText = "Demonstração de Resultados";
@@ -392,6 +404,21 @@
                     });
                 }
             }
+
+            if (myChart) myChart.destroy();
+            const canvas = document.getElementById('mainChart');
+            if(canvas) {
+                const ctx = canvas.getContext('2d');
+                let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(5, 150, 105, 0.4)'); gradient.addColorStop(1, 'rgba(5, 150, 105, 0.0)'); 
+                
+                myChart = new Chart(ctx, { 
+                    type: chartData.type, 
+                    data: { labels: chartData.labels, datasets: [{ label: 'Valor (R$)', data: chartData.data, borderColor: '#059669', backgroundColor: chartData.type === 'line' ? gradient : '#059669', borderWidth: 3, fill: true, tension: 0.4, borderRadius: 4 }] }, 
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } } } 
+                });
+            }
+        }
 
             if (myChart) myChart.destroy();
             const canvas = document.getElementById('mainChart');
