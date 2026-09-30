@@ -289,7 +289,7 @@
             </section>
         </div>
 
-        <!-- ABA 4: EQUIPE DE ANALISTAS (AGORA COM BOTÃO DE ADICIONAR COLABORADOR) -->
+        <!-- ABA 4: EQUIPE DE ANALISTAS -->
         <div id="tab-equipe" class="tab-content" style="display:none;">
             <section class="dashboard-grid" style="grid-template-columns: 1fr;">
                 <div class="panel">
@@ -300,9 +300,7 @@
                     <div style="overflow-x: auto;">
                         <table>
                             <thead><tr><th>Nome do Colaborador</th><th>E-mail</th><th>Cargo / Nível</th><th>Clientes Alocados</th><th>Status</th></tr></thead>
-                            <tbody id="lista-equipe-prisma">
-                                <!-- Preenchido dinamicamente -->
-                            </tbody>
+                            <tbody id="lista-equipe-prisma"></tbody>
                         </table>
                     </div>
                 </div>
@@ -311,6 +309,9 @@
     </main>
 
     <script>
+        // ----------------------------------------------------
+        // UTILITÁRIOS GLOBAIS E TRATAMENTO DE ERROS (SISTEMA ANTI-QUEBRA)
+        // ----------------------------------------------------
         const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 
         window.simularAcao = (mensagem, isError = false) => {
@@ -323,7 +324,30 @@
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
         };
 
-        // LOGIN MASTER
+        // Função de Segurança: Lê dados do LocalStorage sem causar erros fatais
+        const lerBancoLocal = (chave, valorPadrao = null) => {
+            try {
+                const dado = localStorage.getItem(chave);
+                return dado ? JSON.parse(dado) : valorPadrao;
+            } catch (error) {
+                console.error(`[Prevenção de Erro] Falha ao ler '${chave}':`, error);
+                return valorPadrao;
+            }
+        };
+
+        // Função de Segurança: Guarda dados no LocalStorage em segurança
+        const guardarBancoLocal = (chave, dados) => {
+            try {
+                localStorage.setItem(chave, JSON.stringify(dados));
+            } catch (error) {
+                console.error(`[Prevenção de Erro] Falha ao gravar '${chave}':`, error);
+                simularAcao("Erro de memória do navegador.", true);
+            }
+        };
+
+        // ----------------------------------------------------
+        // LÓGICA DE LOGIN MASTER
+        // ----------------------------------------------------
         window.verificarMaster = () => {
             const email = document.getElementById('master-email').value.trim().toLowerCase();
             const pwd = document.getElementById('master-pwd').value;
@@ -345,7 +369,9 @@
             window.location.reload();
         };
 
+        // ----------------------------------------------------
         // SISTEMA DE ABAS (TABS)
+        // ----------------------------------------------------
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', () => {
                 const tabId = item.getAttribute('data-tab');
@@ -356,13 +382,9 @@
                 document.getElementById('tab-' + tabId).style.display = 'block';
 
                 const btnArea = document.getElementById('header-btn-area');
-                if(tabId === 'visao') {
-                    document.getElementById('painel-titulo').innerText = "Painel de Comando Central";
+                if(tabId === 'visao' || tabId === 'carteira') {
+                    document.getElementById('painel-titulo').innerText = tabId === 'visao' ? "Painel de Comando Central" : "Gestão de CRM";
                     document.getElementById('painel-subtitulo').innerText = "Monitorização global da operação.";
-                    btnArea.innerHTML = `<button class="btn-acessar" style="background:var(--primary); color:white; border:none; padding: 12px 20px;" onclick="abrirModalNovoCliente()">+ Novo Cliente</button>`;
-                } else if(tabId === 'carteira') {
-                    document.getElementById('painel-titulo').innerText = "Gestão de CRM";
-                    document.getElementById('painel-subtitulo').innerText = "Acesse cada cofre digital e controle as permissões dos clientes.";
                     btnArea.innerHTML = `<button class="btn-acessar" style="background:var(--primary); color:white; border:none; padding: 12px 20px;" onclick="abrirModalNovoCliente()">+ Novo Cliente</button>`;
                 } else if(tabId === 'faturamento') {
                     document.getElementById('painel-titulo').innerText = "Financeiro Interno";
@@ -371,12 +393,14 @@
                 } else if(tabId === 'equipe') {
                     document.getElementById('painel-titulo').innerText = "Gestão de Equipe";
                     document.getElementById('painel-subtitulo').innerText = "Gerencie os analistas internos da Prisma.";
-                    btnArea.innerHTML = `<button class="btn-acessar" style="background:var(--success); color:white; border:none; padding: 12px 20px;" onclick="abrirModalNovoAnalista()">+ Adicionar Colaborador</button>`;
+                    btnArea.innerHTML = '';
                 }
             });
         });
 
-        // 1. PROVISIONAMENTO DE CLIENTE
+        // ----------------------------------------------------
+        // MÓDULO 1: PROVISIONAMENTO DE CLIENTE
+        // ----------------------------------------------------
         const modalAdmin = document.getElementById('modal-novo-cliente');
         window.abrirModalNovoCliente = () => modalAdmin.classList.add('ativo');
         window.fecharModalNovoCliente = () => modalAdmin.classList.remove('ativo');
@@ -391,7 +415,7 @@
             if(isNaN(limiteMax) || limiteMax < 1) limiteMax = 1;
             if(limiteMax > 15) limiteMax = 15; 
 
-            localStorage.setItem('prisma_vinculo_' + email, JSON.stringify({ nome: nome, cnpj: cnpj, permissao: 'Master (Full)' }));
+            guardarBancoLocal('prisma_vinculo_' + email, { nome: nome, cnpj: cnpj, permissao: 'Master (Full)' });
             
             if(!localStorage.getItem('prisma_cofre_' + cnpj)) {
                 let cofreData = { limite_usuarios: limiteMax, saldo: 0, faturamento: 0, custos: 0, impostos: 0, rh_headcount: 0, rh_folha: 0, rh_beneficios: 0, transacoes: [] };
@@ -400,7 +424,7 @@
                         transacoes: [{ desc: "Receita de Vendas (Lote)", valor: 25000, data: "Hoje", tipo: "Receita" }, { desc: "Impostos Federais (DAS)", valor: 3480, data: "Ontem", tipo: "Despesa" }]
                     };
                 }
-                localStorage.setItem('prisma_cofre_' + cnpj, JSON.stringify(cofreData));
+                guardarBancoLocal('prisma_cofre_' + cnpj, cofreData);
             }
             
             simularAcao(`Cofre criado com sucesso para ${cnpj}!`);
@@ -410,49 +434,47 @@
             document.getElementById('admin-cad-email').value = ''; document.getElementById('admin-cad-nome').value = ''; document.getElementById('admin-cad-cnpj').value = '';
         };
 
-        // 2. ADICIONAR ANALISTA DA PRISMA
+        // ----------------------------------------------------
+        // MÓDULO 2: ADICIONAR EQUIPA PRISMA (CORRIGIDO E OTIMIZADO)
+        // ----------------------------------------------------
         const modalAnalista = document.getElementById('modal-novo-analista');
         window.abrirModalNovoAnalista = () => modalAnalista.classList.add('ativo');
         window.fecharModalNovoAnalista = () => modalAnalista.classList.remove('ativo');
 
         window.salvarNovoAnalista = () => {
-            const nome = document.getElementById('Prisma-analista-nome').value;
-            const email = document.getElementById('Prisma-analista-email').value;
-            const cargo = document.getElementById('Prisma-analista-cargo').value;
-            const clientes = document.getElementById('Prisma-analista-clientes').value;
+            const nome = document.getElementById('prisma-analista-nome').value;
+            const email = document.getElementById('prisma-analista-email').value;
+            const cargo = document.getElementById('prisma-analista-cargo').value;
+            const clientes = document.getElementById('prisma-analista-clientes').value;
 
             if(!nome || !email) { simularAcao("Preencha o Nome e o E-mail.", true); return; }
 
-            let equipe = JSON.parse(localStorage.getItem('prisma_equipe_interna')) || [
+            let equipe = lerBancoLocal('prisma_equipe_interna', [
                 { nome: "Raul Lima", email: "ceo@prismafinance.com.br", cargo: "Master Admin / CEO", clientes: "Todos", status: "Online" }
-            ];
+            ]);
 
             equipe.push({ nome, email, cargo, clientes: clientes || 'Geral', status: 'Ativo' });
-            localStorage.setItem('prisma_equipe_interna', JSON.stringify(equipe));
+            guardarBancoLocal('prisma_equipe_interna', equipe);
 
-            simularAcao(`Colaborador ${nome} adicionado à equipe com sucesso!`);
+            simularAcao(`Colaborador ${nome} adicionado com sucesso!`);
             fecharModalNovoAnalista();
             renderizarEquipePrisma();
 
-            document.getElementById('Prisma-analista-nome').value = '';
-            document.getElementById('Prisma-analista-email').value = '';
-            document.getElementById('Prisma-analista-clientes').value = '';
+            document.getElementById('prisma-analista-nome').value = '';
+            document.getElementById('prisma-analista-email').value = '';
+            document.getElementById('prisma-analista-clientes').value = '';
         };
 
         function renderizarEquipePrisma() {
-            let equipe = JSON.parse(localStorage.getItem('prisma_equipe_interna'));
-            if(!equipe) {
-                equipe = [
-                    { nome: "Raul Lima", email: "ceo@prismafinance.com.br", cargo: "Master Admin / CEO", clientes: "Todos", status: "Online" }
-                ];
-                localStorage.setItem('prisma_equipe_interna', JSON.stringify(equipe));
-            }
+            let equipe = lerBancoLocal('prisma_equipe_interna', [
+                { nome: "Raul Lima", email: "ceo@prismafinance.com.br", cargo: "Master Admin / CEO", clientes: "Todos", status: "Online" }
+            ]);
 
             const tbody = document.getElementById('lista-equipe-prisma');
-            tbody.innerHTML = '';
+            let htmlEquipa = '';
 
             equipe.forEach(colab => {
-                tbody.innerHTML += `
+                htmlEquipa += `
                     <tr>
                         <td><div style="font-weight: 800; color: white;">${colab.nome}</div></td>
                         <td class="td-cnpj">${colab.email}</td>
@@ -461,9 +483,14 @@
                         <td><span class="status-badge">${colab.status}</span></td>
                     </tr>`;
             });
+            
+            // Injeção única (Alta Performance)
+            tbody.innerHTML = htmlEquipa;
         }
 
-        // 3. GESTÃO DE ACESSOS DE CLIENTES
+        // ----------------------------------------------------
+        // MÓDULO 3: GESTÃO DE ACESSOS DE CLIENTES
+        // ----------------------------------------------------
         const modalAcessos = document.getElementById('modal-acessos');
         window.abrirModalAcessos = (cnpj, nomeEmpresa) => {
             document.getElementById('acessos-cnpj').value = cnpj;
@@ -481,10 +508,10 @@
             if(isNaN(novoLimite) || novoLimite < 1) novoLimite = 1;
             if(novoLimite > 15) { simularAcao("O limite máximo do sistema é 15.", true); novoLimite = 15; }
             
-            const cofreData = JSON.parse(localStorage.getItem('prisma_cofre_' + cnpj));
+            const cofreData = lerBancoLocal('prisma_cofre_' + cnpj);
             if(cofreData) {
                 cofreData.limite_usuarios = novoLimite;
-                localStorage.setItem('prisma_cofre_' + cnpj, JSON.stringify(cofreData));
+                guardarBancoLocal('prisma_cofre_' + cnpj, cofreData);
                 document.getElementById('limite-acessos-display').innerText = novoLimite;
                 document.getElementById('ajuste-limite-input').value = novoLimite;
                 simularAcao(`Plano de acessos atualizado para ${novoLimite}.`);
@@ -494,11 +521,11 @@
 
         function renderizarListaAcessos(cnpjBase) {
             const divLista = document.getElementById('lista-usuarios-cnpj');
-            divLista.innerHTML = '';
+            let htmlUsuarios = '';
             let contagem = 0;
 
-            const cofreData = JSON.parse(localStorage.getItem('prisma_cofre_' + cnpjBase));
-            const limiteAtual = (cofreData && cofreData.limite_usuarios) ? cofreData.limite_usuarios : 8; 
+            const cofreData = lerBancoLocal('prisma_cofre_' + cnpjBase, {});
+            const limiteAtual = cofreData.limite_usuarios || 8; 
             
             document.getElementById('limite-acessos-display').innerText = limiteAtual;
             document.getElementById('ajuste-limite-input').value = limiteAtual;
@@ -506,8 +533,8 @@
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key.startsWith('prisma_vinculo_')) {
-                    const vinculo = JSON.parse(localStorage.getItem(key));
-                    if (vinculo.cnpj === cnpjBase) {
+                    const vinculo = lerBancoLocal(key);
+                    if (vinculo && vinculo.cnpj === cnpjBase) {
                         const email = key.replace('prisma_vinculo_', '');
                         const perm = vinculo.permissao || 'Master (Full)';
                         let corPerm = 'var(--text-muted)';
@@ -515,7 +542,7 @@
                         if(perm.includes('RH')) corPerm = 'var(--warning)';
                         if(perm.includes('Master')) corPerm = 'var(--primary)';
 
-                        divLista.innerHTML += `
+                        htmlUsuarios += `
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
                                 <div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${email}</div><div style="font-size: 0.75rem; color: ${corPerm}; font-weight: 800;">${perm}</div></div>
                                 <button onclick="removerAcesso('${email}', '${cnpjBase}')" class="btn-danger">Revogar</button>
@@ -524,6 +551,8 @@
                     }
                 }
             }
+            // Injeção única (Alta Performance)
+            divLista.innerHTML = htmlUsuarios;
             document.getElementById('contagem-acessos').innerText = contagem;
         }
 
@@ -539,7 +568,7 @@
             
             if(atual >= limiteMax) { simularAcao(`Limite de ${limiteMax} acessos atingido.`, true); return; }
 
-            localStorage.setItem('prisma_vinculo_' + email, JSON.stringify({ nome: nome, cnpj: cnpj, permissao: nivel }));
+            guardarBancoLocal('prisma_vinculo_' + email, { nome: nome, cnpj: cnpj, permissao: nivel });
             simularAcao(`Permissão de [${nivel}] concedida para ${email}.`);
             
             document.getElementById('novo-acesso-email').value = '';
@@ -554,7 +583,9 @@
             carregarDadosSistema();
         };
 
-        // 4. INJEÇÃO DE FATURA
+        // ----------------------------------------------------
+        // MÓDULO 4: INJEÇÃO DE FATURA
+        // ----------------------------------------------------
         const modalInjetar = document.getElementById('modal-injetar');
         window.abrirModalInjetar = (cnpj) => { document.getElementById('injetar-cnpj').value = cnpj; modalInjetar.classList.add('ativo'); };
         window.fecharModalInjetar = () => modalInjetar.classList.remove('ativo');
@@ -573,14 +604,14 @@
 
             setTimeout(() => {
                 const cofreKey = 'prisma_cofre_' + cnpj;
-                const cofreData = JSON.parse(localStorage.getItem(cofreKey));
+                const cofreData = lerBancoLocal(cofreKey);
                 if(cofreData) {
                     if(tipo === 'Receita') { cofreData.saldo += valor; cofreData.faturamento += valor; } 
                     else { cofreData.saldo -= valor; cofreData.custos += valor; }
                     
                     let descFinal = desc; if(arquivo) descFinal += ' 📎';
                     cofreData.transacoes.unshift({ desc: descFinal, valor: valor, data: "Lançamento Admin", tipo: tipo });
-                    localStorage.setItem(cofreKey, JSON.stringify(cofreData));
+                    guardarBancoLocal(cofreKey, cofreData);
                     
                     simularAcao(arquivo ? `PDF anexado e valor injetado no cofre!` : `Lançamento injetado no cofre do cliente!`);
                     carregarDadosSistema();
@@ -591,10 +622,12 @@
             }, 800);
         };
 
-        // 5. AUDITORIA
+        // ----------------------------------------------------
+        // MÓDULO 5: AUDITORIA
+        // ----------------------------------------------------
         const modalInspecionar = document.getElementById('modal-inspecionar');
         window.abrirModalInspecionar = (cnpj) => {
-            const cofre = JSON.parse(localStorage.getItem('prisma_cofre_' + cnpj));
+            const cofre = lerBancoLocal('prisma_cofre_' + cnpj);
             if(!cofre) return;
             document.getElementById('insp-cnpj').innerText = "Identificador Legal: " + cnpj;
             document.getElementById('insp-saldo').innerText = formatoBRL(cofre.saldo);
@@ -602,41 +635,54 @@
             document.getElementById('insp-despesas').innerText = formatoBRL(cofre.custos);
             
             const extratoDiv = document.getElementById('insp-extrato');
-            extratoDiv.innerHTML = '';
-            if(cofre.transacoes.length === 0) { extratoDiv.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding: 15px;">Sem movimentações.</p>'; } 
-            else {
+            let htmlExtrato = '';
+
+            if(cofre.transacoes.length === 0) { 
+                htmlExtrato = '<p style="text-align:center; color:var(--text-muted); padding: 15px;">Sem movimentações.</p>'; 
+            } else {
                 cofre.transacoes.forEach(t => {
                     const cor = t.tipo === 'Receita' ? 'var(--success)' : 'var(--danger)';
                     const sinal = t.tipo === 'Receita' ? '+' : '-';
-                    extratoDiv.innerHTML += `<div style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid var(--border);"><div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${t.desc}</div><div style="font-size: 0.75rem; color: var(--text-muted);">${t.data} • ${t.tipo}</div></div><div style="font-weight: 800; color: ${cor};">${sinal} ${formatoBRL(t.valor)}</div></div>`;
+                    htmlExtrato += `<div style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid var(--border);"><div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${t.desc}</div><div style="font-size: 0.75rem; color: var(--text-muted);">${t.data} • ${t.tipo}</div></div><div style="font-weight: 800; color: ${cor};">${sinal} ${formatoBRL(t.valor)}</div></div>`;
                 });
             }
+            // Injeção única (Alta Performance)
+            extratoDiv.innerHTML = htmlExtrato;
             modalInspecionar.classList.add('ativo');
         };
         window.fecharModalInspecionar = () => modalInspecionar.classList.remove('ativo');
 
+        // ----------------------------------------------------
+        // CARREGAMENTO PRINCIPAL (OTIMIZADO)
+        // ----------------------------------------------------
         function carregarDadosSistema() {
             const empresas = {}; 
             let volumeTotal = 0; let faturamentoGlobal = 0;
 
+            // Leitura Segura de Cofres
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key.startsWith('prisma_cofre_')) {
                     const cnpj = key.replace('prisma_cofre_', '');
-                    const cofreData = JSON.parse(localStorage.getItem(key));
-                    const limitMax = cofreData.limite_usuarios || 8; 
-                    empresas[cnpj] = { cnpj: cnpj, saldo: cofreData.saldo, faturamento: cofreData.faturamento, usuarios: [], nome: "Empresa Não Nomeada", max_users: limitMax };
-                    volumeTotal += cofreData.saldo; faturamentoGlobal += cofreData.faturamento;
+                    const cofreData = lerBancoLocal(key, {});
+                    
+                    const saldo = parseFloat(cofreData.saldo) || 0;
+                    const faturamento = parseFloat(cofreData.faturamento) || 0;
+                    const limitMax = parseInt(cofreData.limite_usuarios) || 8; 
+
+                    empresas[cnpj] = { cnpj: cnpj, saldo: saldo, faturamento: faturamento, usuarios: [], nome: "Empresa Não Nomeada", max_users: limitMax };
+                    volumeTotal += saldo; faturamentoGlobal += faturamento;
                 }
             }
 
+            // Leitura Segura de Usuários/Vínculos
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key.startsWith('prisma_vinculo_')) {
                     const email = key.replace('prisma_vinculo_', '');
-                    const vinculo = JSON.parse(localStorage.getItem(key));
-                    if(empresas[vinculo.cnpj]) {
-                        empresas[vinculo.cnpj].nome = vinculo.nome; 
+                    const vinculo = lerBancoLocal(key);
+                    if(vinculo && vinculo.cnpj && empresas[vinculo.cnpj]) {
+                        empresas[vinculo.cnpj].nome = vinculo.nome || "Empresa Sem Nome"; 
                         empresas[vinculo.cnpj].usuarios.push(email);
                     }
                 }
@@ -648,14 +694,14 @@
             document.getElementById('kpi-faturamento').innerText = formatoBRL(faturamentoGlobal);
 
             const tbody = document.getElementById('lista-clientes');
-            tbody.innerHTML = '';
+            let htmlClientes = '';
             
             if (listaEmpresas.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 30px;">Nenhuma empresa registada. Clique em "+ Novo Cliente" para começar.</td></tr>`;
+                htmlClientes = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 30px;">Nenhuma empresa registada. Clique em "+ Novo Cliente" para começar.</td></tr>`;
             } else {
                 listaEmpresas.forEach(emp => {
                     const contagemUsr = emp.usuarios.length;
-                    tbody.innerHTML += `
+                    htmlClientes += `
                         <tr>
                             <td><div style="font-weight: 800; color: white; font-size: 1.05rem;">${emp.nome}</div></td>
                             <td class="td-cnpj">${emp.cnpj}</td>
@@ -669,11 +715,15 @@
                         </tr>`;
                 });
             }
+            // Injeção Única (Alta Performance)
+            tbody.innerHTML = htmlClientes;
 
             renderizarEquipePrisma();
         }
 
+        // ----------------------------------------------------
         // INIT C/ VERIFICAÇÃO MASTER
+        // ----------------------------------------------------
         document.addEventListener('DOMContentLoaded', () => {
             if(sessionStorage.getItem('prisma_admin_auth') === 'true') {
                 document.getElementById('admin-login-screen').style.display = 'none';
