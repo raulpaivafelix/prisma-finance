@@ -412,7 +412,6 @@
                 lista.innerHTML = "";
                 
                 if (tab === 'integracoes') {
-                    // MODO BANCOS (Ativado só na aba de Integrações)
                     if(tituloLista) tituloLista.innerText = "Bancos e Instituições";
                     if(subtituloLista) subtituloLista.innerText = "Conecte as suas contas para conciliação automática via Open Finance.";
                     
@@ -422,7 +421,7 @@
                                 <div style="background: #8A05BE; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">NU</div>
                                 <div><h4 style="margin: 0; color: #f9fafb;">Nubank PJ</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Open Finance ativo</p></div>
                             </div>
-                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="simularAcao('A redirecionar para o portal do Nubank...')">Conectar</button>
+                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Nubank PJ')">Conectar</button>
                         </div>
 
                         <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
@@ -430,15 +429,39 @@
                                 <div style="background: #EC7000; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">IT</div>
                                 <div><h4 style="margin: 0; color: #f9fafb;">Itaú Empresas</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Requer chave de API</p></div>
                             </div>
-                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="simularAcao('A iniciar conexão segura AES-256 com Itaú...')">Conectar</button>
+                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Itaú Empresas')">Conectar</button>
                         </div>
 
+                        <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
+                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
+                                <div style="background: #FF7A00; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">IN</div>
+                                <div><h4 style="margin: 0; color: #f9fafb;">Banco Inter</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Conta Digital PJ</p></div>
+                            </div>
+                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Banco Inter')">Conectar</button>
+                        </div>
+
+                        <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
+                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
+                                <div style="background: #003DA5; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #F9D342; font-weight: bold; font-size: 1.2rem;">BB</div>
+                                <div><h4 style="margin: 0; color: #f9fafb;">Banco do Brasil</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Gerenciador Financeiro</p></div>
+                            </div>
+                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Banco do Brasil')">Conectar</button>
+                        </div>
+
+                        <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
+                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
+                                <div style="background: #CC0000; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">SA</div>
+                                <div><h4 style="margin: 0; color: #f9fafb;">Santander</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Internet Banking</p></div>
+                            </div>
+                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Santander')">Conectar</button>
+                        </div>
+                        
                         <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
                             <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
                                 <div style="background: #fe3c6b; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">CO</div>
                                 <div><h4 style="margin: 0; color: #f9fafb;">Cora Bank</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Integração nativa Prisma OS</p></div>
                             </div>
-                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="simularAcao('A autenticar token do Cora Bank...')">Conectar</button>
+                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Cora Bank')">Conectar</button>
                         </div>
                     `;
                 } else {
@@ -459,6 +482,16 @@
                                 </div>`;
                         });
                     }
+                }
+            }
+
+            // MÁGICA FINAL: Esconde o botão grande de Aprovar Lote nas abas que não precisam dele
+            const btnAprovar = document.getElementById('btn-aprovar-lote');
+            if (btnAprovar) {
+                if (tab === 'integracoes' || tab === 'suporte' || tab === 'visao') {
+                    btnAprovar.style.display = 'none';
+                } else {
+                    btnAprovar.style.display = 'block';
                 }
             }
 
@@ -536,6 +569,22 @@
                     btnAprovar.style.background = ""; 
                     btnAprovar.style.pointerEvents = "auto";
                 }, 4000);
+            }, 2000);
+        };
+
+        window.conectarBanco = (btn, nomeBanco) => {
+            if (btn.innerText.includes('Conectado')) return; 
+
+            btn.innerHTML = "<span class='spinner-small'></span> A ligar...";
+            btn.style.opacity = '0.8';
+            btn.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                btn.innerHTML = "✓ Conectado";
+                btn.style.background = "#374151"; 
+                btn.style.color = "#9ca3af";
+                btn.style.borderColor = "#374151";
+                simularAcao(`Ligação com ${nomeBanco} estabelecida com sucesso!`);
             }, 2000);
         };
 
