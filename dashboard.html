@@ -153,7 +153,6 @@
             </div>
             <div class="header-actions">
                 <button class="btn-secondary" onclick="exportarPDF()">📄 Exportar Relatório</button>
-                <button class="btn-action" onclick="abrirModalNovaTransacao()">+ Nova Transação</button>
             </div>
         </header>
 
@@ -176,6 +175,8 @@
                         <h3 id="list-title">Movimentações Recentes</h3>
                         <p id="list-subtitle">Documentos e lançamentos registados.</p>
                     </div>
+                    <!-- Botão reposicionado -->
+                     <button class="btn-action" onclick="abrirModalNovaTransacao()">+ Nova Transação</button>
                 </div>
                 <div id="lista-pendencias"></div>
                 <button class="btn-action" id="btn-aprovar-lote" style="width: 100%; margin-top: 15px;" onclick="aprovarLote()">Aprovar e Enviar ao Banco</button>
@@ -216,7 +217,7 @@
     </main>
 
     <script>
-        // CONFIGURAÇÃO GLOBAL DB CLIENT (CONECTADO À NUVEM OFICIAL)
+        // CONFIGURAÇÃO GLOBAL DB CLIENT (SUPABASE NUVEM)
         var _url = 'https://ebomgngzpwaaghtcjllz.supabase.co';
         var _key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
         var prismaDB = window.supabase.createClient(_url, _key);
@@ -248,7 +249,7 @@
         let myChart = null;
         let currentTab = 'visao';
 
-        // 1. A FECHADURA CORRIGIDA: Agora pergunta à Nuvem e não à memória local
+        // 1. VERIFICAÇÃO DE ACESSO NA NUVEM
         async function verificarVozDoCliente(email) {
             currentUserEmail = email;
             
@@ -257,41 +258,49 @@
                 
                 if (perfil && perfil.cnpj) {
                     await iniciarCofreDoCNPJ(perfil.cnpj, perfil.nome);
-                    document.getElementById('auth-loader').style.display = 'none';
+                    const loader = document.getElementById('auth-loader');
+                    if(loader) loader.style.display = 'none';
                 } else {
                     throw new Error("Cliente não encontrado na Nuvem");
                 }
             } catch (err) {
-                document.getElementById('auth-loader').innerHTML = `
-                    <div style="background: var(--bg-surface); padding: 40px; border-radius: 16px; border: 1px solid var(--danger); text-align: center; max-width: 420px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
-                        <span style="font-size: 3rem; margin-bottom: 20px; display: block;">🔒</span>
-                        <h2 style="color: var(--danger); margin-bottom: 10px;">Acesso Restrito</h2>
-                        <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem; line-height: 1.6;">
-                            O seu e-mail (<strong>${email}</strong>) foi autenticado, mas o seu Cofre Digital ainda não foi provisionado pela nossa equipe administrativa.<br><br>
-                            Por favor, aguarde a liberação ou entre em contato com o seu Gestor de Conta.
-                        </p>
-                        <button onclick="window.fazerLogout()" style="background: var(--bg-dark); color: white; border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%;">Sair da Conta</button>
-                    </div>
-                `;
+                const loader = document.getElementById('auth-loader');
+                if(loader) {
+                    loader.innerHTML = `
+                        <div style="background: var(--bg-surface); padding: 40px; border-radius: 16px; border: 1px solid var(--danger); text-align: center; max-width: 420px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+                            <span style="font-size: 3rem; margin-bottom: 20px; display: block;">🔒</span>
+                            <h2 style="color: var(--danger); margin-bottom: 10px;">Acesso Restrito</h2>
+                            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem; line-height: 1.6;">
+                                O seu e-mail (<strong>${email}</strong>) foi autenticado, mas o seu Cofre Digital ainda não foi provisionado pela nossa equipe administrativa.<br><br>
+                                Por favor, aguarde a liberação ou entre em contato com o seu Gestor de Conta.
+                            </p>
+                            <button onclick="window.fazerLogout()" style="background: var(--bg-dark); color: white; border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%;">Sair da Conta</button>
+                        </div>
+                    `;
+                }
             }
         }
 
-        // 2. SINCRONIZAÇÃO EM TEMPO REAL: Busca os números direto da tabela do Master Admin
+        // 2. SINCRONIZAÇÃO COMPLETA DE DADOS (INCLUINDO RH E IMPOSTOS)
         async function iniciarCofreDoCNPJ(cnpj, nomeEmpresa) {
             currentCNPJ = cnpj;
             document.getElementById('user-company-name').innerText = nomeEmpresa;
             document.getElementById('user-cnpj-display').innerText = "CNPJ: " + cnpj;
-            document.getElementById('user-avatar').innerText = nomeEmpresa.charAt(0).toUpperCase();
+            
+            const avatar = document.getElementById('user-avatar');
+            if(avatar) avatar.innerText = nomeEmpresa.charAt(0).toUpperCase();
 
-            // Sincroniza o Caixa da Empresa
             const { data: empresa } = await prismaDB.from('empresas').select('*').eq('cnpj', cnpj).single();
             if (empresa) {
                 userData.saldo = parseFloat(empresa.saldo) || 0;
                 userData.faturamento = parseFloat(empresa.faturamento) || 0;
                 userData.custos = parseFloat(empresa.custos) || 0;
+                userData.impostos = parseFloat(empresa.impostos) || 0;
+                userData.rh_headcount = parseInt(empresa.rh_headcount) || 0;
+                userData.rh_folha = parseFloat(empresa.rh_folha) || 0;
+                userData.rh_beneficios = parseFloat(empresa.rh_beneficios) || 0;
             }
 
-            // Sincroniza as Transações Injetadas
             const { data: transacoes } = await prismaDB.from('transacoes').select('*').eq('cnpj', cnpj).order('id', { ascending: false });
             if (transacoes) {
                 userData.transacoes = transacoes.map(t => ({
@@ -302,6 +311,7 @@
             renderDashboard(currentTab);
         }
 
+        // 3. RENDERIZAÇÃO DOS GRÁFICOS E KPIs
         function renderDashboard(tab) {
             currentTab = tab;
             const kpiContainer = document.getElementById('kpi-container');
@@ -354,42 +364,48 @@
             kpiContainer.innerHTML = kpiHTML;
 
             const lista = document.getElementById('lista-pendencias');
-            lista.innerHTML = "";
-            if(userData.transacoes.length === 0) {
-                lista.innerHTML = "<p style='color: #9ca3af; font-size: 0.9rem;'>Sem movimentações registadas ainda.</p>";
-            } else {
-                userData.transacoes.forEach(t => {
-                    const sinal = t.tipo === "Receita" ? "+" : "-";
-                    const cssClass = t.tipo === "Receita" ? "positive" : "negative";
-                    lista.innerHTML += `
-                        <div class="transaction-item">
-                            <div class="t-info"><h4>${t.desc}</h4><p>${t.tipo || 'Despesa'} • ${t.data}</p></div>
-                            <div class="t-amount ${cssClass}">${sinal} ${formatoBRL(t.valor)}</div>
-                        </div>`;
-                });
+            if(lista) {
+                lista.innerHTML = "";
+                if(userData.transacoes.length === 0) {
+                    lista.innerHTML = "<p style='color: #9ca3af; font-size: 0.9rem;'>Sem movimentações registadas ainda.</p>";
+                } else {
+                    userData.transacoes.forEach(t => {
+                        const sinal = t.tipo === "Receita" ? "+" : "-";
+                        const cssClass = t.tipo === "Receita" ? "positive" : "negative";
+                        lista.innerHTML += `
+                            <div class="transaction-item">
+                                <div class="t-info"><h4>${t.desc}</h4><p>${t.tipo || 'Despesa'} • ${t.data}</p></div>
+                                <div class="t-amount ${cssClass}">${sinal} ${formatoBRL(t.valor)}</div>
+                            </div>`;
+                    });
+                }
             }
 
             if (myChart) myChart.destroy();
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(5, 150, 105, 0.4)'); gradient.addColorStop(1, 'rgba(5, 150, 105, 0.0)'); 
-            
-            myChart = new Chart(ctx, { 
-                type: chartData.type, 
-                data: { labels: chartData.labels, datasets: [{ label: 'Valor (R$)', data: chartData.data, borderColor: '#059669', backgroundColor: chartData.type === 'line' ? gradient : '#059669', borderWidth: 3, fill: true, tension: 0.4, borderRadius: 4 }] }, 
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } } } 
-            });
+            const canvas = document.getElementById('mainChart');
+            if(canvas) {
+                const ctx = canvas.getContext('2d');
+                let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(5, 150, 105, 0.4)'); gradient.addColorStop(1, 'rgba(5, 150, 105, 0.0)'); 
+                
+                myChart = new Chart(ctx, { 
+                    type: chartData.type, 
+                    data: { labels: chartData.labels, datasets: [{ label: 'Valor (R$)', data: chartData.data, borderColor: '#059669', backgroundColor: chartData.type === 'line' ? gradient : '#059669', borderWidth: 3, fill: true, tension: 0.4, borderRadius: 4 }] }, 
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } } } 
+                });
+            }
         }
 
         const modal = document.getElementById('modal-transacao');
-        window.abrirModalNovaTransacao = () => modal.classList.add('ativo');
-        window.fecharModalNovaTransacao = () => modal.classList.remove('ativo');
+        window.abrirModalNovaTransacao = () => { if(modal) modal.classList.add('ativo'); };
+        window.fecharModalNovaTransacao = () => { if(modal) modal.classList.remove('ativo'); };
 
-        // 3. GRAVA NA NUVEM AS INJEÇÕES DO CLIENTE
+        // 4. GRAVAÇÃO SEGURA NA NUVEM DE TRANSAÇÕES
         window.processarFaturaReal = async () => {
             const desc = document.getElementById('t-desc').value;
             const valor = parseFloat(document.getElementById('t-valor').value);
-            const isRH = document.getElementById('btn-tipo-rh') ? document.getElementById('btn-tipo-rh').classList.contains('active') : false;
+            const btnRH = document.getElementById('btn-tipo-rh');
+            const isRH = btnRH ? btnRH.classList.contains('active') : false;
 
             if(!desc || !valor || valor <= 0) { simularAcao("Por favor, preencha a Descrição e o Valor.", true); return; }
 
@@ -401,9 +417,15 @@
             try {
                 let tipo = isRH ? "Custo RH" : "Despesa";
                 userData.saldo -= valor;
+                
                 if(isRH) { userData.rh_folha += valor; } else { userData.custos += valor; }
 
-                await prismaDB.from('empresas').update({ saldo: userData.saldo, custos: userData.custos }).eq('cnpj', currentCNPJ);
+                await prismaDB.from('empresas').update({ 
+                    saldo: userData.saldo, 
+                    custos: userData.custos,
+                    rh_folha: userData.rh_folha 
+                }).eq('cnpj', currentCNPJ);
+                
                 await prismaDB.from('transacoes').insert([{ cnpj: currentCNPJ, descricao: desc, valor: valor, tipo: tipo, data_lancamento: "Processado via IA" }]);
 
                 await iniciarCofreDoCNPJ(currentCNPJ, document.getElementById('user-company-name').innerText);
@@ -432,6 +454,7 @@
 
         window.aprovarLote = () => {
             const btnAprovar = document.getElementById('btn-aprovar-lote');
+            if(!btnAprovar) return;
             btnAprovar.innerHTML = "<span class='spinner-small'></span> Sincronizando com Banco...";
             btnAprovar.style.opacity = '0.8';
             
@@ -449,8 +472,11 @@
             }, 2000);
         };
 
+        // INICIALIZAÇÃO DA SESSÃO
         document.addEventListener('DOMContentLoaded', async () => {
             try {
+                if (!window.supabase) throw new Error("Supabase SDK não carregado.");
+                
                 const { data, error } = await prismaDB.auth.getSession();
                 if (error || !data.session) { window.location.replace('index.html'); return; }
 
@@ -469,7 +495,7 @@
                 window.fazerLogout = async () => { await prismaDB.auth.signOut(); window.location.replace('index.html'); };
 
             } catch (err) {
-                console.error(err);
+                console.error("Erro de inicialização:", err);
             }
         });
     </script>
