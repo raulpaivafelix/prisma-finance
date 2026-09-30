@@ -216,10 +216,16 @@
     </main>
 
     <script>
+        // CONFIGURAÇÃO GLOBAL DB CLIENT (CONECTADO À NUVEM OFICIAL)
+        var _url = 'https://ebomgngzpwaaghtcjllz.supabase.co';
+        var _key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
+        var prismaDB = window.supabase.createClient(_url, _key);
+
         const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
         
         window.simularAcao = (mensagem, isError = false) => {
             const container = document.getElementById('toast-container');
+            if(!container) return;
             const toast = document.createElement('div');
             toast.className = `custom-toast ${isError ? 'error' : ''}`;
             toast.innerHTML = `<span style="margin-right:8px;">${isError ? '⚠️' : '✨'}</span> ${mensagem}`;
@@ -238,19 +244,24 @@
 
         let currentUserEmail = "";
         let currentCNPJ = "";
-        let userData = {};
+        let userData = { saldo: 0, faturamento: 0, custos: 0, impostos: 0, rh_headcount: 0, rh_folha: 0, rh_beneficios: 0, transacoes: [] };
         let myChart = null;
         let currentTab = 'visao';
 
-        function verificarVozDoCliente(email) {
+        // 1. A FECHADURA CORRIGIDA: Agora pergunta à Nuvem e não à memória local
+        async function verificarVozDoCliente(email) {
             currentUserEmail = email;
-            const perfilVinculo = localStorage.getItem('prisma_vinculo_' + email);
             
-            if (perfilVinculo) {
-                const perfil = JSON.parse(perfilVinculo);
-                iniciarCofreDoCNPJ(perfil.cnpj, perfil.nome);
-                document.getElementById('auth-loader').style.display = 'none';
-            } else {
+            try {
+                const { data: perfil, error } = await prismaDB.from('acessos_clientes').select('*').eq('email', email).single();
+                
+                if (perfil && perfil.cnpj) {
+                    await iniciarCofreDoCNPJ(perfil.cnpj, perfil.nome);
+                    document.getElementById('auth-loader').style.display = 'none';
+                } else {
+                    throw new Error("Cliente não encontrado na Nuvem");
+                }
+            } catch (err) {
                 document.getElementById('auth-loader').innerHTML = `
                     <div style="background: var(--bg-surface); padding: 40px; border-radius: 16px; border: 1px solid var(--danger); text-align: center; max-width: 420px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
                         <span style="font-size: 3rem; margin-bottom: 20px; display: block;">🔒</span>
@@ -265,38 +276,30 @@
             }
         }
 
-        function iniciarCofreDoCNPJ(cnpj, nomeEmpresa) {
+        // 2. SINCRONIZAÇÃO EM TEMPO REAL: Busca os números direto da tabela do Master Admin
+        async function iniciarCofreDoCNPJ(cnpj, nomeEmpresa) {
             currentCNPJ = cnpj;
             document.getElementById('user-company-name').innerText = nomeEmpresa;
             document.getElementById('user-cnpj-display').innerText = "CNPJ: " + cnpj;
             document.getElementById('user-avatar').innerText = nomeEmpresa.charAt(0).toUpperCase();
 
-            const dbKey = 'prisma_cofre_' + cnpj; 
-            let savedData = localStorage.getItem(dbKey);
-            
-            if (savedData) {
-                userData = JSON.parse(savedData);
-            } else {
-                userData = {
-                    saldo: 0, faturamento: 0, custos: 0, impostos: 0,
-                    rh_headcount: 0, rh_folha: 0, rh_beneficios: 0, transacoes: []
-                };
-                salvarBancoDeDados();
+            // Sincroniza o Caixa da Empresa
+            const { data: empresa } = await prismaDB.from('empresas').select('*').eq('cnpj', cnpj).single();
+            if (empresa) {
+                userData.saldo = parseFloat(empresa.saldo) || 0;
+                userData.faturamento = parseFloat(empresa.faturamento) || 0;
+                userData.custos = parseFloat(empresa.custos) || 0;
             }
-            renderDashboard(currentTab);
-            
-            // Fica "escutando" se o Admin injetar faturas em tempo real
-            window.addEventListener('storage', (e) => {
-                if(e.key === dbKey) {
-                    userData = JSON.parse(e.newValue);
-                    renderDashboard(currentTab);
-                    simularAcao("Nova atualização recebida do seu Consultor!");
-                }
-            });
-        }
 
-        function salvarBancoDeDados() {
-            localStorage.setItem('prisma_cofre_' + currentCNPJ, JSON.stringify(userData));
+            // Sincroniza as Transações Injetadas
+            const { data: transacoes } = await prismaDB.from('transacoes').select('*').eq('cnpj', cnpj).order('id', { ascending: false });
+            if (transacoes) {
+                userData.transacoes = transacoes.map(t => ({
+                    desc: t.descricao, valor: parseFloat(t.valor), data: t.data_lancamento, tipo: t.tipo
+                }));
+            }
+
+            renderDashboard(currentTab);
         }
 
         function renderDashboard(tab) {
@@ -382,26 +385,29 @@
         window.abrirModalNovaTransacao = () => modal.classList.add('ativo');
         window.fecharModalNovaTransacao = () => modal.classList.remove('ativo');
 
-        window.processarFaturaReal = () => {
+        // 3. GRAVA NA NUVEM AS INJEÇÕES DO CLIENTE
+        window.processarFaturaReal = async () => {
             const desc = document.getElementById('t-desc').value;
             const valor = parseFloat(document.getElementById('t-valor').value);
-            const isRH = document.getElementById('btn-tipo-rh').classList.contains('active');
+            const isRH = document.getElementById('btn-tipo-rh') ? document.getElementById('btn-tipo-rh').classList.contains('active') : false;
 
             if(!desc || !valor || valor <= 0) { simularAcao("Por favor, preencha a Descrição e o Valor.", true); return; }
 
             const btnProc = document.getElementById('btn-processar-ia');
             btnProc.innerHTML = "<span class='spinner-small'></span> A IA está a ler e conciliar..."; 
             btnProc.style.opacity = '0.8';
+            btnProc.disabled = true;
             
-            setTimeout(() => {
+            try {
+                let tipo = isRH ? "Custo RH" : "Despesa";
                 userData.saldo -= valor;
                 if(isRH) { userData.rh_folha += valor; } else { userData.custos += valor; }
-                
-                userData.transacoes.unshift({ desc: desc, valor: valor, data: "Registado Agora", tipo: isRH ? "Custo RH" : "Despesa" });
-                
-                salvarBancoDeDados();
-                renderDashboard(currentTab);
 
+                await prismaDB.from('empresas').update({ saldo: userData.saldo, custos: userData.custos }).eq('cnpj', currentCNPJ);
+                await prismaDB.from('transacoes').insert([{ cnpj: currentCNPJ, descricao: desc, valor: valor, tipo: tipo, data_lancamento: "Processado via IA" }]);
+
+                await iniciarCofreDoCNPJ(currentCNPJ, document.getElementById('user-company-name').innerText);
+                
                 btnProc.innerText = "✓ Lançamento Automático Feito!"; 
                 btnProc.style.background = "#059669";
                 simularAcao("Fatura processada e vinculada ao CNPJ atual.");
@@ -411,10 +417,17 @@
                     btnProc.innerText = "Processar Documento via IA"; 
                     btnProc.style.background = ""; 
                     btnProc.style.opacity = '1'; 
+                    btnProc.disabled = false;
                     document.getElementById('t-desc').value = '';
                     document.getElementById('t-valor').value = '';
                 }, 2000);
-            }, 2000);
+
+            } catch(e) {
+                simularAcao("Erro ao gravar. Verifique a conexão.", true);
+                btnProc.innerText = "Tentar Novamente"; 
+                btnProc.style.opacity = '1'; 
+                btnProc.disabled = false;
+            }
         };
 
         window.aprovarLote = () => {
@@ -438,15 +451,10 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                if (!window.supabase) throw new Error("Acesso à base de dados bloqueado.");
-                const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
-                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
-                const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-                const { data, error } = await supabase.auth.getSession();
+                const { data, error } = await prismaDB.auth.getSession();
                 if (error || !data.session) { window.location.replace('index.html'); return; }
 
-                verificarVozDoCliente(data.session.user.email);
+                await verificarVozDoCliente(data.session.user.email);
 
                 document.querySelectorAll('.menu-item').forEach(item => {
                     item.addEventListener('click', () => {
@@ -458,10 +466,10 @@
                     });
                 });
 
-                window.fazerLogout = async () => { await supabase.auth.signOut(); window.location.replace('index.html'); };
+                window.fazerLogout = async () => { await prismaDB.auth.signOut(); window.location.replace('index.html'); };
 
             } catch (err) {
-                window.location.replace('index.html');
+                console.error(err);
             }
         });
     </script>
