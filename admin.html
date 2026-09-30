@@ -300,397 +300,413 @@
     </main>
 
     <script>
-        // CONFIGURAÇÃO SUPABASE GLOBAL
-        const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    // CONFIGURAÇÃO SUPABASE GLOBAL ÚNICA
+    const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+    const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 
-        window.simularAcao = (mensagem, isError = false) => {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `custom-toast ${isError ? 'error' : ''}`;
-            toast.innerHTML = `<span style="margin-right:8px;">${isError ? '⚠️' : '⚡'}</span> ${mensagem}`;
-            container.appendChild(toast);
-            setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
-        };
+    window.simularAcao = (mensagem, isError = false) => {
+        const container = document.getElementById('toast-container');
+        if(!container) return;
+        const toast = document.createElement('div');
+        toast.className = `custom-toast ${isError ? 'error' : ''}`;
+        toast.innerHTML = `<span style="margin-right:8px;">${isError ? '⚠️' : '⚡'}</span> ${mensagem}`;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
+    };
 
-        // LOGIN DE PRODUÇÃO (VERIFICA NA BASE DE DADOS DO SUPABASE)
-        window.verificarMaster = async () => {
-            const email = document.getElementById('master-email').value.trim().toLowerCase();
-            const pwd = document.getElementById('master-pwd').value;
-            const btn = document.getElementById('btn-login-master');
+    // LOGIN DE PRODUÇÃO SEGURO
+    window.verificarMaster = async () => {
+        const emailInput = document.getElementById('master-email');
+        const pwdInput = document.getElementById('master-pwd');
+        const btn = document.getElementById('btn-login-master');
 
-            if(!email || !pwd) { simularAcao("Preencha e-mail e senha.", true); return; }
-            if(btn) { btn.innerText = "A autenticar..."; btn.disabled = true; }
+        if(!emailInput || !pwdInput) return;
+        const email = emailInput.value.trim().toLowerCase();
+        const pwd = pwdInput.value;
 
-            // Comunica com o Supabase Auth de forma segura
-            const { data, error } = await supabase.auth.signInWithPassword({ email: email, password: pwd });
+        if(!email || !pwd) { simularAcao("Preencha e-mail e senha.", true); return; }
+        if(btn) { btn.innerText = "A autenticar..."; btn.disabled = true; }
 
-            if (error) {
-                simularAcao('Credenciais inválidas ou e-mail não cadastrado.', true);
-                document.getElementById('master-pwd').value = '';
-                if(btn) { btn.innerText = "Autenticar no Supabase"; btn.disabled = false; }
-            } else {
-                document.getElementById('admin-login-screen').style.opacity = '0';
-                setTimeout(() => { document.getElementById('admin-login-screen').style.display = 'none'; }, 500);
-                carregarDadosSistema();
-                simularAcao("Acesso Produção Concedido.");
+        const { data, error } = await supabase.auth.signInWithPassword({ email: email, password: pwd });
+
+        if (error) {
+            simularAcao('Credenciais inválidas ou e-mail não cadastrado.', true);
+            pwdInput.value = '';
+            if(btn) { btn.innerText = "Autenticar no Supabase"; btn.disabled = false; }
+        } else {
+            const loginScreen = document.getElementById('admin-login-screen');
+            if(loginScreen) {
+                loginScreen.style.opacity = '0';
+                setTimeout(() => { loginScreen.style.display = 'none'; }, 500);
             }
-        };
+            carregarDadosSistema();
+            simularAcao("Acesso Produção Concedido.");
+        }
+    };
 
-        window.fazerLogoutMaster = async () => {
-            await supabase.auth.signOut();
-            window.location.reload();
-        };
+    window.fazerLogoutMaster = async () => {
+        await supabase.auth.signOut();
+        window.location.reload();
+    };
 
-        // ABAS
-        document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const tabId = item.getAttribute('data-tab');
-                if(!tabId) return;
-                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-                document.getElementById('tab-' + tabId).style.display = 'block';
+    // ABAS DO PAINEL
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const tabId = item.getAttribute('data-tab');
+            if(!tabId) return;
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+            const targetTab = document.getElementById('tab-' + tabId);
+            if(targetTab) targetTab.style.display = 'block';
 
-                const btnArea = document.getElementById('header-btn-area');
-                if(tabId === 'visao' || tabId === 'carteira') {
-                    document.getElementById('painel-titulo').innerText = tabId === 'visao' ? "Painel de Comando Central" : "Gestão de CRM";
-                    document.getElementById('painel-subtitulo').innerText = "Monitorização global da operação (Produção Oficial).";
-                    btnArea.innerHTML = `<button class="btn-acessar" style="background:var(--primary); color:white; border:none; padding: 12px 20px;" onclick="abrirModalNovoCliente()">+ Novo Cliente</button>`;
-                } else if(tabId === 'faturamento') {
-                    document.getElementById('painel-titulo').innerText = "Financeiro Interno";
-                    document.getElementById('painel-subtitulo').innerText = "Receitas de mensalidades da Prisma Finance.";
-                    btnArea.innerHTML = '';
-                } else if(tabId === 'equipe') {
-                    document.getElementById('painel-titulo').innerText = "Gestão de Equipe";
-                    document.getElementById('painel-subtitulo').innerText = "Gerencie os analistas internos da Prisma.";
-                    btnArea.innerHTML = '';
-                }
-            });
+            const btnArea = document.getElementById('header-btn-area');
+            const painelTitulo = document.getElementById('painel-titulo');
+            const painelSubtitulo = document.getElementById('painel-subtitulo');
+
+            if(tabId === 'visao' || tabId === 'carteira') {
+                if(painelTitulo) painelTitulo.innerText = tabId === 'visao' ? "Painel de Comando Central" : "Gestão de CRM";
+                if(painelSubtitulo) painelSubtitulo.innerText = "Monitorização global da operação (Produção Oficial).";
+                if(btnArea) btnArea.innerHTML = `<button class="btn-acessar" style="background:var(--primary); color:white; border:none; padding: 12px 20px;" onclick="abrirModalNovoCliente()">+ Novo Cliente</button>`;
+            } else if(tabId === 'faturamento') {
+                if(painelTitulo) painelTitulo.innerText = "Financeiro Interno";
+                if(painelSubtitulo) painelSubtitulo.innerText = "Receitas de mensalidades da Prisma Finance.";
+                if(btnArea) btnArea.innerHTML = '';
+            } else if(tabId === 'equipe') {
+                if(painelTitulo) painelTitulo.innerText = "Gestão de Equipe";
+                if(painelSubtitulo) painelSubtitulo.innerText = "Gerencie os analistas internos da Prisma.";
+                if(btnArea) btnArea.innerHTML = '';
+            }
         });
+    });
 
-        // 1. PROVISIONAR CLIENTE DE PRODUÇÃO
-        const modalAdmin = document.getElementById('modal-novo-cliente');
-        window.abrirModalNovoCliente = () => modalAdmin.classList.add('ativo');
-        window.fecharModalNovoCliente = () => modalAdmin.classList.remove('ativo');
+    // MODAIS E AÇÕES
+    const modalAdmin = document.getElementById('modal-novo-cliente');
+    window.abrirModalNovoCliente = () => modalAdmin && modalAdmin.classList.add('ativo');
+    window.fecharModalNovoCliente = () => modalAdmin && modalAdmin.classList.remove('ativo');
 
-        window.salvarNovoCliente = async () => {
-            const email = document.getElementById('admin-cad-email').value;
-            const nome = document.getElementById('admin-cad-nome').value;
-            const cnpj = document.getElementById('admin-cad-cnpj').value;
-            let limiteMax = parseInt(document.getElementById('admin-cad-limite').value) || 5;
+    window.salvarNovoCliente = async () => {
+        const email = document.getElementById('admin-cad-email').value;
+        const nome = document.getElementById('admin-cad-nome').value;
+        const cnpj = document.getElementById('admin-cad-cnpj').value;
+        let limiteMax = parseInt(document.getElementById('admin-cad-limite').value) || 5;
 
-            if(!email || !nome || !cnpj) { simularAcao("Preencha todos os campos.", true); return; }
-            const btn = document.getElementById('btn-salvar-cliente');
-            btn.innerHTML = "A provisionar no Cloud..."; btn.disabled = true;
+        if(!email || !nome || !cnpj) { simularAcao("Preencha todos os campos.", true); return; }
+        const btn = document.getElementById('btn-salvar-cliente');
+        if(btn) { btn.innerHTML = "A provisionar no Cloud..."; btn.disabled = true; }
 
-            try {
-                await supabase.from('empresas').insert([{
-                    cnpj: cnpj, nome: nome, saldo: 0, faturamento: 0, custos: 0, limite_usuarios: limiteMax
-                }]);
+        try {
+            await supabase.from('empresas').insert([{ cnpj: cnpj, nome: nome, saldo: 0, faturamento: 0, custos: 0, limite_usuarios: limiteMax }]);
+            await supabase.from('acessos_clientes').insert([{ email: email, cnpj: cnpj, nome: nome, permissao: 'Master (Full)' }]);
 
-                await supabase.from('acessos_clientes').insert([{
-                    email: email, cnpj: cnpj, nome: nome, permissao: 'Master (Full)'
-                }]);
-
-                simularAcao(`Cofre cloud seguro criado para ${cnpj}!`);
-                fecharModalNovoCliente();
-                await carregarDadosSistema();
-            } catch(e) {
-                console.error(e);
-                simularAcao("Erro no servidor da Cloud.", true);
-            }
-
-            btn.innerHTML = "Criar Cofre e Liberar Acesso"; btn.disabled = false;
-            document.getElementById('admin-cad-email').value = ''; document.getElementById('admin-cad-nome').value = ''; document.getElementById('admin-cad-cnpj').value = '';
-        };
-
-        // 2. NOVA EQUIPA PRISMA
-        const modalAnalista = document.getElementById('modal-novo-analista');
-        window.abrirModalNovoAnalista = () => modalAnalista.classList.add('ativo');
-        window.fecharModalNovoAnalista = () => modalAnalista.classList.remove('ativo');
-
-        window.salvarNovoAnalista = async () => {
-            const nome = document.getElementById('prisma-analista-nome').value;
-            const email = document.getElementById('prisma-analista-email').value;
-            const cargo = document.getElementById('prisma-analista-cargo').value;
-            const clientes = document.getElementById('prisma-analista-clientes').value || 'Geral';
-
-            if(!nome || !email) { simularAcao("Preencha o Nome e o E-mail.", true); return; }
-            const btn = document.getElementById('btn-salvar-analista');
-            btn.innerHTML = "A guardar na Cloud..."; btn.disabled = true;
-
-            try {
-                await supabase.from('equipe_prisma').insert([{
-                    email: email, nome: nome, cargo: cargo, clientes_alocados: clientes, status: 'Ativo'
-                }]);
-                simularAcao(`Colaborador ${nome} adicionado com sucesso!`);
-                fecharModalNovoAnalista();
-                await renderizarEquipePrisma();
-            } catch (e) {
-                simularAcao("Falha ao salvar colaborador.", true);
-            }
-
-            btn.innerHTML = "Cadastrar Colaborador"; btn.disabled = false;
-            document.getElementById('prisma-analista-nome').value = ''; document.getElementById('prisma-analista-email').value = ''; document.getElementById('prisma-analista-clientes').value = '';
-        };
-
-        async function renderizarEquipePrisma() {
-            const tbody = document.getElementById('lista-equipe-prisma');
-            try {
-                const { data: equipe } = await supabase.from('equipe_prisma').select('*');
-                let htmlEquipa = `
-                    <tr>
-                        <td><div style="font-weight: 800; color: white;">Raul Lima</div></td>
-                        <td class="td-cnpj">ceo@prismafinance.com.br</td>
-                        <td><span class="role-badge" style="background:var(--primary); color:white;">Master Admin / CEO</span></td>
-                        <td>Todos</td>
-                        <td><span class="status-badge">Online</span></td>
-                    </tr>`;
-
-                if(equipe) {
-                    equipe.forEach(colab => {
-                        htmlEquipa += `
-                            <tr>
-                                <td><div style="font-weight: 800; color: white;">${colab.nome}</div></td>
-                                <td class="td-cnpj">${colab.email}</td>
-                                <td><span class="role-badge" style="background:var(--primary); color:white;">${colab.cargo}</span></td>
-                                <td>${colab.clientes_alocados}</td>
-                                <td><span class="status-badge">${colab.status}</span></td>
-                            </tr>`;
-                    });
-                }
-                tbody.innerHTML = htmlEquipa;
-            } catch(e) { console.error(e); }
+            simularAcao(`Cofre cloud seguro criado para ${cnpj}!`);
+            fecharModalNovoCliente();
+            await carregarDadosSistema();
+        } catch(e) {
+            console.error(e);
+            simularAcao("Erro no servidor da Cloud.", true);
         }
 
-        // 3. GESTÃO DE ACESSOS
-        const modalAcessos = document.getElementById('modal-acessos');
-        window.abrirModalAcessos = async (cnpj, nomeEmpresa) => {
-            document.getElementById('acessos-cnpj').value = cnpj;
-            document.getElementById('acessos-nome').value = nomeEmpresa;
-            document.getElementById('acessos-empresa').innerText = `${nomeEmpresa} (CNPJ: ${cnpj})`;
+        if(btn) { btn.innerHTML = "Criar Cofre e Liberar Acesso"; btn.disabled = false; }
+        document.getElementById('admin-cad-email').value = ''; 
+        document.getElementById('admin-cad-nome').value = ''; 
+        document.getElementById('admin-cad-cnpj').value = '';
+    };
+
+    const modalAnalista = document.getElementById('modal-novo-analista');
+    window.abrirModalNovoAnalista = () => modalAnalista && modalAnalista.classList.add('ativo');
+    window.fecharModalNovoAnalista = () => modalAnalista && modalAnalista.classList.remove('ativo');
+
+    window.salvarNovoAnalista = async () => {
+        const nome = document.getElementById('prisma-analista-nome').value;
+        const email = document.getElementById('prisma-analista-email').value;
+        const cargo = document.getElementById('prisma-analista-cargo').value;
+        const clientes = document.getElementById('prisma-analista-clientes').value || 'Geral';
+
+        if(!nome || !email) { simularAcao("Preencha o Nome e o E-mail.", true); return; }
+        const btn = document.getElementById('btn-salvar-analista');
+        if(btn) { btn.innerHTML = "A guardar na Cloud..."; btn.disabled = true; }
+
+        try {
+            await supabase.from('equipe_prisma').insert([{ email: email, nome: nome, cargo: cargo, clientes_alocados: clientes, status: 'Ativo' }]);
+            simularAcao(`Colaborador ${nome} adicionado com sucesso!`);
+            fecharModalNovoAnalista();
+            await renderizarEquipePrisma();
+        } catch (e) {
+            simularAcao("Falha ao salvar colaborador.", true);
+        }
+
+        if(btn) { btn.innerHTML = "Cadastrar Colaborador"; btn.disabled = false; }
+        document.getElementById('prisma-analista-nome').value = ''; 
+        document.getElementById('prisma-analista-email').value = ''; 
+        document.getElementById('prisma-analista-clientes').value = '';
+    };
+
+    async function renderizarEquipePrisma() {
+        const tbody = document.getElementById('lista-equipe-prisma');
+        if(!tbody) return;
+        try {
+            const { data: equipe } = await supabase.from('equipe_prisma').select('*');
+            let htmlEquipa = `
+                <tr>
+                    <td><div style="font-weight: 800; color: white;">Raul Lima</div></td>
+                    <td class="td-cnpj">ceo@prismafinance.com.br</td>
+                    <td><span class="role-badge" style="background:var(--primary); color:white;">Master Admin / CEO</span></td>
+                    <td>Todos</td>
+                    <td><span class="status-badge">Online</span></td>
+                </tr>`;
+
+            if(equipe) {
+                equipe.forEach(colab => {
+                    htmlEquipa += `
+                        <tr>
+                            <td><div style="font-weight: 800; color: white;">${colab.nome}</div></td>
+                            <td class="td-cnpj">${colab.email}</td>
+                            <td><span class="role-badge" style="background:var(--primary); color:white;">${colab.cargo}</span></td>
+                            <td>${colab.clientes_alocados}</td>
+                            <td><span class="status-badge">${colab.status}</span></td>
+                        </tr>`;
+                });
+            }
+            tbody.innerHTML = htmlEquipa;
+        } catch(e) { console.error(e); }
+    }
+
+    const modalAcessos = document.getElementById('modal-acessos');
+    window.abrirModalAcessos = async (cnpj, nomeEmpresa) => {
+        document.getElementById('acessos-cnpj').value = cnpj;
+        document.getElementById('acessos-nome').value = nomeEmpresa;
+        const tituloEmpresa = document.getElementById('acessos-empresa');
+        if(tituloEmpresa) tituloEmpresa.innerText = `${nomeEmpresa} (CNPJ: ${cnpj})`;
+        await renderizarListaAcessos(cnpj);
+        if(modalAcessos) modalAcessos.classList.add('ativo');
+    };
+    window.fecharModalAcessos = () => modalAcessos && modalAcessos.classList.remove('ativo');
+
+    window.salvarNovoLimite = async () => {
+        const cnpj = document.getElementById('acessos-cnpj').value;
+        let novoLimite = parseInt(document.getElementById('ajuste-limite-input').value) || 8;
+        if(novoLimite > 15) novoLimite = 15;
+        
+        try {
+            await supabase.from('empresas').update({ limite_usuarios: novoLimite }).eq('cnpj', cnpj);
+            const limiteDisplay = document.getElementById('limite-acessos-display');
+            if(limiteDisplay) limiteDisplay.innerText = novoLimite;
+            simularAcao(`Plano de acessos atualizado para ${novoLimite}.`);
+            await carregarDadosSistema(); 
+        } catch(e) { simularAcao("Erro ao atualizar limite.", true); }
+    };
+
+    async function renderizarListaAcessos(cnpjBase) {
+        const divLista = document.getElementById('lista-usuarios-cnpj');
+        if(!divLista) return;
+        try {
+            const { data: empresa } = await supabase.from('empresas').select('limite_usuarios').eq('cnpj', cnpjBase).single();
+            const limiteAtual = empresa ? empresa.limite_usuarios : 8; 
+            const limiteDisplay = document.getElementById('limite-acessos-display');
+            const ajusteInput = document.getElementById('ajuste-limite-input');
+            if(limiteDisplay) limiteDisplay.innerText = limiteAtual;
+            if(ajusteInput) ajusteInput.value = limiteAtual;
+
+            const { data: acessos } = await supabase.from('acessos_clientes').select('*').eq('cnpj', cnpjBase);
+            let htmlUsuarios = '';
+            let contagem = 0;
+
+            if(acessos) {
+                acessos.forEach(acc => {
+                    const perm = acc.permissao || 'Master (Full)';
+                    let corPerm = 'var(--text-muted)';
+                    if(perm.includes('Financeiro')) corPerm = 'var(--success)';
+                    if(perm.includes('RH')) corPerm = 'var(--warning)';
+                    if(perm.includes('Master')) corPerm = 'var(--primary)';
+
+                    htmlUsuarios += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                            <div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${acc.email}</div><div style="font-size: 0.75rem; color: ${corPerm}; font-weight: 800;">${perm}</div></div>
+                            <button onclick="removerAcesso('${acc.email}', '${cnpjBase}')" class="btn-danger">Revogar</button>
+                        </div>`;
+                    contagem++;
+                });
+            }
+            divLista.innerHTML = htmlUsuarios;
+            const contagemDisplay = document.getElementById('contagem-acessos');
+            if(contagemDisplay) contagemDisplay.innerText = contagem;
+        } catch(e) { console.error(e); }
+    }
+
+    window.adicionarNovoAcesso = async () => {
+        const email = document.getElementById('novo-acesso-email').value;
+        const nivel = document.getElementById('novo-acesso-nivel').value;
+        const cnpj = document.getElementById('acessos-cnpj').value;
+        const nome = document.getElementById('acessos-nome').value;
+
+        if(!email) { simularAcao('Digite o e-mail.', true); return; }
+        const limiteMax = parseInt(document.getElementById('limite-acessos-display').innerText);
+        const atual = parseInt(document.getElementById('contagem-acessos').innerText);
+        
+        if(atual >= limiteMax) { simularAcao(`Limite atingido.`, true); return; }
+
+        const btn = document.getElementById('btn-add-acesso');
+        if(btn) { btn.innerHTML = "..."; btn.disabled = true; }
+
+        try {
+            await supabase.from('acessos_clientes').insert([{ email: email, cnpj: cnpj, nome: nome, permissao: nivel }]);
+            simularAcao(`Permissão concedida para ${email}.`);
+            document.getElementById('novo-acesso-email').value = '';
             await renderizarListaAcessos(cnpj);
-            modalAcessos.classList.add('ativo');
-        };
-        window.fecharModalAcessos = () => modalAcessos.classList.remove('ativo');
+            await carregarDadosSistema(); 
+        } catch(e) { simularAcao("Erro ao adicionar acesso.", true); }
+        if(btn) { btn.innerHTML = "Autorizar Novo Usuário"; btn.disabled = false; }
+    };
 
-        window.salvarNovoLimite = async () => {
-            const cnpj = document.getElementById('acessos-cnpj').value;
-            let novoLimite = parseInt(document.getElementById('ajuste-limite-input').value) || 8;
-            if(novoLimite > 15) { novoLimite = 15; }
-            
-            try {
-                await supabase.from('empresas').update({ limite_usuarios: novoLimite }).eq('cnpj', cnpj);
-                document.getElementById('limite-acessos-display').innerText = novoLimite;
-                simularAcao(`Plano de acessos atualizado para ${novoLimite}.`);
-                await carregarDadosSistema(); 
-            } catch(e) { simularAcao("Erro ao atualizar limite.", true); }
-        };
+    window.removerAcesso = async (email, cnpj) => {
+        try {
+            await supabase.from('acessos_clientes').delete().eq('email', email);
+            simularAcao(`Acesso revogado.`);
+            await renderizarListaAcessos(cnpj);
+            await carregarDadosSistema();
+        } catch(e) {}
+    };
 
-        async function renderizarListaAcessos(cnpjBase) {
-            const divLista = document.getElementById('lista-usuarios-cnpj');
-            try {
-                const { data: empresa } = await supabase.from('empresas').select('limite_usuarios').eq('cnpj', cnpjBase).single();
-                const limiteAtual = empresa ? empresa.limite_usuarios : 8; 
-                document.getElementById('limite-acessos-display').innerText = limiteAtual;
-                document.getElementById('ajuste-limite-input').value = limiteAtual;
+    const modalInjetar = document.getElementById('modal-injetar');
+    window.abrirModalInjetar = (cnpj) => { document.getElementById('injetar-cnpj').value = cnpj; modalInjetar && modalInjetar.classList.add('ativo'); };
+    window.fecharModalInjetar = () => modalInjetar && modalInjetar.classList.remove('ativo');
 
-                const { data: acessos } = await supabase.from('acessos_clientes').select('*').eq('cnpj', cnpjBase);
-                let htmlUsuarios = '';
-                let contagem = 0;
+    window.salvarInjecao = async () => {
+        const cnpj = document.getElementById('injetar-cnpj').value;
+        const desc = document.getElementById('injetar-desc').value;
+        const valor = parseFloat(document.getElementById('injetar-valor').value);
+        const tipo = document.getElementById('injetar-tipo').value;
+        const btn = document.getElementById('btn-submit-injecao');
 
-                if(acessos) {
-                    acessos.forEach(acc => {
-                        const perm = acc.permissao || 'Master (Full)';
-                        let corPerm = 'var(--text-muted)';
-                        if(perm.includes('Financeiro')) corPerm = 'var(--success)';
-                        if(perm.includes('RH')) corPerm = 'var(--warning)';
-                        if(perm.includes('Master')) corPerm = 'var(--primary)';
+        if(!desc || !valor) { simularAcao("Preencha a descrição e o valor.", true); return; }
+        if(btn) { btn.innerHTML = "Enviando..."; btn.disabled = true; }
 
-                        htmlUsuarios += `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
-                                <div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${acc.email}</div><div style="font-size: 0.75rem; color: ${corPerm}; font-weight: 800;">${perm}</div></div>
-                                <button onclick="removerAcesso('${acc.email}', '${cnpjBase}')" class="btn-danger">Revogar</button>
-                            </div>`;
-                        contagem++;
-                    });
-                }
-                divLista.innerHTML = htmlUsuarios;
-                document.getElementById('contagem-acessos').innerText = contagem;
-            } catch(e) { console.error(e); }
-        }
+        try {
+            const { data: emp } = await supabase.from('empresas').select('*').eq('cnpj', cnpj).single();
+            if(emp) {
+                let novoSaldo = parseFloat(emp.saldo) || 0;
+                let novoFat = parseFloat(emp.faturamento) || 0;
+                let novoCusto = parseFloat(emp.custos) || 0;
 
-        window.adicionarNovoAcesso = async () => {
-            const email = document.getElementById('novo-acesso-email').value;
-            const nivel = document.getElementById('novo-acesso-nivel').value;
-            const cnpj = document.getElementById('acessos-cnpj').value;
-            const nome = document.getElementById('acessos-nome').value;
+                if(tipo === 'Receita') { novoSaldo += valor; novoFat += valor; } 
+                else { novoSaldo -= valor; novoCusto += valor; }
 
-            if(!email) { simularAcao('Digite o e-mail.', true); return; }
-            const limiteMax = parseInt(document.getElementById('limite-acessos-display').innerText);
-            const atual = parseInt(document.getElementById('contagem-acessos').innerText);
-            
-            if(atual >= limiteMax) { simularAcao(`Limite atingido.`, true); return; }
+                await supabase.from('empresas').update({ saldo: novoSaldo, faturamento: novoFat, custos: novoCusto }).eq('cnpj', cnpj);
+                await supabase.from('transacoes').insert([{ cnpj: cnpj, descricao: desc, valor: valor, tipo: tipo, data_lancamento: "Lançamento Contábil" }]);
 
-            const btn = document.getElementById('btn-add-acesso');
-            btn.innerHTML = "..."; btn.disabled = true;
-
-            try {
-                await supabase.from('acessos_clientes').insert([{ email: email, cnpj: cnpj, nome: nome, permissao: nivel }]);
-                simularAcao(`Permissão concedida para ${email}.`);
-                document.getElementById('novo-acesso-email').value = '';
-                await renderizarListaAcessos(cnpj);
-                await carregarDadosSistema(); 
-            } catch(e) { simularAcao("Erro ao adicionar acesso.", true); }
-            btn.innerHTML = "Autorizar Novo Usuário"; btn.disabled = false;
-        };
-
-        window.removerAcesso = async (email, cnpj) => {
-            try {
-                await supabase.from('acessos_clientes').delete().eq('email', email);
-                simularAcao(`Acesso revogado.`);
-                await renderizarListaAcessos(cnpj);
+                simularAcao(`Lançamento auditado e injetado.`);
                 await carregarDadosSistema();
-            } catch(e) {}
-        };
-
-        // 4. INJEÇÃO DE FATURA
-        const modalInjetar = document.getElementById('modal-injetar');
-        window.abrirModalInjetar = (cnpj) => { document.getElementById('injetar-cnpj').value = cnpj; modalInjetar.classList.add('ativo'); };
-        window.fecharModalInjetar = () => modalInjetar.classList.remove('ativo');
-
-        window.salvarInjecao = async () => {
-            const cnpj = document.getElementById('injetar-cnpj').value;
-            const desc = document.getElementById('injetar-desc').value;
-            const valor = parseFloat(document.getElementById('injetar-valor').value);
-            const tipo = document.getElementById('injetar-tipo').value;
-            const btn = document.getElementById('btn-submit-injecao');
-
-            if(!desc || !valor) { simularAcao("Preencha a descrição e o valor.", true); return; }
-            btn.innerHTML = "<span class='spinner-small'></span> Enviando..."; btn.disabled = true;
-
-            try {
-                const { data: emp } = await supabase.from('empresas').select('*').eq('cnpj', cnpj).single();
-                if(emp) {
-                    let novoSaldo = parseFloat(emp.saldo) || 0;
-                    let novoFat = parseFloat(emp.faturamento) || 0;
-                    let novoCusto = parseFloat(emp.custos) || 0;
-
-                    if(tipo === 'Receita') { novoSaldo += valor; novoFat += valor; } 
-                    else { novoSaldo -= valor; novoCusto += valor; }
-
-                    await supabase.from('empresas').update({ saldo: novoSaldo, faturamento: novoFat, custos: novoCusto }).eq('cnpj', cnpj);
-                    await supabase.from('transacoes').insert([{ cnpj: cnpj, descricao: desc, valor: valor, tipo: tipo, data_lancamento: "Lançamento Contábil" }]);
-
-                    simularAcao(`Lançamento auditado e injetado.`);
-                    await carregarDadosSistema();
-                    fecharModalInjetar();
-                    document.getElementById('injetar-desc').value = ''; document.getElementById('injetar-valor').value = '';
-                }
-            } catch (e) { simularAcao("Erro de gravação.", true); }
-
-            btn.innerHTML = "Injetar no Cofre do Cliente"; btn.disabled = false;
-        };
-
-        // 5. AUDITORIA
-        const modalInspecionar = document.getElementById('modal-inspecionar');
-        window.abrirModalInspecionar = async (cnpj) => {
-            try {
-                const { data: emp } = await supabase.from('empresas').select('*').eq('cnpj', cnpj).single();
-                if(!emp) return;
-
-                document.getElementById('insp-cnpj').innerText = "Identificador Legal: " + cnpj;
-                document.getElementById('insp-saldo').innerText = formatoBRL(emp.saldo);
-                document.getElementById('insp-receitas').innerText = formatoBRL(emp.faturamento);
-                document.getElementById('insp-despesas').innerText = formatoBRL(emp.custos);
-                
-                const { data: transacoes } = await supabase.from('transacoes').select('*').eq('cnpj', cnpj).order('id', { ascending: false });
-                const extratoDiv = document.getElementById('insp-extrato');
-                let htmlExtrato = '';
-
-                if(!transacoes || transacoes.length === 0) { 
-                    htmlExtrato = '<p style="text-align:center; color:var(--text-muted); padding: 15px;">Sem movimentações auditadas.</p>'; 
-                } else {
-                    transacoes.forEach(t => {
-                        const cor = t.tipo === 'Receita' ? 'var(--success)' : 'var(--danger)';
-                        const sinal = t.tipo === 'Receita' ? '+' : '-';
-                        htmlExtrato += `<div style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid var(--border);"><div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${t.descricao}</div><div style="font-size: 0.75rem; color: var(--text-muted);">${t.data_lancamento} • ${t.tipo}</div></div><div style="font-weight: 800; color: ${cor};">${sinal} ${formatoBRL(t.valor)}</div></div>`;
-                    });
-                }
-                extratoDiv.innerHTML = htmlExtrato;
-                modalInspecionar.classList.add('ativo');
-            } catch(e) { console.error(e); simularAcao("Erro ao auditar cofre.", true); }
-        };
-        window.fecharModalInspecionar = () => modalInspecionar.classList.remove('ativo');
-
-        // CARREGAMENTO GLOBAL ASSÍNCRONO DA CLOUD
-        async function carregarDadosSistema() {
-            try {
-                const { data: empresasData } = await supabase.from('empresas').select('*');
-                const { data: acessosData } = await supabase.from('acessos_clientes').select('*');
-                
-                const empresas = {}; 
-                let volumeTotal = 0; let faturamentoGlobal = 0;
-
-                (empresasData || []).forEach(emp => {
-                    empresas[emp.cnpj] = { cnpj: emp.cnpj, saldo: emp.saldo, faturamento: emp.faturamento, usuarios: [], nome: emp.nome || "Sem Nome", max_users: emp.limite_usuarios };
-                    volumeTotal += parseFloat(emp.saldo) || 0; faturamentoGlobal += parseFloat(emp.faturamento) || 0;
-                });
-
-                (acessosData || []).forEach(acc => {
-                    if(empresas[acc.cnpj]) { empresas[acc.cnpj].usuarios.push(acc.email); }
-                });
-
-                const listaEmpresas = Object.values(empresas);
-                document.getElementById('kpi-clientes').innerText = listaEmpresas.length;
-                document.getElementById('kpi-volume').innerText = formatoBRL(volumeTotal);
-                document.getElementById('kpi-faturamento').innerText = formatoBRL(faturamentoGlobal);
-
-                const tbody = document.getElementById('lista-clientes');
-                let htmlClientes = '';
-                
-                if (listaEmpresas.length === 0) {
-                    htmlClientes = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 30px;">Cloud Vazia. Provisione o primeiro cliente.</td></tr>`;
-                } else {
-                    listaEmpresas.forEach(emp => {
-                        const contagemUsr = emp.usuarios.length;
-                        htmlClientes += `
-                            <tr>
-                                <td><div style="font-weight: 800; color: white; font-size: 1.05rem;">${emp.nome}</div></td>
-                                <td class="td-cnpj">${emp.cnpj}</td>
-                                <td><span class="role-badge" style="background:var(--warning); color:#000;">${contagemUsr}/${emp.max_users} Acessos</span></td>
-                                <td style="color: var(--success); font-weight: 800;">${formatoBRL(emp.saldo)}</td>
-                                <td style="display:flex; gap: 10px;">
-                                    <button class="btn-acessar" style="border-color:var(--warning); color:var(--warning);" onclick="abrirModalAcessos('${emp.cnpj}', '${emp.nome}')">🔑 Acessos</button>
-                                    <button class="btn-acessar" style="border-color:var(--success); color:var(--success);" onclick="abrirModalInjetar('${emp.cnpj}')">+ Lançamento</button>
-                                    <button class="btn-acessar" onclick="abrirModalInspecionar('${emp.cnpj}')">Auditar</button>
-                                </td>
-                            </tr>`;
-                    });
-                }
-                tbody.innerHTML = htmlClientes;
-                await renderizarEquipePrisma();
-            } catch (e) {
-                console.error(e);
-                simularAcao("Falha ao comunicar com os servidores cloud.", true);
+                fecharModalInjetar();
+                document.getElementById('injetar-desc').value = ''; 
+                document.getElementById('injetar-valor').value = '';
             }
-        }
+        } catch (e) { simularAcao("Erro de gravação.", true); }
 
-        // INIT SEGURO
-        document.addEventListener('DOMContentLoaded', async () => {
-            const { data, error } = await supabase.auth.getSession();
-            if (data && data.session) {
-                document.getElementById('admin-login-screen').style.display = 'none';
-                carregarDadosSistema();
+        if(btn) { btn.innerHTML = "Injetar no Cofre do Cliente"; btn.disabled = false; }
+    };
+
+    const modalInspecionar = document.getElementById('modal-inspecionar');
+    window.abrirModalInspecionar = async (cnpj) => {
+        try {
+            const { data: emp } = await supabase.from('empresas').select('*').eq('cnpj', cnpj).single();
+            if(!emp) return;
+
+            document.getElementById('insp-cnpj').innerText = "Identificador Legal: " + cnpj;
+            document.getElementById('insp-saldo').innerText = formatoBRL(emp.saldo);
+            document.getElementById('insp-receitas').innerText = formatoBRL(emp.faturamento);
+            document.getElementById('insp-despesas').innerText = formatoBRL(emp.custos);
+            
+            const { data: transacoes } = await supabase.from('transacoes').select('*').eq('cnpj', cnpj).order('id', { ascending: false });
+            const extratoDiv = document.getElementById('insp-extrato');
+            let htmlExtrato = '';
+
+            if(!transacoes || transacoes.length === 0) { 
+                htmlExtrato = '<p style="text-align:center; color:var(--text-muted); padding: 15px;">Sem movimentações auditadas.</p>'; 
             } else {
-                document.getElementById('admin-login-screen').style.display = 'flex';
+                transacoes.forEach(t => {
+                    const cor = t.tipo === 'Receita' ? 'var(--success)' : 'var(--danger)';
+                    const sinal = t.tipo === 'Receita' ? '+' : '-';
+                    htmlExtrato += `<div style="display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid var(--border);"><div><div style="font-weight: 600; font-size: 0.9rem; color: white;">${t.descricao}</div><div style="font-size: 0.75rem; color: var(--text-muted);">${t.data_lancamento} • ${t.tipo}</div></div><div style="font-weight: 800; color: ${cor};">${sinal} ${formatoBRL(t.valor)}</div></div>`;
+                });
             }
-        });
-    </script>
+            if(extratoDiv) extratoDiv.innerHTML = htmlExtrato;
+            if(modalInspecionar) modalInspecionar.classList.add('ativo');
+        } catch(e) { console.error(e); simularAcao("Erro ao auditar cofre.", true); }
+    };
+    window.fecharModalInspecionar = () => modalInspecionar && modalInspecionar.classList.remove('ativo');
+
+    async function carregarDadosSistema() {
+        try {
+            const { data: empresasData } = await supabase.from('empresas').select('*');
+            const { data: acessosData } = await supabase.from('acessos_clientes').select('*');
+            
+            const empresas = {}; 
+            let volumeTotal = 0; let faturamentoGlobal = 0;
+
+            (empresasData || []).forEach(emp => {
+                empresas[emp.cnpj] = { cnpj: emp.cnpj, saldo: emp.saldo, faturamento: emp.faturamento, usuarios: [], nome: emp.nome || "Sem Nome", max_users: emp.limite_usuarios };
+                volumeTotal += parseFloat(emp.saldo) || 0; faturamentoGlobal += parseFloat(emp.faturamento) || 0;
+            });
+
+            (acessosData || []).forEach(acc => {
+                if(empresas[acc.cnpj]) { empresas[acc.cnpj].usuarios.push(acc.email); }
+            });
+
+            const listaEmpresas = Object.values(empresas);
+            const kpiClientes = document.getElementById('kpi-clientes');
+            const kpiVolume = document.getElementById('kpi-volume');
+            const kpiFaturamento = document.getElementById('kpi-faturamento');
+
+            if(kpiClientes) kpiClientes.innerText = listaEmpresas.length;
+            if(kpiVolume) kpiVolume.innerText = formatoBRL(volumeTotal);
+            if(kpiFaturamento) kpiFaturamento.innerText = formatoBRL(faturamentoGlobal);
+
+            const tbody = document.getElementById('lista-clientes');
+            if(!tbody) return;
+            let htmlClientes = '';
+            
+            if (listaEmpresas.length === 0) {
+                htmlClientes = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 30px;">Cloud Vazia. Provisione o primeiro cliente.</td></tr>`;
+            } else {
+                listaEmpresas.forEach(emp => {
+                    const contagemUsr = emp.usuarios.length;
+                    htmlClientes += `
+                        <tr>
+                            <td><div style="font-weight: 800; color: white; font-size: 1.05rem;">${emp.nome}</div></td>
+                            <td class="td-cnpj">${emp.cnpj}</td>
+                            <td><span class="role-badge" style="background:var(--warning); color:#000;">${contagemUsr}/${emp.max_users} Acessos</span></td>
+                            <td style="color: var(--success); font-weight: 800;">${formatoBRL(emp.saldo)}</td>
+                            <td style="display:flex; gap: 10px;">
+                                <button class="btn-acessar" style="border-color:var(--warning); color:var(--warning);" onclick="abrirModalAcessos('${emp.cnpj}', '${emp.nome}')">🔑 Acessos</button>
+                                <button class="btn-acessar" style="border-color:var(--success); color:var(--success);" onclick="abrirModalInjetar('${emp.cnpj}')">+ Lançamento</button>
+                                <button class="btn-acessar" onclick="abrirModalInspecionar('${emp.cnpj}')">Auditar</button>
+                            </td>
+                        </tr>`;
+                });
+            }
+            tbody.innerHTML = htmlClientes;
+            await renderizarEquipePrisma();
+        } catch (e) {
+            console.error(e);
+            simularAcao("Falha ao comunicar com os servidores cloud.", true);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const { data } = await supabase.auth.getSession();
+        const loginScreen = document.getElementById('admin-login-screen');
+        if (data && data.session) {
+            if(loginScreen) loginScreen.style.display = 'none';
+            carregarDadosSistema();
+        } else {
+            if(loginScreen) loginScreen.style.display = 'flex';
+        }
+    });
+</script>
 </body>
 </html>
