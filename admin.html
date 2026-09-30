@@ -92,13 +92,18 @@
             <h2 style="margin-bottom: 20px;">Provisionar Novo Cofre</h2>
             <div style="margin-bottom: 15px;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">E-mail do Gestor Principal (CEO)</label><input type="email" id="admin-cad-email" placeholder="ceo@cliente.com.br"></div>
             <div style="margin-bottom: 15px;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Nome da Empresa</label><input type="text" id="admin-cad-nome" placeholder="Empresa LTDA"></div>
-            <div style="margin-bottom: 15px;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">CNPJ</label><input type="text" id="admin-cad-cnpj" placeholder="00.000.000/0001-00"></div>
+            
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div style="flex: 2;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">CNPJ</label><input type="text" id="admin-cad-cnpj" placeholder="00.000.000/0001-00"></div>
+                <div style="flex: 1;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Usuários (Máx 15)</label><input type="number" id="admin-cad-limite" min="1" max="15" value="5" style="text-align: center;"></div>
+            </div>
+
             <div style="margin-bottom: 25px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: white; font-size: 0.85rem; font-weight: 600;"><input type="checkbox" id="admin-cad-demo" checked style="width: 18px; height: 18px; accent-color: var(--primary);"> Preencher com Dados Fictícios (Pitch de Vendas)</label></div>
             <button onclick="salvarNovoCliente()" style="background: var(--primary); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 600; cursor: pointer;">Criar Cofre e Liberar Acesso</button>
         </div>
     </div>
 
-    <!-- 2. MODAL GESTÃO DE ACESSOS (NOVO) -->
+    <!-- 2. MODAL GESTÃO DE ACESSOS (RBAC + LIMITE) -->
     <div id="modal-acessos" class="modal-overlay">
         <div class="modal-box" style="border-top: 5px solid var(--warning);">
             <button onclick="fecharModalAcessos()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -110,7 +115,14 @@
 
             <!-- Lista de Usuários Autorizados -->
             <div style="background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--border); padding: 15px; margin-bottom: 25px;">
-                <h4 style="font-size: 0.9rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Colaboradores Autorizados (<span id="contagem-acessos">0</span>/8)</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
+                    <h4 style="font-size: 0.9rem; margin: 0;">Autorizados (<span id="contagem-acessos">0</span>/<span id="limite-acessos-display">5</span>)</h4>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Ajustar Limite:</span>
+                        <input type="number" id="ajuste-limite-input" min="1" max="15" style="width: 55px; padding: 6px; text-align: center; font-size: 0.8rem;">
+                        <button onclick="salvarNovoLimite()" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; font-weight: 600;">Salvar</button>
+                    </div>
+                </div>
                 <div id="lista-usuarios-cnpj" style="display: flex; flex-direction: column; gap: 10px;">
                     <!-- Preenchido via JS -->
                 </div>
@@ -294,7 +306,7 @@
             });
         });
 
-        // 1. PROVISIONAMENTO DE CLIENTE
+        // 1. PROVISIONAMENTO DE CLIENTE (Com limite dinâmico max 15)
         const modalAdmin = document.getElementById('modal-novo-cliente');
         window.abrirModalNovoCliente = () => modalAdmin.classList.add('ativo');
         window.fecharModalNovoCliente = () => modalAdmin.classList.remove('ativo');
@@ -303,31 +315,35 @@
             const email = document.getElementById('admin-cad-email').value;
             const nome = document.getElementById('admin-cad-nome').value;
             const cnpj = document.getElementById('admin-cad-cnpj').value;
+            let limiteMax = parseInt(document.getElementById('admin-cad-limite').value);
 
             if(!email || !nome || !cnpj) { simularAcao("Preencha todos os campos.", true); return; }
+            if(isNaN(limiteMax) || limiteMax < 1) limiteMax = 1;
+            if(limiteMax > 15) limiteMax = 15; // Proteção extra (Máx 15)
 
             // Salva o vínculo com a permissão Master padrão para o CEO
             localStorage.setItem('prisma_vinculo_' + email, JSON.stringify({ nome: nome, cnpj: cnpj, permissao: 'Master (Full)' }));
             
-            // Só cria o cofre se ele não existir ainda
+            // Só cria o cofre se ele não existir ainda, salvando também o limite
             if(!localStorage.getItem('prisma_cofre_' + cnpj)) {
-                let cofreData = { saldo: 0, faturamento: 0, custos: 0, impostos: 0, rh_headcount: 0, rh_folha: 0, rh_beneficios: 0, transacoes: [] };
+                let cofreData = { limite_usuarios: limiteMax, saldo: 0, faturamento: 0, custos: 0, impostos: 0, rh_headcount: 0, rh_folha: 0, rh_beneficios: 0, transacoes: [] };
                 if (document.getElementById('admin-cad-demo').checked) {
-                    cofreData = { saldo: 145250, faturamento: 68400, custos: 18200, impostos: 11050, rh_headcount: 14, rh_folha: 42500, rh_beneficios: 5200,
+                    cofreData = { limite_usuarios: limiteMax, saldo: 145250, faturamento: 68400, custos: 18200, impostos: 11050, rh_headcount: 14, rh_folha: 42500, rh_beneficios: 5200,
                         transacoes: [{ desc: "Receita de Vendas (Lote)", valor: 25000, data: "Hoje", tipo: "Receita" }, { desc: "Impostos Federais (DAS)", valor: 3480, data: "Ontem", tipo: "Despesa" }]
                     };
                 }
                 localStorage.setItem('prisma_cofre_' + cnpj, JSON.stringify(cofreData));
             }
             
-            simularAcao(`Cofre criado com sucesso para ${cnpj}!`);
+            simularAcao(`Cofre criado com sucesso para ${cnpj}! Limite: ${limiteMax} acessos.`);
             fecharModalNovoCliente();
             carregarTodosOsClientes();
             
             document.getElementById('admin-cad-email').value = ''; document.getElementById('admin-cad-nome').value = ''; document.getElementById('admin-cad-cnpj').value = '';
+            document.getElementById('admin-cad-limite').value = '5'; // Reseta pro default do input
         };
 
-        // 2. GESTÃO DE ACESSOS (RBAC) - NOVO!
+        // 2. GESTÃO DE ACESSOS (RBAC + LIMITES MÁXIMOS)
         const modalAcessos = document.getElementById('modal-acessos');
         window.abrirModalAcessos = (cnpj, nomeEmpresa) => {
             document.getElementById('acessos-cnpj').value = cnpj;
@@ -338,10 +354,40 @@
         };
         window.fecharModalAcessos = () => modalAcessos.classList.remove('ativo');
 
+        // Atualizar o Limite pelo Painel de Acessos
+        window.salvarNovoLimite = () => {
+            const cnpj = document.getElementById('acessos-cnpj').value;
+            let novoLimite = parseInt(document.getElementById('ajuste-limite-input').value);
+            
+            if(isNaN(novoLimite) || novoLimite < 1) novoLimite = 1;
+            if(novoLimite > 15) {
+                simularAcao("O limite máximo do sistema é de 15 acessos por CNPJ.", true);
+                novoLimite = 15;
+            }
+            
+            const cofreData = JSON.parse(localStorage.getItem('prisma_cofre_' + cnpj));
+            if(cofreData) {
+                cofreData.limite_usuarios = novoLimite;
+                localStorage.setItem('prisma_cofre_' + cnpj, JSON.stringify(cofreData));
+                
+                document.getElementById('limite-acessos-display').innerText = novoLimite;
+                document.getElementById('ajuste-limite-input').value = novoLimite;
+                simularAcao(`Plano de acessos atualizado para ${novoLimite} utilizadores.`);
+                carregarTodosOsClientes(); // Atualiza a tag amarela na tabela traseira
+            }
+        };
+
         function renderizarListaAcessos(cnpjBase) {
             const divLista = document.getElementById('lista-usuarios-cnpj');
             divLista.innerHTML = '';
             let contagem = 0;
+
+            // Carrega o limite real do banco de dados
+            const cofreData = JSON.parse(localStorage.getItem('prisma_cofre_' + cnpjBase));
+            const limiteAtual = (cofreData && cofreData.limite_usuarios) ? cofreData.limite_usuarios : 8; // Fallback se for antigo
+            
+            document.getElementById('limite-acessos-display').innerText = limiteAtual;
+            document.getElementById('ajuste-limite-input').value = limiteAtual;
 
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
@@ -379,9 +425,12 @@
 
             if(!email) { simularAcao('Digite o e-mail do colaborador.', true); return; }
             
-            // Verifica se atingiu limite de 8
-            if(parseInt(document.getElementById('contagem-acessos').innerText) >= 8) {
-                simularAcao('Limite máximo de 8 acessos atingido para este CNPJ.', true); return;
+            const limiteMax = parseInt(document.getElementById('limite-acessos-display').innerText);
+            const atual = parseInt(document.getElementById('contagem-acessos').innerText);
+            
+            if(atual >= limiteMax) {
+                simularAcao(`O limite do plano desta empresa é de ${limiteMax} acessos. Atualize o limite para adicionar mais.`, true); 
+                return;
             }
 
             localStorage.setItem('prisma_vinculo_' + email, JSON.stringify({ nome: nome, cnpj: cnpj, permissao: nivel }));
@@ -471,7 +520,8 @@
                 if (key.startsWith('prisma_cofre_')) {
                     const cnpj = key.replace('prisma_cofre_', '');
                     const cofreData = JSON.parse(localStorage.getItem(key));
-                    empresas[cnpj] = { cnpj: cnpj, saldo: cofreData.saldo, faturamento: cofreData.faturamento, usuarios: [], nome: "Empresa Não Nomeada" };
+                    const limitMax = cofreData.limite_usuarios || 8; // Resgate do limite
+                    empresas[cnpj] = { cnpj: cnpj, saldo: cofreData.saldo, faturamento: cofreData.faturamento, usuarios: [], nome: "Empresa Não Nomeada", max_users: limitMax };
                     volumeTotal += cofreData.saldo; faturamentoGlobal += cofreData.faturamento;
                 }
             }
@@ -507,7 +557,7 @@
                     <tr>
                         <td><div style="font-weight: 800; color: white; font-size: 1.05rem;">${emp.nome}</div></td>
                         <td class="td-cnpj">${emp.cnpj}</td>
-                        <td><span class="role-badge" style="background:var(--warning); color:#000;">${contagemUsr}/8 Acessos</span></td>
+                        <td><span class="role-badge" style="background:var(--warning); color:#000;">${contagemUsr}/${emp.max_users} Acessos</span></td>
                         <td style="color: var(--success); font-weight: 800;">${formatoBRL(emp.saldo)}</td>
                         <td style="display:flex; gap: 10px;">
                             <button class="btn-acessar" style="border-color:var(--warning); color:var(--warning);" onclick="abrirModalAcessos('${emp.cnpj}', '${emp.nome}')">🔑 Acessos</button>
