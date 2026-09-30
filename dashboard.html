@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.pluggy.ai/pluggy-connect/v2.5.0/pluggy-connect.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         :root { --bg-dark: #030712; --bg-surface: #111827; --primary: #059669; --danger: #ef4444; --text-main: #f9fafb; --text-muted: #9ca3af; --border: rgba(255, 255, 255, 0.05); }
@@ -413,11 +414,27 @@
                 lista.innerHTML = "";
                 
                 if (tab === 'integracoes') {
-            // ... (todo aquele código grande dos botões dos bancos que editámos antes) ...
-            // ...
+            if(tituloLista) tituloLista.innerText = "Bancos e Instituições";
+            if(subtituloLista) subtituloLista.innerText = "Conecte as suas contas para conciliação automática via Open Finance.";
+            
+            lista.innerHTML = `
+                <div class="transaction-item" style="justify-content: space-between; padding: 15px;">
+                    <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
+                        <div style="background: #8A05BE; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">NU</div>
+                        <div><h4 style="margin: 0; color: #f9fafb;">Nubank PJ</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Open Finance ativo</p></div>
+                    </div>
+                    <button onclick="conectarBanco(this, 'Nubank')" style="background: transparent; border: 1px solid #374151; color: #f9fafb; padding: 8px 15px; border-radius: 6px; cursor: pointer; transition: 0.2s;">Conectar</button>
+                </div>
+                <div class="transaction-item" style="justify-content: space-between; padding: 15px;">
+                    <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
+                        <div style="background: #FF7A00; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">IN</div>
+                        <div><h4 style="margin: 0; color: #f9fafb;">Banco Inter</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Requer autenticação</p></div>
+                    </div>
+                    <button onclick="conectarBanco(this, 'Inter')" style="background: transparent; border: 1px solid #374151; color: #f9fafb; padding: 8px 15px; border-radius: 6px; cursor: pointer; transition: 0.2s;">Conectar</button>
+                </div>
+            `;
         } 
         else if (tab === 'nfs') {
-            // COLE O CÓDIGO DO PASSO 1 AQUI DENTRO (Desde o tituloLista até ao final do lista.innerHTML)
             if(tituloLista) tituloLista.innerText = "Emissão de Documentos";
             if(subtituloLista) subtituloLista.innerText = "Gere recibos de pagamento e prévias de NFs.";
             
@@ -449,7 +466,7 @@
                             <label style="color: #9ca3af; font-size: 0.85rem;">Descrição do Serviço</label>
                             <textarea id="doc-desc" required rows="3" style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px; resize: none;" placeholder="Consultoria financeira, Gestão de BPO..."></textarea>
                         </div>
-                        <button type="submit" style="background: #059669; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1rem;">Gerar e Imprimir Documento</button>
+                        <button type="submit" style="background: #059669; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1rem;">Gerar Documento Oficial</button>
                     </form>
                 </div>
             `;
@@ -562,52 +579,87 @@
             }, 2000);
         };
 
-        if (tab === 'integracoes') {
-            // ... (todo aquele código grande dos botões dos bancos que editámos antes) ...
-            // ...
-        } 
-        else if (tab === 'nfs') {
-            // COLE O CÓDIGO DO PASSO 1 AQUI DENTRO (Desde o tituloLista até ao final do lista.innerHTML)
-            if(tituloLista) tituloLista.innerText = "Emissão de Documentos";
-            if(subtituloLista) subtituloLista.innerText = "Gere recibos de pagamento e prévias de NFs.";
+        window.gerarDocumento = (event) => {
+            event.preventDefault(); // Evita recarregar a página
             
-            lista.innerHTML = `
-                <div class="card" style="padding: 20px; background: transparent; border: none;">
-                    <form id="form-emissao" onsubmit="gerarDocumento(event)" style="display: flex; flex-direction: column; gap: 15px;">
-                        <div>
-                            <label style="color: #9ca3af; font-size: 0.85rem;">Tipo de Documento</label>
-                            <select id="doc-tipo" style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;">
-                                <option value="Recibo de Pagamento">Recibo de Pagamento</option>
-                                <option value="Nota Fiscal de Serviço (Prévia)">Nota Fiscal de Serviço (Prévia)</option>
-                            </select>
+            const tipo = document.getElementById('doc-tipo').value;
+            const cliente = document.getElementById('doc-cliente').value;
+            const documento = document.getElementById('doc-doc').value;
+            const desc = document.getElementById('doc-desc').value;
+            const btn = event.target.querySelector('button');
+            
+            const valorFormatado = parseFloat(document.getElementById('doc-valor').value)
+                .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            
+            const dataAtual = new Date().toLocaleDateString('pt-BR');
+
+            // Feedback visual de produção
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = "<span class='spinner-small'></span> A gerar PDF oficial...";
+            btn.disabled = true;
+            btn.style.opacity = '0.8';
+
+            // Cria a estrutura visual do PDF em background
+            const elementoPDF = document.createElement('div');
+            elementoPDF.innerHTML = `
+                <div style="font-family: 'Helvetica', 'Arial', sans-serif; padding: 50px; color: #111827; background: #ffffff;">
+                    <div style="text-align: center; border-bottom: 2px solid #059669; padding-bottom: 20px; margin-bottom: 40px;">
+                        <h1 style="margin: 0; color: #059669; text-transform: uppercase; font-size: 2rem; letter-spacing: 1px;">${tipo}</h1>
+                        <p style="margin: 8px 0 0 0; color: #4b5563; font-size: 1rem; font-weight: bold;">Prisma Finance - Gestão Financeira & BPO</p>
+                    </div>
+                    
+                    <div style="line-height: 1.8; font-size: 1.1rem; color: #374151;">
+                        <p style="text-align: right; color: #6b7280; font-size: 0.95rem;">Emitido em: <strong>${dataAtual}</strong></p>
+                        
+                        <p style="margin-top: 30px;">Recebemos da empresa/cliente <strong>${cliente}</strong>, inscrita sob o CPF/CNPJ nº <strong>${documento}</strong>,</p>
+                        <p>A importância líquida referente a:</p>
+                        
+                        <div style="background: #f3f4f6; padding: 20px; border-left: 5px solid #059669; margin: 25px 0; font-style: italic; color: #1f2937;">
+                            ${desc}
                         </div>
-                        <div>
-                            <label style="color: #9ca3af; font-size: 0.85rem;">Nome do Cliente / Empresa</label>
-                            <input type="text" id="doc-cliente" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="Ex: Empresa XYZ Ltda">
+                        
+                        <div style="font-size: 2rem; font-weight: 900; text-align: center; margin: 40px 0; padding: 25px; background: #ecfdf5; color: #065f46; border-radius: 8px; border: 2px dashed #059669;">
+                            ${valorFormatado}
                         </div>
-                        <div style="display: flex; gap: 15px;">
-                            <div style="flex: 1;">
-                                <label style="color: #9ca3af; font-size: 0.85rem;">CPF / CNPJ</label>
-                                <input type="text" id="doc-doc" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="00.000.000/0001-00">
-                            </div>
-                            <div style="flex: 1;">
-                                <label style="color: #9ca3af; font-size: 0.85rem;">Valor (R$)</label>
-                                <input type="number" id="doc-valor" step="0.01" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="1500.00">
-                            </div>
+                        
+                        <p style="margin-bottom: 60px;">Para maior clareza e validade legal, firmamos o presente documento.</p>
+                    </div>
+                    
+                    <div style="margin-top: 80px; text-align: center;">
+                        <div style="border-top: 1px solid #111827; width: 300px; margin: 0 auto; padding-top: 12px; font-weight: bold; font-size: 1.1rem;">
+                            Raul Paiva Felix de Lima
                         </div>
-                        <div>
-                            <label style="color: #9ca3af; font-size: 0.85rem;">Descrição do Serviço</label>
-                            <textarea id="doc-desc" required rows="3" style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px; resize: none;" placeholder="Consultoria financeira, Gestão de BPO..."></textarea>
-                        </div>
-                        <button type="submit" style="background: #059669; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1rem;">Gerar e Imprimir Documento</button>
-                    </form>
+                        <span style="font-size: 0.9rem; color: #6b7280;">Prisma Finance / BPO - Assinatura Digital</span>
+                    </div>
                 </div>
             `;
-        }
-        else {
-            // MODO TRANSAÇÕES (Padrão para outras abas)
-            if(tituloLista) tituloLista.innerText = "Movimentações Recentes";
-            // ...
+
+            // Configurações do motor de PDF
+            const opcoesPDF = {
+                margin:       [0, 0, 0, 0],
+                filename:     `${tipo.replace(/ /g, '_')}_${cliente.replace(/ /g, '')}.pdf`,
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Gera e descarrega o ficheiro PDF
+            html2pdf().set(opcoesPDF).from(elementoPDF).save().then(() => {
+                btn.innerHTML = "✓ PDF Gerado e Transferido";
+                btn.style.background = "#059669";
+                btn.style.opacity = '1';
+                simularAcao(`Documento oficial gerado e guardado para ${cliente}!`);
+                
+                setTimeout(() => {
+                    btn.innerHTML = "Gerar e Imprimir Documento";
+                    btn.disabled = false;
+                }, 3000);
+            }).catch(erro => {
+                btn.innerHTML = "Erro ao gerar PDF";
+                btn.disabled = false;
+                console.error("Erro no PDF:", erro);
+            });
+        };
 
         window.conectarBanco = async (btn, nomeBanco) => {
             if (btn.innerText.includes('Conectado')) return;
