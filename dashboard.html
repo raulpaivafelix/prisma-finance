@@ -413,61 +413,50 @@
                 lista.innerHTML = "";
                 
                 if (tab === 'integracoes') {
-                    if(tituloLista) tituloLista.innerText = "Bancos e Instituições";
-                    if(subtituloLista) subtituloLista.innerText = "Conecte as suas contas para conciliação automática via Open Finance.";
-                    
-                    lista.innerHTML = `
-                        <div class="transaction-item" style="justify-content: space-between; padding: 15px;">
-                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
-                                <div style="background: #8A05BE; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">NU</div>
-                                <div><h4 style="margin: 0; color: #f9fafb;">Nubank PJ</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Open Finance ativo</p></div>
-                            </div>
-                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Nubank PJ')">Conectar</button>
+            // ... (todo aquele código grande dos botões dos bancos que editámos antes) ...
+            // ...
+        } 
+        else if (tab === 'nfs') {
+            // COLE O CÓDIGO DO PASSO 1 AQUI DENTRO (Desde o tituloLista até ao final do lista.innerHTML)
+            if(tituloLista) tituloLista.innerText = "Emissão de Documentos";
+            if(subtituloLista) subtituloLista.innerText = "Gere recibos de pagamento e prévias de NFs.";
+            
+            lista.innerHTML = `
+                <div class="card" style="padding: 20px; background: transparent; border: none;">
+                    <form id="form-emissao" onsubmit="gerarDocumento(event)" style="display: flex; flex-direction: column; gap: 15px;">
+                        <div>
+                            <label style="color: #9ca3af; font-size: 0.85rem;">Tipo de Documento</label>
+                            <select id="doc-tipo" style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;">
+                                <option value="Recibo de Pagamento">Recibo de Pagamento</option>
+                                <option value="Nota Fiscal de Serviço (Prévia)">Nota Fiscal de Serviço (Prévia)</option>
+                            </select>
                         </div>
-
-                        <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
-                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
-                                <div style="background: #EC7000; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">IT</div>
-                                <div><h4 style="margin: 0; color: #f9fafb;">Itaú Empresas</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Requer chave de API</p></div>
-                            </div>
-                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Itaú Empresas')">Conectar</button>
+                        <div>
+                            <label style="color: #9ca3af; font-size: 0.85rem;">Nome do Cliente / Empresa</label>
+                            <input type="text" id="doc-cliente" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="Ex: Empresa XYZ Ltda">
                         </div>
-
-                        <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
-                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
-                                <div style="background: #FF7A00; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">IN</div>
-                                <div><h4 style="margin: 0; color: #f9fafb;">Banco Inter</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Conta Digital PJ</p></div>
+                        <div style="display: flex; gap: 15px;">
+                            <div style="flex: 1;">
+                                <label style="color: #9ca3af; font-size: 0.85rem;">CPF / CNPJ</label>
+                                <input type="text" id="doc-doc" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="00.000.000/0001-00">
                             </div>
-                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Banco Inter')">Conectar</button>
-                        </div>
-
-                        <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
-                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
-                                <div style="background: #003DA5; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #F9D342; font-weight: bold; font-size: 1.2rem;">BB</div>
-                                <div><h4 style="margin: 0; color: #f9fafb;">Banco do Brasil</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Gerenciador Financeiro</p></div>
+                            <div style="flex: 1;">
+                                <label style="color: #9ca3af; font-size: 0.85rem;">Valor (R$)</label>
+                                <input type="number" id="doc-valor" step="0.01" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="1500.00">
                             </div>
-                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Banco do Brasil')">Conectar</button>
                         </div>
-
-                        <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
-                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
-                                <div style="background: #CC0000; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">SA</div>
-                                <div><h4 style="margin: 0; color: #f9fafb;">Santander</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Internet Banking</p></div>
-                            </div>
-                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Santander')">Conectar</button>
+                        <div>
+                            <label style="color: #9ca3af; font-size: 0.85rem;">Descrição do Serviço</label>
+                            <textarea id="doc-desc" required rows="3" style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px; resize: none;" placeholder="Consultoria financeira, Gestão de BPO..."></textarea>
                         </div>
-                        
-                        <div class="transaction-item" style="justify-content: space-between; padding: 15px; margin-top: 10px;">
-                            <div class="t-info" style="display: flex; align-items: center; gap: 15px;">
-                                <div style="background: #fe3c6b; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">CO</div>
-                                <div><h4 style="margin: 0; color: #f9fafb;">Cora Bank</h4><p style="margin: 3px 0 0; font-size: 0.85rem; color: #9ca3af;">Integração nativa Prisma OS</p></div>
-                            </div>
-                            <button class="btn-action" style="padding: 8px 16px; font-size: 0.9rem;" onclick="conectarBanco(this, 'Cora Bank')">Conectar</button>
-                        </div>
-                    `;
-                } else {
-                    // MODO TRANSAÇÕES (Padrão para as outras abas)
-                    if(tituloLista) tituloLista.innerText = "Movimentações Recentes";
+                        <button type="submit" style="background: #059669; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1rem;">Gerar e Imprimir Documento</button>
+                    </form>
+                </div>
+            `;
+        }
+        else {
+            // MODO TRANSAÇÕES (Padrão para outras abas)
+            if(tituloLista) tituloLista.innerText = "Movimentações Recentes";
                     if(subtituloLista) subtituloLista.innerText = "Documentos e lançamentos registados.";
 
                     if(userData.transacoes.length === 0) {
@@ -572,6 +561,53 @@
                 }, 4000);
             }, 2000);
         };
+
+        if (tab === 'integracoes') {
+            // ... (todo aquele código grande dos botões dos bancos que editámos antes) ...
+            // ...
+        } 
+        else if (tab === 'nfs') {
+            // COLE O CÓDIGO DO PASSO 1 AQUI DENTRO (Desde o tituloLista até ao final do lista.innerHTML)
+            if(tituloLista) tituloLista.innerText = "Emissão de Documentos";
+            if(subtituloLista) subtituloLista.innerText = "Gere recibos de pagamento e prévias de NFs.";
+            
+            lista.innerHTML = `
+                <div class="card" style="padding: 20px; background: transparent; border: none;">
+                    <form id="form-emissao" onsubmit="gerarDocumento(event)" style="display: flex; flex-direction: column; gap: 15px;">
+                        <div>
+                            <label style="color: #9ca3af; font-size: 0.85rem;">Tipo de Documento</label>
+                            <select id="doc-tipo" style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;">
+                                <option value="Recibo de Pagamento">Recibo de Pagamento</option>
+                                <option value="Nota Fiscal de Serviço (Prévia)">Nota Fiscal de Serviço (Prévia)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="color: #9ca3af; font-size: 0.85rem;">Nome do Cliente / Empresa</label>
+                            <input type="text" id="doc-cliente" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="Ex: Empresa XYZ Ltda">
+                        </div>
+                        <div style="display: flex; gap: 15px;">
+                            <div style="flex: 1;">
+                                <label style="color: #9ca3af; font-size: 0.85rem;">CPF / CNPJ</label>
+                                <input type="text" id="doc-doc" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="00.000.000/0001-00">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="color: #9ca3af; font-size: 0.85rem;">Valor (R$)</label>
+                                <input type="number" id="doc-valor" step="0.01" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="1500.00">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="color: #9ca3af; font-size: 0.85rem;">Descrição do Serviço</label>
+                            <textarea id="doc-desc" required rows="3" style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px; resize: none;" placeholder="Consultoria financeira, Gestão de BPO..."></textarea>
+                        </div>
+                        <button type="submit" style="background: #059669; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1rem;">Gerar e Imprimir Documento</button>
+                    </form>
+                </div>
+            `;
+        }
+        else {
+            // MODO TRANSAÇÕES (Padrão para outras abas)
+            if(tituloLista) tituloLista.innerText = "Movimentações Recentes";
+            // ...
 
         window.conectarBanco = async (btn, nomeBanco) => {
             if (btn.innerText.includes('Conectado')) return;
