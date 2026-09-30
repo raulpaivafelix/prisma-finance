@@ -292,9 +292,10 @@
     </main>
 
     <script>
+        // CONFIGURAÇÃO GLOBAL DB CLIENT (ISOLADA)
         const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        const dbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
 
         const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 
@@ -321,7 +322,7 @@
             if(!email || !pwd) { simularAcao("Preencha e-mail e senha.", true); return; }
             if(btn) { btn.innerText = "A autenticar..."; btn.disabled = true; }
 
-            const { data, error } = await supabase.auth.signInWithPassword({ email: email, password: pwd });
+            const { data, error } = await dbClient.auth.signInWithPassword({ email: email, password: pwd });
 
             if (error) {
                 simularAcao('Credenciais inválidas ou e-mail não cadastrado.', true);
@@ -339,7 +340,7 @@
         };
 
         window.fazerLogoutMaster = async () => {
-            await supabase.auth.signOut();
+            await dbClient.auth.signOut();
             window.location.reload();
         };
 
@@ -388,8 +389,8 @@
             if(btn) { btn.innerHTML = "A provisionar no Cloud..."; btn.disabled = true; }
 
             try {
-                await supabase.from('empresas').insert([{ cnpj: cnpj, nome: nome, saldo: 0, faturamento: 0, custos: 0, limite_usuarios: limiteMax }]);
-                await supabase.from('acessos_clientes').insert([{ email: email, cnpj: cnpj, nome: nome, permissao: 'Master (Full)' }]);
+                await dbClient.from('empresas').insert([{ cnpj: cnpj, nome: nome, saldo: 0, faturamento: 0, custos: 0, limite_usuarios: limiteMax }]);
+                await dbClient.from('acessos_clientes').insert([{ email: email, cnpj: cnpj, nome: nome, permissao: 'Master (Full)' }]);
 
                 simularAcao(`Cofre cloud seguro criado para ${cnpj}!`);
                 fecharModalNovoCliente();
@@ -420,7 +421,7 @@
             if(btn) { btn.innerHTML = "A guardar na Cloud..."; btn.disabled = true; }
 
             try {
-                await supabase.from('equipe_prisma').insert([{ email: email, nome: nome, cargo: cargo, clientes_alocados: clientes, status: 'Ativo' }]);
+                await dbClient.from('equipe_prisma').insert([{ email: email, nome: nome, cargo: cargo, clientes_alocados: clientes, status: 'Ativo' }]);
                 simularAcao(`Colaborador ${nome} adicionado com sucesso!`);
                 fecharModalNovoAnalista();
                 await renderizarEquipePrisma();
@@ -438,7 +439,7 @@
             const tbody = document.getElementById('lista-equipe-prisma');
             if(!tbody) return;
             try {
-                const { data: equipe } = await supabase.from('equipe_prisma').select('*');
+                const { data: equipe } = await dbClient.from('equipe_prisma').select('*');
                 let htmlEquipa = `
                     <tr>
                         <td><div style="font-weight: 800; color: white;">Raul Lima</div></td>
@@ -481,7 +482,7 @@
             if(novoLimite > 15) novoLimite = 15;
             
             try {
-                await supabase.from('empresas').update({ limite_usuarios: novoLimite }).eq('cnpj', cnpj);
+                await dbClient.from('empresas').update({ limite_usuarios: novoLimite }).eq('cnpj', cnpj);
                 const limiteDisplay = document.getElementById('limite-acessos-display');
                 if(limiteDisplay) limiteDisplay.innerText = novoLimite;
                 simularAcao(`Plano de acessos atualizado para ${novoLimite}.`);
@@ -493,14 +494,14 @@
             const divLista = document.getElementById('lista-usuarios-cnpj');
             if(!divLista) return;
             try {
-                const { data: empresa } = await supabase.from('empresas').select('limite_usuarios').eq('cnpj', cnpjBase).single();
+                const { data: empresa } = await dbClient.from('empresas').select('limite_usuarios').eq('cnpj', cnpjBase).single();
                 const limiteAtual = empresa ? empresa.limite_usuarios : 8; 
                 const limiteDisplay = document.getElementById('limite-acessos-display');
                 const ajusteInput = document.getElementById('ajuste-limite-input');
                 if(limiteDisplay) limiteDisplay.innerText = limiteAtual;
                 if(ajusteInput) ajusteInput.value = limiteAtual;
 
-                const { data: acessos } = await supabase.from('acessos_clientes').select('*').eq('cnpj', cnpjBase);
+                const { data: acessos } = await dbClient.from('acessos_clientes').select('*').eq('cnpj', cnpjBase);
                 let htmlUsuarios = '';
                 let contagem = 0;
 
@@ -542,7 +543,7 @@
             if(btn) { btn.innerHTML = "..."; btn.disabled = true; }
 
             try {
-                await supabase.from('acessos_clientes').insert([{ email: email, cnpj: cnpj, nome: nome, permissao: nivel }]);
+                await dbClient.from('acessos_clientes').insert([{ email: email, cnpj: cnpj, nome: nome, permissao: nivel }]);
                 simularAcao(`Permissão concedida para ${email}.`);
                 document.getElementById('novo-acesso-email').value = '';
                 await renderizarListaAcessos(cnpj);
@@ -553,7 +554,7 @@
 
         window.removerAcesso = async (email, cnpj) => {
             try {
-                await supabase.from('acessos_clientes').delete().eq('email', email);
+                await dbClient.from('acessos_clientes').delete().eq('email', email);
                 simularAcao(`Acesso revogado.`);
                 await renderizarListaAcessos(cnpj);
                 await carregarDadosSistema();
@@ -575,7 +576,7 @@
             if(btn) { btn.innerHTML = "Enviando..."; btn.disabled = true; }
 
             try {
-                const { data: emp } = await supabase.from('empresas').select('*').eq('cnpj', cnpj).single();
+                const { data: emp } = await dbClient.from('empresas').select('*').eq('cnpj', cnpj).single();
                 if(emp) {
                     let novoSaldo = parseFloat(emp.saldo) || 0;
                     let novoFat = parseFloat(emp.faturamento) || 0;
@@ -584,8 +585,8 @@
                     if(tipo === 'Receita') { novoSaldo += valor; novoFat += valor; } 
                     else { novoSaldo -= valor; novoCusto += valor; }
 
-                    await supabase.from('empresas').update({ saldo: novoSaldo, faturamento: novoFat, custos: novoCusto }).eq('cnpj', cnpj);
-                    await supabase.from('transacoes').insert([{ cnpj: cnpj, descricao: desc, valor: valor, tipo: tipo, data_lancamento: "Lançamento Contábil" }]);
+                    await dbClient.from('empresas').update({ saldo: novoSaldo, faturamento: novoFat, custos: novoCusto }).eq('cnpj', cnpj);
+                    await dbClient.from('transacoes').insert([{ cnpj: cnpj, descricao: desc, valor: valor, tipo: tipo, data_lancamento: "Lançamento Contábil" }]);
 
                     simularAcao(`Lançamento auditado e injetado.`);
                     await carregarDadosSistema();
@@ -601,7 +602,7 @@
         const modalInspecionar = document.getElementById('modal-inspecionar');
         window.abrirModalInspecionar = async (cnpj) => {
             try {
-                const { data: emp } = await supabase.from('empresas').select('*').eq('cnpj', cnpj).single();
+                const { data: emp } = await dbClient.from('empresas').select('*').eq('cnpj', cnpj).single();
                 if(!emp) return;
 
                 document.getElementById('insp-cnpj').innerText = "Identificador Legal: " + cnpj;
@@ -609,7 +610,7 @@
                 document.getElementById('insp-receitas').innerText = formatoBRL(emp.faturamento);
                 document.getElementById('insp-despesas').innerText = formatoBRL(emp.custos);
                 
-                const { data: transacoes } = await supabase.from('transacoes').select('*').eq('cnpj', cnpj).order('id', { ascending: false });
+                const { data: transacoes } = await dbClient.from('transacoes').select('*').eq('cnpj', cnpj).order('id', { ascending: false });
                 const extratoDiv = document.getElementById('insp-extrato');
                 let htmlExtrato = '';
 
@@ -630,8 +631,8 @@
 
         async function carregarDadosSistema() {
             try {
-                const { data: empresasData } = await supabase.from('empresas').select('*');
-                const { data: acessosData } = await supabase.from('acessos_clientes').select('*');
+                const { data: empresasData } = await dbClient.from('empresas').select('*');
+                const { data: acessosData } = await dbClient.from('acessos_clientes').select('*');
                 
                 const empresas = {}; 
                 let volumeTotal = 0; let faturamentoGlobal = 0;
@@ -686,7 +687,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const { data } = await supabase.auth.getSession();
+            const { data } = await dbClient.auth.getSession();
             const loginScreen = document.getElementById('admin-login-screen');
             if (data && data.session) {
                 if(loginScreen) loginScreen.style.display = 'none';
