@@ -122,7 +122,7 @@
         <nav class="menu-nav">
             <span class="menu-section">Financeiro BPO</span>
             <a class="menu-item active" data-tab="visao">📊 Visão Executiva</a>
-            <a class="menu-item" onclick="simularAcao('A abrir extratos e conciliação bancária...')">💸 Fluxo de Caixa</a>
+            <a class="menu-item" data-tab="fluxo">💸 Fluxo de Caixa</a>
             <a class="menu-item" data-tab="dre">📈 DRE & Resultados</a>
             <a class="menu-item" onclick="simularAcao('A ligar ao portal da SEFAZ e Prefeituras...')">🧾 Emissão de NFs</a>
             
@@ -176,7 +176,7 @@
                         <p id="list-subtitle">Documentos e lançamentos registados.</p>
                     </div>
                     <!-- Botão reposicionado -->
-                     <button id="btn-nova-transacao" class="btn-action" onclick="abrirModalNovaTransacao()">+ Nova Transação</button>
+                     <button id="btn-nova-transacao" class="btn-action" onclick="abrirModalNovaTransacao()" style="display: none;">+ Nova Transação</button>
                 </div>
                 <div id="lista-pendencias"></div>
                 <button class="btn-action" id="btn-aprovar-lote" style="width: 100%; margin-top: 15px;" onclick="aprovarLote()">Aprovar e Enviar ao Banco</button>
@@ -217,13 +217,14 @@
     </main>
 
     <script>
-        // CONFIGURAÇÃO GLOBAL DB CLIENT (SUPABASE NUVEM)
+        // 1. LIGAÇÃO À NUVEM PRISMA OS
         var _url = 'https://ebomgngzpwaaghtcjllz.supabase.co';
         var _key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
         var prismaDB = window.supabase.createClient(_url, _key);
 
         const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
         
+        // 2. FUNÇÕES DE UTILIDADE E UI
         window.simularAcao = (mensagem, isError = false) => {
             const container = document.getElementById('toast-container');
             if(!container) return;
@@ -243,25 +244,24 @@
             }, 1500);
         };
 
+        // VARIÁVEIS GLOBAIS DE SESSÃO
         let currentUserEmail = "";
         let currentCNPJ = "";
         let userData = { saldo: 0, faturamento: 0, custos: 0, impostos: 0, rh_headcount: 0, rh_folha: 0, rh_beneficios: 0, transacoes: [] };
         let myChart = null;
         let currentTab = 'visao';
 
-        // 1. VERIFICAÇÃO DE ACESSO NA NUVEM
+        // 3. VALIDAÇÃO E SINCRONIZAÇÃO DE DADOS
         async function verificarVozDoCliente(email) {
             currentUserEmail = email;
-            
             try {
                 const { data: perfil, error } = await prismaDB.from('acessos_clientes').select('*').eq('email', email).single();
-                
                 if (perfil && perfil.cnpj) {
                     await iniciarCofreDoCNPJ(perfil.cnpj, perfil.nome);
                     const loader = document.getElementById('auth-loader');
                     if(loader) loader.style.display = 'none';
                 } else {
-                    throw new Error("Cliente não encontrado na Nuvem");
+                    throw new Error("Cliente não encontrado");
                 }
             } catch (err) {
                 const loader = document.getElementById('auth-loader');
@@ -270,23 +270,16 @@
                         <div style="background: var(--bg-surface); padding: 40px; border-radius: 16px; border: 1px solid var(--danger); text-align: center; max-width: 420px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
                             <span style="font-size: 3rem; margin-bottom: 20px; display: block;">🔒</span>
                             <h2 style="color: var(--danger); margin-bottom: 10px;">Acesso Restrito</h2>
-                            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem; line-height: 1.6;">
-                                O seu e-mail (<strong>${email}</strong>) foi autenticado, mas o seu Cofre Digital ainda não foi provisionado pela nossa equipe administrativa.<br><br>
-                                Por favor, aguarde a liberação ou entre em contato com o seu Gestor de Conta.
-                            </p>
-                            <button onclick="window.fazerLogout()" style="background: var(--bg-dark); color: white; border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%;">Sair da Conta</button>
-                        </div>
-                    `;
+                            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem; line-height: 1.6;">O seu e-mail foi autenticado, mas aguarda provisionamento.</p>
+                            <button onclick="window.fazerLogout()" style="background: var(--bg-dark); color: white; padding: 12px 24px; border-radius: 8px; cursor: pointer; width: 100%;">Sair da Conta</button>
+                        </div>`;
                 }
             }
         }
 
-        // 2. SINCRONIZAÇÃO COMPLETA DE DADOS
         async function iniciarCofreDoCNPJ(cnpj, nomeEmpresa) {
             currentCNPJ = cnpj;
             document.getElementById('user-company-name').innerText = nomeEmpresa;
-            document.getElementById('user-cnpj-display').innerText = "CNPJ: " + cnpj;
-            
             const avatar = document.getElementById('user-avatar');
             if(avatar) avatar.innerText = nomeEmpresa.charAt(0).toUpperCase();
 
@@ -303,26 +296,19 @@
 
             const { data: transacoes } = await prismaDB.from('transacoes').select('*').eq('cnpj', cnpj).order('id', { ascending: false });
             if (transacoes) {
-                userData.transacoes = transacoes.map(t => ({
-                    desc: t.descricao, valor: parseFloat(t.valor), data: t.data_lancamento, tipo: t.tipo
-                }));
+                userData.transacoes = transacoes.map(t => ({ desc: t.descricao, valor: parseFloat(t.valor), data: t.data_lancamento, tipo: t.tipo }));
             }
-
             renderDashboard(currentTab);
         }
 
-        // 3. RENDERIZAÇÃO DOS GRÁFICOS E KPIs (Com botão mágico)
+        // 4. MOTOR DE NAVEGAÇÃO E GRÁFICOS (Render Dashboard)
         function renderDashboard(tab) {
             currentTab = tab;
             
-            // Oculta/Mostra o botão de Nova Transação
+            // Oculta/Mostra o botão de Nova Transação baseado na aba
             const btnTransacao = document.getElementById('btn-nova-transacao');
             if (btnTransacao) {
-                if (tab === 'fluxo') {
-                    btnTransacao.style.display = 'block';
-                } else {
-                    btnTransacao.style.display = 'none';
-                }
+                btnTransacao.style.display = (tab === 'fluxo') ? 'block' : 'none';
             }
 
             const kpiContainer = document.getElementById('kpi-container');
@@ -333,64 +319,57 @@
             const ebitda = userData.faturamento - userData.impostos - userData.custos;
 
             if (tab === 'visao') {
-                document.getElementById('page-title').innerText = "Visão Executiva - " + document.getElementById('user-company-name').innerText;
-                document.getElementById('page-subtitle').innerText = "O panorama financeiro atualizado ao milissegundo pela IA.";
-                
+                document.getElementById('page-title').innerText = "Visão Executiva";
+                document.getElementById('page-subtitle').innerText = "Panorama atualizado ao milissegundo.";
                 kpiHTML = `
                     <div class="kpi-card"><p class="kpi-title">Saldo Disponível</p><h2 class="kpi-value">${formatoBRL(userData.saldo)}</h2><span class="kpi-subtitle">Contas sincronizadas</span></div>
-                    <div class="kpi-card"><p class="kpi-title">Faturamento (Mês)</p><h2 class="kpi-value">${formatoBRL(userData.faturamento)}</h2><span class="kpi-subtitle">↑ Receitas</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Faturamento</p><h2 class="kpi-value">${formatoBRL(userData.faturamento)}</h2><span class="kpi-subtitle">↑ Receitas</span></div>
                     <div class="kpi-card"><p class="kpi-title">Custos Totais</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.custos)}</h2><span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Despesas</span></div>
                     <div class="kpi-card"><p class="kpi-title">Lucro Operacional</p><h2 class="kpi-value">${formatoBRL(lucroOperacional)}</h2><span class="kpi-subtitle">Métrica principal</span></div>
                 `;
-                document.getElementById('chart-title').innerText = "Projeção de Fluxo de Caixa";
                 chartData = { type: 'line', labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], data: [userData.saldo, userData.saldo+1000, userData.saldo-2000, userData.saldo-500, userData.saldo+4000, userData.saldo+4000, userData.saldo+4000] };
             
             } else if (tab === 'fluxo') {
                 document.getElementById('page-title').innerText = "Gestão de Fluxo de Caixa";
-                document.getElementById('page-subtitle').innerText = "Controle diário de entradas, saídas e previsões.";
-                
+                document.getElementById('page-subtitle').innerText = "Controle diário de entradas e saídas.";
                 kpiHTML = `
-                    <div class="kpi-card"><p class="kpi-title">Total de Entradas</p><h2 class="kpi-value" style="color:var(--success)">${formatoBRL(userData.faturamento)}</h2><span class="kpi-subtitle">Recebimentos</span></div>
-                    <div class="kpi-card"><p class="kpi-title">Total de Saídas</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.custos)}</h2><span class="kpi-subtitle">Pagamentos efetuados</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Entradas</p><h2 class="kpi-value" style="color:var(--success)">${formatoBRL(userData.faturamento)}</h2><span class="kpi-subtitle">Recebimentos</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Saídas</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.custos)}</h2><span class="kpi-subtitle">Pagamentos</span></div>
                     <div class="kpi-card"><p class="kpi-title">Saldo Real</p><h2 class="kpi-value">${formatoBRL(userData.saldo)}</h2><span class="kpi-subtitle">Disponível em Caixa</span></div>
                 `;
-                document.getElementById('chart-title').innerText = "Movimentação do Caixa (Semanal)";
                 chartData = { type: 'line', labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'], data: [userData.saldo, userData.saldo, userData.saldo, userData.saldo, userData.saldo, userData.saldo, userData.saldo] };
             
             } else if (tab === 'dre') {
                 document.getElementById('page-title').innerText = "Demonstração de Resultados";
-                document.getElementById('page-subtitle').innerText = "A saúde financeira detalhada por categorias.";
-                
+                document.getElementById('page-subtitle').innerText = "Saúde financeira detalhada.";
                 kpiHTML = `
                     <div class="kpi-card"><p class="kpi-title">Receita Bruta</p><h2 class="kpi-value">${formatoBRL(userData.faturamento)}</h2><span class="kpi-subtitle">Vendas/Serviços</span></div>
                     <div class="kpi-card"><p class="kpi-title">Impostos Retidos</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.impostos)}</h2><span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Simples Nacional</span></div>
                     <div class="kpi-card"><p class="kpi-title">Despesas Fixas</p><h2 class="kpi-value">${formatoBRL(userData.custos)}</h2><span class="kpi-subtitle">Operacionais</span></div>
                     <div class="kpi-card"><p class="kpi-title">EBITDA</p><h2 class="kpi-value" style="color:var(--primary)">${formatoBRL(ebitda)}</h2><span class="kpi-subtitle">Caixa Gerado</span></div>
                 `;
-                document.getElementById('chart-title').innerText = "Receitas vs Despesas (Ano)";
                 chartData = { type: 'line', labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], data: [25000, 40000, 38000, 50000, 68000, userData.faturamento] };
             
             } else if (tab === 'rh') {
                 document.getElementById('page-title').innerText = "Departamento Pessoal & RH";
-                document.getElementById('page-subtitle').innerText = "Gestão inteligente da sua equipe e custos de folha.";
-                
+                document.getElementById('page-subtitle').innerText = "Gestão da sua equipe e custos de folha.";
                 kpiHTML = `
-                    <div class="kpi-card"><p class="kpi-title">Headcount (Equipe)</p><h2 class="kpi-value">${userData.rh_headcount} Colab.</h2><span class="kpi-subtitle">Ativos</span></div>
-                    <div class="kpi-card"><p class="kpi-title">Custo Folha Salarial</p><h2 class="kpi-value">${formatoBRL(userData.rh_folha)}</h2><span class="kpi-subtitle">Mês atual</span></div>
-                    <div class="kpi-card"><p class="kpi-title">Encargos (INSS/FGTS)</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.rh_folha * 0.30)}</h2><span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Provisão</span></div>
-                    <div class="kpi-card"><p class="kpi-title">Custo Benefícios</p><h2 class="kpi-value">${formatoBRL(userData.rh_beneficios)}</h2><span class="kpi-subtitle">VR/VA/Plano</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Headcount</p><h2 class="kpi-value">${userData.rh_headcount} Colab.</h2><span class="kpi-subtitle">Ativos</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Custo Folha</p><h2 class="kpi-value">${formatoBRL(userData.rh_folha)}</h2><span class="kpi-subtitle">Mês atual</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Encargos</p><h2 class="kpi-value" style="color:var(--danger)">${formatoBRL(userData.rh_folha * 0.30)}</h2><span class="kpi-subtitle" style="color:var(--danger); background:rgba(239, 68, 68, 0.1);">Provisão</span></div>
+                    <div class="kpi-card"><p class="kpi-title">Benefícios</p><h2 class="kpi-value">${formatoBRL(userData.rh_beneficios)}</h2><span class="kpi-subtitle">VR/VA/Plano</span></div>
                 `;
-                document.getElementById('chart-title').innerText = "Evolução do Custo com Pessoal";
                 chartData = { type: 'bar', labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], data: [38000, 38000, 39500, 39500, 42500, userData.rh_folha] };
             }
 
             if(kpiContainer) kpiContainer.innerHTML = kpiHTML;
 
+            // Renderiza Lista de Movimentações
             const lista = document.getElementById('lista-pendencias');
             if(lista) {
                 lista.innerHTML = "";
                 if(userData.transacoes.length === 0) {
-                    lista.innerHTML = "<p style='color: #9ca3af; font-size: 0.9rem;'>Sem movimentações registadas ainda.</p>";
+                    lista.innerHTML = "<p style='color: #9ca3af; font-size: 0.9rem;'>Sem movimentações registadas.</p>";
                 } else {
                     userData.transacoes.forEach(t => {
                         const sinal = t.tipo === "Receita" ? "+" : "-";
@@ -404,109 +383,77 @@
                 }
             }
 
+            // Renderiza Gráfico
             if (myChart) myChart.destroy();
             const canvas = document.getElementById('mainChart');
             if(canvas) {
                 const ctx = canvas.getContext('2d');
                 let gradient = ctx.createLinearGradient(0, 0, 0, 400);
                 gradient.addColorStop(0, 'rgba(5, 150, 105, 0.4)'); gradient.addColorStop(1, 'rgba(5, 150, 105, 0.0)'); 
-                
                 myChart = new Chart(ctx, { 
                     type: chartData.type, 
-                    data: { labels: chartData.labels, datasets: [{ label: 'Valor (R$)', data: chartData.data, borderColor: '#059669', backgroundColor: chartData.type === 'line' ? gradient : '#059669', borderWidth: 3, fill: true, tension: 0.4, borderRadius: 4 }] }, 
+                    data: { labels: chartData.labels, datasets: [{ label: 'Valor', data: chartData.data, borderColor: '#059669', backgroundColor: chartData.type === 'line' ? gradient : '#059669', borderWidth: 3, fill: true, tension: 0.4, borderRadius: 4 }] }, 
                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af' } } } } 
                 });
             }
         }
 
+        // 5. TRANSAÇÕES E LÓGICA DE NEGÓCIO
         const modal = document.getElementById('modal-transacao');
         window.abrirModalNovaTransacao = () => { if(modal) modal.classList.add('ativo'); };
         window.fecharModalNovaTransacao = () => { if(modal) modal.classList.remove('ativo'); };
 
-        // 4. GRAVAÇÃO SEGURA NA NUVEM DE TRANSAÇÕES
         window.processarFaturaReal = async () => {
             const desc = document.getElementById('t-desc').value;
             const valor = parseFloat(document.getElementById('t-valor').value);
             const btnRH = document.getElementById('btn-tipo-rh');
             const isRH = btnRH ? btnRH.classList.contains('active') : false;
 
-            if(!desc || !valor || valor <= 0) { simularAcao("Por favor, preencha a Descrição e o Valor.", true); return; }
+            if(!desc || !valor || valor <= 0) { simularAcao("Por favor, preencha Descrição e Valor.", true); return; }
 
             const btnProc = document.getElementById('btn-processar-ia');
-            btnProc.innerHTML = "<span class='spinner-small'></span> A IA está a ler e conciliar..."; 
-            btnProc.style.opacity = '0.8';
+            btnProc.innerHTML = "<span class='spinner-small'></span> Processando..."; 
             btnProc.disabled = true;
             
             try {
                 let tipo = isRH ? "Custo RH" : "Despesa";
                 userData.saldo -= valor;
-                
                 if(isRH) { userData.rh_folha += valor; } else { userData.custos += valor; }
 
-                await prismaDB.from('empresas').update({ 
-                    saldo: userData.saldo, 
-                    custos: userData.custos,
-                    rh_folha: userData.rh_folha 
-                }).eq('cnpj', currentCNPJ);
-                
-                await prismaDB.from('transacoes').insert([{ cnpj: currentCNPJ, descricao: desc, valor: valor, tipo: tipo, data_lancamento: "Processado via IA" }]);
+                await prismaDB.from('empresas').update({ saldo: userData.saldo, custos: userData.custos, rh_folha: userData.rh_folha }).eq('cnpj', currentCNPJ);
+                await prismaDB.from('transacoes').insert([{ cnpj: currentCNPJ, descricao: desc, valor: valor, tipo: tipo, data_lancamento: "Via Painel Cliente" }]);
 
                 await iniciarCofreDoCNPJ(currentCNPJ, document.getElementById('user-company-name').innerText);
                 
-                btnProc.innerText = "✓ Lançamento Automático Feito!"; 
-                btnProc.style.background = "#059669";
-                simularAcao("Fatura processada e vinculada ao CNPJ atual.");
+                btnProc.innerText = "✓ Lançado!"; 
+                simularAcao("Fatura processada com sucesso.");
                 
                 setTimeout(() => { 
                     fecharModalNovaTransacao(); 
                     btnProc.innerText = "Processar Documento via IA"; 
-                    btnProc.style.background = ""; 
-                    btnProc.style.opacity = '1'; 
                     btnProc.disabled = false;
                     document.getElementById('t-desc').value = '';
                     document.getElementById('t-valor').value = '';
-                }, 2000);
-
+                }, 1500);
             } catch(e) {
-                simularAcao("Erro ao gravar. Verifique a conexão.", true);
+                simularAcao("Erro ao gravar na Nuvem.", true);
                 btnProc.innerText = "Tentar Novamente"; 
-                btnProc.style.opacity = '1'; 
                 btnProc.disabled = false;
             }
         };
 
-        window.aprovarLote = () => {
-            const btnAprovar = document.getElementById('btn-aprovar-lote');
-            if(!btnAprovar) return;
-            btnAprovar.innerHTML = "<span class='spinner-small'></span> Sincronizando com Banco...";
-            btnAprovar.style.opacity = '0.8';
-            
-            setTimeout(() => {
-                btnAprovar.innerText = "✓ Lote Sincronizado e Pago"; 
-                btnAprovar.style.background = "#059669"; 
-                btnAprovar.style.pointerEvents = "none";
-                simularAcao("Comprovantes bancários gerados para este CNPJ!");
-                
-                setTimeout(() => {
-                    btnAprovar.innerText = "Aprovar e Enviar ao Banco"; 
-                    btnAprovar.style.background = ""; 
-                    btnAprovar.style.pointerEvents = "auto";
-                }, 4000);
-            }, 2000);
-        };
-
-        // INICIALIZAÇÃO DA SESSÃO
+        // 6. INICIALIZAÇÃO DA PÁGINA E CLIQUES NO MENU
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                if (!window.supabase) throw new Error("Supabase SDK não carregado.");
-                
                 const { data, error } = await prismaDB.auth.getSession();
                 if (error || !data.session) { window.location.replace('index.html'); return; }
 
                 await verificarVozDoCliente(data.session.user.email);
 
+                // Ativa a mudança de abas ao clicar no menu
                 document.querySelectorAll('.menu-item').forEach(item => {
-                    item.addEventListener('click', () => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault(); // Previne que a página salte para o topo
                         if(item.hasAttribute('data-tab')) {
                             document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
                             item.classList.add('active');
@@ -518,7 +465,7 @@
                 window.fazerLogout = async () => { await prismaDB.auth.signOut(); window.location.replace('index.html'); };
 
             } catch (err) {
-                console.error("Erro de inicialização:", err);
+                console.error("Erro Crítico:", err);
             }
         });
     </script>
