@@ -292,10 +292,13 @@
     </main>
 
     <script>
-        // CONFIGURAÇÃO GLOBAL DB CLIENT (ISOLADA)
-        const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
-        const dbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
+        // INICIALIZAÇÃO SEGURA E ISOLADA DO SUPABASE
+        const _url = 'https://ebomgngzpwaaghtcjllz.supabase.co';
+        const _key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
+        const dbClient = window.supabase.createClient(_url, _key);
+
+        // Garante que o cliente de BD utiliza um nome totalmente isolado (dbClient)
+        const dbClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 
