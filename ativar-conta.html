@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prisma Finance - Ativar Conta</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #111827; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background-color: #1f2937; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); width: 100%; max-width: 400px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 6px; border: 1px solid #374151; background: #111827; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #059669; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        button:hover { background-color: #047857; }
+        .msg { margin-top: 15px; font-size: 0.9rem; color: #9ca3af; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 style="margin-top: 0;">Ativação de Conta</h2>
+        <p style="font-size: 0.9rem; color: #9ca3af; margin-bottom: 25px;">
+            Insira o e-mail registado no seu contrato Prisma Finance para definir a sua senha de acesso seguro.
+        </p>
+
+        <input type="email" id="emailRegistro" placeholder="Seu E-mail Profissional" required>
+        <input type="password" id="senhaRegistro" placeholder="Crie uma Senha (mín. 6 caracteres)" required>
+        <input type="password" id="senhaConfirma" placeholder="Confirme a Senha" required>
+
+        <button onclick="ativarContaCliente()">Ativar Conta e Entrar</button>
+        
+        <div id="mensagemAlerta" class="msg"></div>
+    </div>
+
+    <!-- SCRIPT DE CONEXÃO AO SUPABASE (Cole aqui o seu bloco com as chaves oficiais) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Substitua pelas suas chaves reais do Supabase
+        const supabaseUrl = 'SUA_URL_AQUI';
+        const supabaseKey = 'SUA_CHAVE_AQUI';
+        const prismaDB = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function ativarContaCliente() {
+            const email = document.getElementById('emailRegistro').value;
+            const senha = document.getElementById('senhaRegistro').value;
+            const confirma = document.getElementById('senhaConfirma').value;
+            const aviso = document.getElementById('mensagemAlerta');
+
+            if (senha !== confirma) {
+                aviso.style.color = '#ef4444';
+                aviso.innerText = "As senhas não coincidem. Tente novamente.";
+                return;
+            }
+
+            if (senha.length < 6) {
+                aviso.style.color = '#ef4444';
+                aviso.innerText = "A senha deve ter pelo menos 6 caracteres.";
+                return;
+            }
+
+            aviso.style.color = '#3b82f6';
+            aviso.innerText = "A criar o seu cofre seguro...";
+
+            try {
+                // Função do Supabase que cria a conta e guarda a senha encriptada
+                const { data, error } = await prismaDB.auth.signUp({
+                    email: email,
+                    password: senha
+                });
+
+                if (error) throw error;
+
+                aviso.style.color = '#10b981';
+                aviso.innerText = "Conta ativada com sucesso! A redirecionar...";
+                
+                // Redireciona o cliente para a página de Login após o sucesso
+                setTimeout(() => {
+                    window.location.replace('index.html'); 
+                }, 2000);
+
+            } catch (err) {
+                console.error(err);
+                aviso.style.color = '#ef4444';
+                aviso.innerText = "Erro ao ativar conta: " + err.message;
+            }
+        }
+    </script>
+</body>
+</html>

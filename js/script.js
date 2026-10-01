@@ -24,18 +24,35 @@ document.addEventListener('DOMContentLoaded', () => {
             if(!supabase) return;
 
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) throw error;
+            // 1. Faz o login normal no cofre do Supabase
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
 
-                btnSubmit.innerText = "✓ Bem-vindo";
-                btnSubmit.style.background = "#059669";
-                setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
-            } catch (err) {
-                btnSubmit.innerText = "✖ Erro no Login";
-                btnSubmit.style.background = "#ef4444";
-                setTimeout(() => { btnSubmit.innerText = "Acessar Dados Seguros"; btnSubmit.style.background = ""; btnSubmit.style.opacity = "1"; }, 2000);
+            // 2. A MÁGICA: Vai à tabela clientes_bpo puxar o CNPJ deste e-mail
+            const { data: clienteData, error: clienteError } = await supabase
+                .from('clientes_bpo')
+                .select('cnpj')
+                .eq('email_login', email)
+                .single();
+
+            if (clienteError) throw clienteError;
+
+            // 3. Guarda o CNPJ na memória do navegador (localStorage)
+            if (clienteData && clienteData.cnpj) {
+                localStorage.setItem('cnpjLogado', clienteData.cnpj);
             }
-        });
+
+            // 4. Animação visual de sucesso e redirecionamento
+            btnSubmit.innerText = "✓ Bem-vindo";
+            btnSubmit.style.background = "#059669";
+            setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
+            
+        } catch (err) {
+            console.error("Erro completo:", err);
+            btnSubmit.innerText = "X Erro no Login";
+            btnSubmit.style.background = "#ef4444";
+            setTimeout(() => { btnSubmit.innerText = "Acessar Dados Seguros"; btnSubmit.style.background = ""; btnSubmit.style.opacity = "1"; }, 2000);
+        }
     }
 
     const range = document.getElementById('faturamento');
