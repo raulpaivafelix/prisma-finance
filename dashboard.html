@@ -505,25 +505,67 @@
             `;
         }
         else {
-            // MODO TRANSAÇÕES (Padrão para outras abas)
-            if(tituloLista) tituloLista.innerText = "Movimentações Recentes";
-                    if(subtituloLista) subtituloLista.innerText = "Documentos e lançamentos registados.";
+            // MODO DASHBOARD (Padrão ao abrir o sistema)
+            if(tituloLista) tituloLista.innerText = "Visão Geral do Negócio";
+            if(subtituloLista) subtituloLista.innerText = "Acompanhe a faturação e a saúde financeira da Prisma BPO.";
+            
+            lista.innerHTML = `
+                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                    <div class="card" style="flex: 1; padding: 20px; background: #1f2937; border-radius: 12px; border: 1px solid #374151;">
+                        <h3 style="color: #9ca3af; font-size: 0.9rem; margin: 0 0 10px 0;">Faturação (Mês Atual)</h3>
+                        <p style="color: #10b981; font-size: 1.8rem; font-weight: bold; margin: 0;">R$ 14.500,00</p>
+                    </div>
+                    <div class="card" style="flex: 1; padding: 20px; background: #1f2937; border-radius: 12px; border: 1px solid #374151;">
+                        <h3 style="color: #9ca3af; font-size: 0.9rem; margin: 0 0 10px 0;">Impostos Retidos (Mês)</h3>
+                        <p style="color: #ef4444; font-size: 1.8rem; font-weight: bold; margin: 0;">R$ 1.232,50</p>
+                    </div>
+                    <div class="card" style="flex: 1; padding: 20px; background: #1f2937; border-radius: 12px; border: 1px solid #374151;">
+                        <h3 style="color: #9ca3af; font-size: 0.9rem; margin: 0 0 10px 0;">NFs Emitidas</h3>
+                        <p style="color: #3b82f6; font-size: 1.8rem; font-weight: bold; margin: 0;">12</p>
+                    </div>
+                </div>
+                <div class="card" style="padding: 20px; background: #1f2937; border-radius: 12px; border: 1px solid #374151;">
+                    <h3 style="color: #f9fafb; font-size: 1.1rem; margin: 0 0 20px 0;">Evolução de Faturação e Serviços (Últimos 6 Meses)</h3>
+                    <canvas id="graficoFaturamento" height="80"></canvas>
+                </div>
+            `;
 
-                    if(userData.transacoes.length === 0) {
-                        lista.innerHTML = "<p style='color: #9ca3af; font-size: 0.9rem;'>Sem movimentações registadas.</p>";
-                    } else {
-                        userData.transacoes.forEach(t => {
-                            const sinal = t.tipo === "Receita" ? "+" : "-";
-                            const cssClass = t.tipo === "Receita" ? "positive" : "negative";
-                            lista.innerHTML += `
-                                <div class="transaction-item">
-                                    <div class="t-info"><h4>${t.desc}</h4><p>${t.tipo || 'Despesa'} • ${t.data}</p></div>
-                                    <div class="t-amount ${cssClass}">${sinal} ${formatoBRL(t.valor)}</div>
-                                </div>`;
-                        });
-                    }
+            // Renderizar o gráfico com Chart.js (Com um pequeno atraso para o HTML carregar primeiro)
+            setTimeout(() => {
+                const ctx = document.getElementById('graficoFaturamento');
+                if (ctx) {
+                    new Chart(ctx.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro'],
+                            datasets: [{
+                                label: 'Faturação Bruta (R$)',
+                                data: [8500, 9200, 11000, 10500, 13200, 14500],
+                                backgroundColor: '#059669',
+                                borderRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false }
+                            },
+                            scales: {
+                                y: { 
+                                    beginAtZero: true,
+                                    grid: { color: '#374151' },
+                                    ticks: { color: '#9ca3af' }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: '#9ca3af' }
+                                }
+                            }
+                        }
+                    });
                 }
-            }
+            }, 150);
+        }
 
             // MÁGICA FINAL: Esconde o botão grande de Aprovar Lote nas abas que não precisam dele
             const btnAprovar = document.getElementById('btn-aprovar-lote');
