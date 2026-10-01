@@ -219,6 +219,11 @@
     </main>
 
     <script>
+        // CONEXÃO OFICIAL AO SUPABASE (MODO PRODUÇÃO)
+        const supabaseUrl = 'https://ebomgngzpwaaghtcjllz.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
         // 1. LIGAÇÃO À NUVEM PRISMA OS
         var _url = 'https://ebomgngzpwaaghtcjllz.supabase.co';
         var _key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
@@ -567,7 +572,7 @@
             }, 150);
         }
     };
-    
+
             // MÁGICA FINAL: Esconde o botão grande de Aprovar Lote nas abas que não precisam dele
             const btnAprovar = document.getElementById('btn-aprovar-lote');
             if (btnAprovar) {
@@ -701,7 +706,7 @@
             }
         };
 
-        window.gerarDocumento = (event) => {
+        window.gerarDocumento = async (event) => {
             event.preventDefault(); 
             
             const btn = event.target.querySelector('button');
@@ -817,6 +822,28 @@
                         </table>
                     </div>`;
             }
+
+        // 🚀 SALVAR NO SUPABASE (BANCO DE DADOS NA NUVEM)
+        try {
+            const { error } = await supabase
+                .from('documentos_fiscais')
+                .insert([
+                    {
+                        tipo: tipo.includes('Recibo') ? 'Recibo' : 'NFS-e',
+                        cliente_nome: cliente,
+                        cliente_doc: documento,
+                        valor: valorBruto
+                    }
+                ]);
+
+            if (error) {
+                console.error("Erro ao salvar no banco:", error);
+            } else {
+                console.log("Sucesso! Documento registado na nuvem.");
+            }
+        } catch (err) {
+            console.error("Falha de conexão:", err);
+        }
 
             const opcoesPDF = {
                 margin:       [0, 0, 0, 0],
