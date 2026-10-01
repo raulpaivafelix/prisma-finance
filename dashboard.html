@@ -537,8 +537,21 @@
             setTimeout(() => {
         const ctx = document.getElementById('graficoFaturamento');
         
-        // ATIVA O DASHBOARD! (Lembre-se de trocar o CNPJ para o seu de teste real)
-        atualizarDashboard('00.000.000/0001-00');
+        // 1. Vai à memória do navegador buscar o CNPJ que o Login guardou
+        const cnpjCliente = localStorage.getItem('cnpjLogado');
+
+        // 2. Verifica se o cliente realmente tem autorização
+        if (cnpjCliente) {
+            // ATIVA O DASHBOARD com o CNPJ real e dinâmico do cliente!
+            atualizarDashboard(cnpjCliente);
+        } else {
+            // 3. SEGURANÇA MÁXIMA: Se alguém tentar aceder ao link do dashboard sem fazer login, é expulso!
+            console.error("Acesso não autorizado. A redirecionar para o login...");
+            window.location.href = "index.html";
+        }
+
+        if (ctx) {
+            new Chart(ctx.getContext('2d'), {
 
         if (ctx) {
                     new Chart(ctx.getContext('2d'), {
