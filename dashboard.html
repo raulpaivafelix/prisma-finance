@@ -657,89 +657,147 @@
                 console.error("Erro no ViaCEP:", erro);
             }
         };
-        
+
         window.gerarDocumento = (event) => {
-            event.preventDefault(); // Evita recarregar a página
+            event.preventDefault(); 
             
+            const btn = event.target.querySelector('button');
             const tipo = document.getElementById('doc-tipo').value;
             const cliente = document.getElementById('doc-cliente').value;
             const documento = document.getElementById('doc-doc').value;
+            const cep = document.getElementById('doc-cep').value || 'Não informado';
+            const cidade = document.getElementById('doc-cidade').value || 'Não informada';
+            const valorBruto = parseFloat(document.getElementById('doc-valor').value);
+            const codServico = document.getElementById('doc-cod-servico').value || '17.02';
+            const issTaxa = parseFloat(document.getElementById('doc-iss').value) || 0;
             const desc = document.getElementById('doc-desc').value;
-            const btn = event.target.querySelector('button');
             
-            const valorFormatado = parseFloat(document.getElementById('doc-valor').value)
-                .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            // Formatações financeiras
+            const formatarReal = (valor) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const valorFormatado = formatarReal(valorBruto);
+            
+            // Cálculos tributários automáticos
+            const valIss = formatarReal(valorBruto * (issTaxa / 100));
+            const valIr = formatarReal(valorBruto * 0.015); // 1.5% Padrão Presumido BPO
+            const valCsll = formatarReal(valorBruto * 0.01); // 1.0%
+            const valCofins = formatarReal(valorBruto * 0.03); // 3.0%
             
             const dataAtual = new Date().toLocaleDateString('pt-BR');
+            const numeroNota = Math.floor(Math.random() * 10000).toString().padStart(5, '0');
+            const codVerificacao = Math.random().toString(36).substring(2, 10).toUpperCase();
 
-            // Feedback visual de produção
-            const textoOriginal = btn.innerHTML;
-            btn.innerHTML = "<span class='spinner-small'></span> A gerar PDF oficial...";
+            btn.innerHTML = "<span class='spinner-small'></span> A processar...";
             btn.disabled = true;
             btn.style.opacity = '0.8';
 
-            // Cria a estrutura visual do PDF em background
             const elementoPDF = document.createElement('div');
-            elementoPDF.innerHTML = `
-                <div style="font-family: 'Helvetica', 'Arial', sans-serif; padding: 50px; color: #111827; background: #ffffff;">
-                    <div style="text-align: center; border-bottom: 2px solid #059669; padding-bottom: 20px; margin-bottom: 40px;">
-                        <h1 style="margin: 0; color: #059669; text-transform: uppercase; font-size: 2rem; letter-spacing: 1px;">${tipo}</h1>
-                        <p style="margin: 8px 0 0 0; color: #4b5563; font-size: 1rem; font-weight: bold;">Prisma Finance - Gestão Financeira & BPO</p>
-                    </div>
-                    
-                    <div style="line-height: 1.8; font-size: 1.1rem; color: #374151;">
-                        <p style="text-align: right; color: #6b7280; font-size: 0.95rem;">Emitido em: <strong>${dataAtual}</strong></p>
-                        
-                        <p style="margin-top: 30px;">Recebemos da empresa/cliente <strong>${cliente}</strong>, inscrita sob o CPF/CNPJ nº <strong>${documento}</strong>,</p>
-                        <p>A importância líquida referente a:</p>
-                        
-                        <div style="background: #f3f4f6; padding: 20px; border-left: 5px solid #059669; margin: 25px 0; font-style: italic; color: #1f2937;">
-                            ${desc}
+            
+            if (tipo.includes('Recibo')) {
+                 // GERA O DESIGN DE RECIBO SIMPLES
+                 elementoPDF.innerHTML = `
+                    <div style="font-family: Arial, sans-serif; padding: 50px; color: #111827; background: #ffffff;">
+                        <div style="text-align: center; border-bottom: 2px solid #059669; padding-bottom: 20px; margin-bottom: 40px;">
+                            <h1 style="margin: 0; color: #059669; text-transform: uppercase;">RECIBO DE PAGAMENTO</h1>
+                            <p style="margin: 8px 0 0 0; color: #4b5563; font-weight: bold;">Prisma Finance - Gestão Financeira & BPO</p>
                         </div>
-                        
-                        <div style="font-size: 2rem; font-weight: 900; text-align: center; margin: 40px 0; padding: 25px; background: #ecfdf5; color: #065f46; border-radius: 8px; border: 2px dashed #059669;">
-                            ${valorFormatado}
+                        <div style="line-height: 1.8; font-size: 1.1rem;">
+                            <p style="text-align: right; color: #6b7280;">Emitido em: <strong>${dataAtual}</strong></p>
+                            <p>Recebemos de <strong>${cliente}</strong> (CPF/CNPJ: ${documento}), localizado em ${cidade} - CEP ${cep},</p>
+                            <p>A importância líquida referente a:</p>
+                            <div style="background: #f3f4f6; padding: 20px; border-left: 5px solid #059669; margin: 25px 0; font-style: italic;">${desc}</div>
+                            <div style="font-size: 2rem; font-weight: 900; text-align: center; margin: 40px 0; padding: 25px; background: #ecfdf5; color: #065f46; border-radius: 8px; border: 2px dashed #059669;">${valorFormatado}</div>
+                            <p>Para maior clareza e validade legal, firmamos o presente documento.</p>
                         </div>
-                        
-                        <p style="margin-bottom: 60px;">Para maior clareza e validade legal, firmamos o presente documento.</p>
-                    </div>
-                    
-                    <div style="margin-top: 80px; text-align: center;">
-                        <div style="border-top: 1px solid #111827; width: 300px; margin: 0 auto; padding-top: 12px; font-weight: bold; font-size: 1.1rem;">
-                            Raul Paiva Felix de Lima
+                        <div style="margin-top: 80px; text-align: center;">
+                            <div style="border-top: 1px solid #111827; width: 300px; margin: 0 auto; padding-top: 12px; font-weight: bold;">Raul Paiva Felix de Lima</div>
+                            <span style="font-size: 0.9rem; color: #6b7280;">Prisma Finance / BPO - Assinatura Digital</span>
                         </div>
-                        <span style="font-size: 0.9rem; color: #6b7280;">Prisma Finance / BPO - Assinatura Digital</span>
-                    </div>
-                </div>
-            `;
+                    </div>`;
+            } else {
+                 // GERA O DESIGN OFICIAL DE NFS-e
+                 const cidadeNome = cidade.split('/')[0].trim();
+                 elementoPDF.innerHTML = `
+                    <div style="font-family: Arial, sans-serif; padding: 30px; color: black; background: white; font-size: 12px;">
+                        <table style="width: 100%; border-collapse: collapse; border: 1px solid black; margin-bottom: 0;">
+                            <tr>
+                                <td style="border: 1px solid black; padding: 10px; text-align: center; width: 20%;"><div style="font-size: 28px;">🏛️</div></td>
+                                <td style="border: 1px solid black; padding: 10px; text-align: center; width: 60%;">
+                                    <h2 style="margin: 0; font-size: 15px;">PREFEITURA MUNICIPAL</h2>
+                                    <p style="margin: 2px 0;">Secretaria Municipal de Tributação de ${cidadeNome}</p>
+                                    <h3 style="margin: 5px 0 0 0; font-size: 14px;">NOTA FISCAL DE SERVIÇOS ELETRÔNICA - NFS-e</h3>
+                                </td>
+                                <td style="border: 1px solid black; padding: 10px; text-align: center; width: 20%;">
+                                    <p style="margin: 0; font-size: 10px;">Número da Nota</p>
+                                    <h3 style="margin: 2px 0; font-size: 16px;">${numeroNota}</h3>
+                                    <p style="margin: 5px 0 0; font-size: 10px;">Data de Emissão</p>
+                                    <h4 style="margin: 2px 0;">${dataAtual}</h4>
+                                </td>
+                            </tr>
+                        </table>
+                        <table style="width: 100%; border-collapse: collapse; border: 1px solid black; border-top: none;">
+                            <tr><td colspan="4" style="background: #e5e7eb; padding: 5px; font-weight: bold; text-align: center; border-bottom: 1px solid black;">PRESTADOR DE SERVIÇOS</td></tr>
+                            <tr>
+                                <td colspan="4" style="padding: 8px; border-bottom: 1px solid black; line-height: 1.5;">
+                                    <b>Razão Social:</b> PRISMA FINANCE GESTAO E BPO LTDA<br>
+                                    <b>CNPJ:</b> 00.000.000/0001-00 &nbsp;&nbsp;&nbsp; <b>Inscrição Municipal:</b> 123456-7<br>
+                                    <b>Endereço:</b> Ponta Negra, Natal - RN
+                                </td>
+                            </tr>
+                            <tr><td colspan="4" style="background: #e5e7eb; padding: 5px; font-weight: bold; text-align: center; border-bottom: 1px solid black; border-top: 1px solid black;">TOMADOR DE SERVIÇOS</td></tr>
+                            <tr>
+                                <td colspan="4" style="padding: 8px; border-bottom: 1px solid black; line-height: 1.5;">
+                                    <b>Razão Social / Nome:</b> ${cliente}<br>
+                                    <b>CPF / CNPJ:</b> ${documento} &nbsp;&nbsp;&nbsp; <b>CEP:</b> ${cep}<br>
+                                    <b>Cidade / UF:</b> ${cidade}
+                                </td>
+                            </tr>
+                            <tr><td colspan="4" style="background: #e5e7eb; padding: 5px; font-weight: bold; text-align: center; border-bottom: 1px solid black; border-top: 1px solid black;">DISCRIMINAÇÃO DOS SERVIÇOS</td></tr>
+                            <tr>
+                                <td colspan="4" style="padding: 15px 8px; border-bottom: 1px solid black; height: 160px; vertical-align: top; line-height: 1.5;">
+                                    ${desc.replace(/\n/g, '<br>')}<br><br>
+                                    <i>Código do Serviço (LC 116): ${codServico}</i>
+                                </td>
+                            </tr>
+                            <tr><td colspan="4" style="background: #e5e7eb; padding: 8px; font-weight: bold; text-align: right; border-bottom: 1px solid black; border-top: 1px solid black; font-size: 14px;">VALOR TOTAL DA NOTA: &nbsp; ${valorFormatado}</td></tr>
+                            <tr style="background: #f9fafb;">
+                                <td style="padding: 8px; border: 1px solid black; text-align: center; width: 25%;"><b>ISS (${issTaxa}%)</b><br>${valIss}</td>
+                                <td style="padding: 8px; border: 1px solid black; text-align: center; width: 25%;"><b>IRPJ (1.5%)</b><br>${valIr}</td>
+                                <td style="padding: 8px; border: 1px solid black; text-align: center; width: 25%;"><b>CSLL (1%)</b><br>${valCsll}</td>
+                                <td style="padding: 8px; border: 1px solid black; text-align: center; width: 25%;"><b>COFINS (3%)</b><br>${valCofins}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="padding: 12px; border: 1px solid black; text-align: center; font-size: 10px; line-height: 1.4;">
+                                    CÓDIGO DE VERIFICAÇÃO DE AUTENTICIDADE: <b style="font-size: 12px;">${codVerificacao}</b><br>
+                                    Este documento é uma representação gráfica da NFS-e. Validade sujeita à transmissão via Web Service da Prefeitura Municipal.
+                                </td>
+                            </tr>
+                        </table>
+                    </div>`;
+            }
 
-            // Configurações do motor de PDF
             const opcoesPDF = {
                 margin:       [0, 0, 0, 0],
-                filename:     `${tipo.replace(/ /g, '_')}_${cliente.replace(/ /g, '')}.pdf`,
+                filename:     `${tipo.includes('Recibo') ? 'Recibo' : 'NFSe'}_${cliente.replace(/ /g, '')}.pdf`,
                 image:        { type: 'jpeg', quality: 1 },
                 html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            // Gera e descarrega o ficheiro PDF
             html2pdf().set(opcoesPDF).from(elementoPDF).save().then(() => {
-                btn.innerHTML = "✓ PDF Gerado e Transferido";
+                btn.innerHTML = "✓ Documento Gerado!";
                 btn.style.background = "#059669";
                 btn.style.opacity = '1';
-                simularAcao(`Documento oficial gerado e guardado para ${cliente}!`);
-                
+                simularAcao(`Documento fiscal gerado para ${cliente}!`);
                 setTimeout(() => {
-                    btn.innerHTML = "Gerar e Imprimir Documento";
+                    btn.innerHTML = "Gerar Documento / Simular Emissão";
                     btn.disabled = false;
                 }, 3000);
             }).catch(erro => {
                 btn.innerHTML = "Erro ao gerar PDF";
                 btn.disabled = false;
-                console.error("Erro no PDF:", erro);
+                console.error("Erro PDF:", erro);
             });
         };
-
         window.conectarBanco = async (btn, nomeBanco) => {
             if (btn.innerText.includes('Conectado')) return;
 
