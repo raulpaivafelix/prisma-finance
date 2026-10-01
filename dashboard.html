@@ -467,7 +467,7 @@
                             <div style="display: flex; gap: 15px;">
                                 <div style="flex: 1;">
                                     <label style="color: #9ca3af; font-size: 0.85rem;">CEP</label>
-                                    <input type="text" id="doc-cep" required style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="00000-000">
+                                    <input type="text" id="doc-cep" required onblur="buscarCEP(this.value)" oninput="this.value = this.value.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2').substring(0, 9)" style="width: 100%; padding: 12px; border-radius: 8px; background: #1f2937; border: 1px solid #374151; color: white; margin-top: 5px;" placeholder="00000-000">
                                 </div>
                                 <div style="flex: 2;">
                                     <label style="color: #9ca3af; font-size: 0.85rem;">Cidade / UF</label>
@@ -612,6 +612,52 @@
             }, 2000);
         };
 
+        window.buscarCEP = async (cep) => {
+            // Remove o traço para consultar a API
+            const cepLimpo = cep.replace(/\D/g, ''); 
+            if (cepLimpo.length !== 8) return; // Só procura se o CEP estiver completo
+
+            const inputCidade = document.getElementById('doc-cidade');
+            const inputIss = document.getElementById('doc-iss');
+
+            inputCidade.value = "A procurar...";
+
+            try {
+                // Consulta a API gratuita e oficial do ViaCEP
+                const resposta = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+                const dados = await resposta.json();
+
+                if (dados.erro) {
+                    inputCidade.value = "CEP não encontrado";
+                    return;
+                }
+
+                // 1. Preenche a Cidade e o Estado automaticamente
+                inputCidade.value = `${dados.localidade} / ${dados.uf}`;
+
+                // 2. Inteligência Tributária: Simula a Alíquota de ISS consoante o Estado
+                let aliquota = 3.0; // Padrão
+                
+                if (['SP', 'RJ', 'DF'].includes(dados.uf)) {
+                    aliquota = 5.0; // Grandes capitais costumam ter ISS teto (5%)
+                } else if (dados.uf === 'RN') {
+                    aliquota = 2.0; // Base do Prisma OS (Natal) usa ISS mínimo (2%)
+                } else if (dados.uf === 'AC') {
+                    aliquota = 2.5; // Regra específica para o Acre
+                }
+                
+                // Preenche o campo de ISS (com ponto decimal para o input type="number")
+                inputIss.value = aliquota;
+                
+                // Dispara aquele aviso verde bonito no canto do ecrã
+                simularAcao(`Localização encontrada: ${dados.localidade}`);
+
+            } catch (erro) {
+                inputCidade.value = "Erro de conexão";
+                console.error("Erro no ViaCEP:", erro);
+            }
+        };
+        
         window.gerarDocumento = (event) => {
             event.preventDefault(); // Evita recarregar a página
             
