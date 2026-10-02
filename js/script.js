@@ -58,13 +58,25 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // 2. Prepara os valores zerados para os 12 meses
             let faturamentoMensal = new Array(12).fill(0);
+            const tbodyHistorico = document.getElementById('tabela-historico-cliente');
+if (tbodyHistorico) tbodyHistorico.innerHTML = '';
 
             // 3. Lê nota por nota da base de dados e soma no mês correto
             dadosNotas.forEach(nota => {
                 if (nota.created_at) {
                     const dataCriacao = new Date(nota.created_at);
                     const mesDaNota = dataCriacao.getMonth(); // 0 é Jan, 9 é Out
-                    faturamentoMensal[mesDaNota] += (nota.valor_nota || 0); 
+                    faturamentoMensal[mesDaNota] += (nota.valor_nota || 0);
+                if (tbodyHistorico) {
+    const dataFormatada = new Date(nota.created_at).toLocaleDateString('pt-BR');
+    tbodyHistorico.innerHTML += `
+        <tr style="border-bottom: 1px solid #374151;">
+            <td style="padding: 12px 10px;">${dataFormatada}</td>
+            <td style="padding: 12px 10px; font-weight: bold;">${formatoBRL(nota.valor_nota || 0)}</td>
+            <td style="padding: 12px 10px; color: #10b981;">✓ Processado</td>
+        </tr>
+    `;
+}     
                 }
             });
 

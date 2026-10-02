@@ -532,6 +532,19 @@
                     <h3 style="color: #f9fafb; font-size: 1.1rem; margin: 0 0 20px 0;">Evolução de Faturação e Serviços (Últimos 6 Meses)</h3>
                     <canvas id="graficoFaturamento" height="80"></canvas>
                 </div>
+                <div class="kpi-card" style="margin-top: 30px; grid-column: 1 / -1;">
+    <h3 class="kpi-title">Histórico de Lançamentos Fiscais</h3>
+    <table style="width: 100%; text-align: left; border-collapse: collapse; margin-top: 15px;">
+        <thead>
+            <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem;">
+                <th style="padding: 10px;">Data de Emissão</th>
+                <th style="padding: 10px;">Valor (R$)</th>
+                <th style="padding: 10px;">Status</th>
+            </tr>
+        </thead>
+        <tbody id="tabela-historico-cliente" style="font-size: 0.9rem;"></tbody>
+    </table>
+</div>
             `;
 
             // Renderizar o gráfico com Chart.js (Com um pequeno atraso para o HTML carregar primeiro)
