@@ -134,6 +134,35 @@
         </div>
     </div>
 
+    <!-- Modal Lançamento Fiscal -->
+    <div id="modal-lancamento-fiscal" class="modal-overlay" style="display: none;">
+        <div class="modal-box" style="border-top: 5px solid var(--success);">
+            <button onclick="document.getElementById('modal-lancamento-fiscal').style.display='none'" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <h2 style="margin-bottom: 20px;">Lançamento Fiscal</h2>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Selecione o Cliente (CNPJ)</label>
+                <select id="clienteSelect" style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-surface); color: white; margin-bottom: 15px;" required>
+                    <option value="">A carregar clientes...</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+                <div style="flex: 1;">
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Valor da Fatura (R$)</label>
+                    <input type="number" id="valorNota" step="0.01" placeholder="Ex: 1500.50" style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-surface); color: white;" required>
+                </div>
+                <div style="flex: 1;">
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Data de Emissão</label>
+                    <input type="date" id="dataNota" style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-surface); color: white;" required>
+                </div>
+            </div>
+
+            <button id="btnSalvarLancamento" onclick="lancarDocumento()" style="background: var(--primary); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 600; cursor: pointer;">Processar Lançamento</button>
+            
+            <p id="msgLancamento" style="margin-top: 15px; text-align: center; font-size: 0.85rem;"></p>
+        </div>
+    </div>
     <div id="modal-acessos" class="modal-overlay">
         <div class="modal-box" style="border-top: 5px solid var(--warning);">
             <button onclick="fecharModalAcessos()" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
@@ -685,6 +714,71 @@
                 if(loginScreen) loginScreen.style.display = 'flex';
             }
         });
+        // 1. Puxar os clientes da tabela clientes_bpo
+        async function carregarClientesDropdown() {
+            const select = document.getElementById('clienteSelect');
+            try {
+                const { data: clientes, error } = await supabase.from('clientes_bpo').select('cnpj, nome_empresa');
+                if (error) throw error;
+
+                select.innerHTML = '<option value="">-- Selecione uma empresa --</option>';
+                
+                clientes.forEach(cliente => {
+                    const option = document.createElement('option');
+                    option.value = cliente.cnpj;
+                    option.innerText = `${cliente.nome_empresa || 'Sem Nome'} (${cliente.cnpj})`;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error("Erro ao carregar clientes:", err);
+                select.innerHTML = '<option value="">Erro ao carregar lista.</option>';
+            }
+        }
+
+        // 2. Enviar a Fatura para o Cliente selecionado
+        async function lancarDocumento() {
+            const cnpjSelecionado = document.getElementById('clienteSelect').value;
+            const valor = document.getElementById('valorNota').value;
+            const dataEmissao = document.getElementById('dataNota').value;
+            const btn = document.getElementById('btnSalvarLancamento');
+            const msg = document.getElementById('msgLancamento');
+
+            if (!cnpjSelecionado || !valor || !dataEmissao) {
+                msg.style.color = 'var(--danger)';
+                msg.innerText = "Preencha todos os campos antes de processar.";
+                return;
+            }
+
+            btn.innerText = "A enviar para a nuvem...";
+            btn.style.opacity = "0.7";
+
+            try {
+                const { error } = await supabase.from('documentos_fiscais').insert([{
+                    cnpj_cliente: cnpjSelecionado,
+                    valor_nota: parseFloat(valor),
+                    created_at: new Date(dataEmissao).toISOString()
+                }]);
+
+                if (error) throw error;
+
+                msg.style.color = 'var(--success)';
+                msg.innerText = "✓ Lançamento registado com sucesso!";
+                
+                document.getElementById('valorNota').value = '';
+                document.getElementById('dataNota').value = '';
+                
+            } catch (err) {
+                console.error(err);
+                msg.style.color = 'var(--danger)';
+                msg.innerText = "Erro ao registar: " + err.message;
+            } finally {
+                btn.innerText = "Processar Lançamento";
+                btn.style.opacity = "1";
+            }
+        }
+
+        // Garante que a lista de clientes carrega quando a página abre
+        document.addEventListener('DOMContentLoaded', carregarClientesDropdown);
     </script>
 </body>
 </html>
