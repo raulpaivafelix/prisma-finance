@@ -263,6 +263,26 @@
                 <div class="kpi-card"><p class="kpi-title">Volume Gerido (Total)</p><h2 class="kpi-value" id="kpi-volume">R$ 0,00</h2><span class="kpi-subtitle" style="color:var(--success); background:rgba(5,150,105,0.1);">Soma dos Saldos</span></div>
                 <div class="kpi-card"><p class="kpi-title">Receita Combinada</p><h2 class="kpi-value" id="kpi-faturamento">R$ 0,00</h2><span class="kpi-subtitle" style="color:var(--text-muted); background:rgba(255,255,255,0.05);">Faturamento Global Mensal</span></div>
             </section>
+            <div class="kpi-card" style="margin-top: 30px; grid-column: 1 / -1;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 class="kpi-title" style="margin: 0;">Auditoria de Lançamentos Globais</h3>
+        <button onclick="carregarHistoricoAdmin()" style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Atualizar Lista</button>
+    </div>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; text-align: left; border-collapse: collapse; min-width: 600px;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem;">
+                    <th style="padding: 12px 10px;">Data de Emissão</th>
+                    <th style="padding: 12px 10px;">CNPJ do Cliente</th>
+                    <th style="padding: 12px 10px;">Valor Lançado (R$)</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-historico-admin" style="font-size: 0.9rem;">
+                <!-- Os dados vão aparecer aqui -->
+            </tbody>
+        </table>
+    </div>
+</div>
         </div>
 
         <div id="tab-carteira" class="tab-content" style="display:none;">
@@ -780,6 +800,50 @@
 
         // Garante que a lista de clientes carrega quando a página abre
         document.addEventListener('DOMContentLoaded', carregarClientesDropdown);
+
+        // --- CARREGAR HISTÓRICO GLOBAL PARA A EQUIPA ---
+async function carregarHistoricoAdmin() {
+    const tbody = document.getElementById('tabela-historico-admin');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '<tr><td colspan="3" style="padding: 15px; text-align: center; color: var(--text-muted);">A carregar dados da nuvem...</td></tr>';
+    
+    try {
+        // Puxa todas as notas de todos os clientes, da mais nova para a mais velha
+        const { data, error } = await prismaDB
+            .from('documentos_fiscais')
+            .select('*')
+            .order('created_at', { ascending: false });
+            
+        if (error) throw error;
+        
+        tbody.innerHTML = '';
+        
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" style="padding: 15px; text-align: center; color: var(--text-muted);">Nenhum lançamento encontrado.</td></tr>';
+            return;
+        }
+
+        data.forEach(nota => {
+            const dataFormatada = new Date(nota.created_at).toLocaleDateString('pt-BR');
+            const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(nota.valor_nota || 0);
+            
+            tbody.innerHTML += `
+                <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;">
+                    <td style="padding: 12px 10px; color: var(--text-main);">${dataFormatada}</td>
+                    <td style="padding: 12px 10px; color: var(--text-muted); font-family: monospace;">${nota.cnpj_cliente}</td>
+                    <td style="padding: 12px 10px; color: var(--success); font-weight: bold;">${valorFormatado}</td>
+                </tr>
+            `;
+        });
+    } catch (err) {
+        console.error("Erro na auditoria:", err);
+        tbody.innerHTML = '<tr><td colspan="3" style="color: var(--danger); padding: 15px; text-align: center;">Erro ao carregar histórico.</td></tr>';
+    }
+}
+
+// Garante que a lista carrega automaticamente mal o administrador entra na página
+document.addEventListener('DOMContentLoaded', carregarHistoricoAdmin);
     </script>
 </body>
 </html>
