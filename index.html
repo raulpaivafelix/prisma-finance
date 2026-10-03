@@ -440,9 +440,14 @@
                         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
                         if (error) throw error;
 
-                        btnSubmit.innerText = "✓ Chave Validada";
-                        btnSubmit.style.background = "#059669";
-                        setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
+                        // O NOVO CÓDIGO
+btnSubmit.innerText = "✓ Chave Validada";
+btnSubmit.style.background = "#059669";
+
+// Esta é a linha mágica que destranca o dashboard:
+localStorage.setItem('cnpjLogado', '65.659.565/0001-20');
+
+setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
                     } catch (err) {
                         btnSubmit.innerText = "✖ Acesso Negado";
                         btnSubmit.style.background = "#ef4444";
