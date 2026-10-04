@@ -1085,7 +1085,7 @@ window.forcarAtualizacao = function() {
     window.location.reload();
 };
 setTimeout(() => {
-    // 1. Atualiza o visual do Perfil (Remove o "CNPJ NÃO VINCULADO")
+    // 1. Atualiza o visual do Perfil
     const displayCnpj = document.getElementById('user-cnpj-display');
     const displayEmpresa = document.getElementById('user-company-name');
     
@@ -1101,12 +1101,10 @@ setTimeout(() => {
     document.querySelectorAll('.menu-item[data-tab]').forEach(botao => {
         botao.addEventListener('click', function(e) {
             e.preventDefault();
-            
             document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-
-            const tabAlvo = this.getAttribute('data-tab');
             
+            const tabAlvo = this.getAttribute('data-tab');
             document.querySelectorAll('main section, .tab-content').forEach(sec => {
                 sec.style.display = 'none';
             });
@@ -1116,7 +1114,7 @@ setTimeout(() => {
         });
     });
 
-    // 3. Reativa os botões de ação genéricos visíveis no ecrã (CORRIGIDO)
+    // 3. Reativa os botões de ação genéricos
     document.querySelectorAll('button').forEach(btn => {
         if (btn.innerText.includes("Aprovar e Enviar ao Banco")) {
             btn.onclick = () => alert("Aprovação registada com sucesso na Supabase.");
@@ -1124,8 +1122,8 @@ setTimeout(() => {
         if (btn.innerText.includes("Exportar Relatório")) {
             btn.onclick = () => alert("A gerar PDF do relatório...");
         }
-      });  
-    }, 500);
+    });
+}, 500);
 
 </script>
     <!-- Botão Flutuante e Janela de Chat do Cliente -->
