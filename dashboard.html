@@ -1091,7 +1091,7 @@ setTimeout(() => {
     
     if (displayCnpj) {
         displayCnpj.innerText = localStorage.getItem('cnpjLogado') || '65.659.565/0001-20';
-        displayCnpj.style.color = '#10b981'; // Fica verde indicando sucesso
+        displayCnpj.style.color = '#10b981'; 
     }
     if (displayEmpresa) {
         displayEmpresa.innerText = 'Prisma Finance LTDA';
@@ -1102,14 +1102,11 @@ setTimeout(() => {
         botao.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Troca a cor de destaque para o botão clicado
             document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
 
-            // Descobre qual é a secção a mostrar (visao, fluxo, dre, nfs)
             const tabAlvo = this.getAttribute('data-tab');
             
-            // Esconde todos os painéis principais do ecrã e mostra apenas o correto
             document.querySelectorAll('main section, .tab-content').forEach(sec => {
                 sec.style.display = 'none';
             });
@@ -1119,14 +1116,15 @@ setTimeout(() => {
         });
     });
 
-    // 3. Reativa os botões de ação genéricos visíveis no ecrã
-    const btnAprovar = document.querySelector('button:contains("Aprovar e Enviar ao Banco")');
-    if(btnAprovar) btnAprovar.onclick = () => alert("Aprovação registada com sucesso na Supabase.");
-    
-    const btnExportar = document.querySelector('button:contains("Exportar Relatório")');
-    if(btnExportar) btnExportar.onclick = () => alert("A gerar PDF do relatório...");
-
-}, 500);
+    // 3. Reativa os botões de ação genéricos visíveis no ecrã (CORRIGIDO)
+    document.querySelectorAll('button').forEach(btn => {
+        if (btn.innerText.includes("Aprovar e Enviar ao Banco")) {
+            btn.onclick = () => alert("Aprovação registada com sucesso na Supabase.");
+        }
+        if (btn.innerText.includes("Exportar Relatório")) {
+            btn.onclick = () => alert("A gerar PDF do relatório...");
+        }
+    });
 </script>
     <!-- Botão Flutuante e Janela de Chat do Cliente -->
 <button onclick="toggleChat()" style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center;">
