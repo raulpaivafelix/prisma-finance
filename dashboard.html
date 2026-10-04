@@ -214,6 +214,8 @@
     </main>
 
     <script>
+
+    localStorage.setItem('cnpjLogado', '65.659.565/0001-20');
         // CONEXÃO OFICIAL AO SUPABASE (MODO PRODUÇÃO)
         
 
@@ -1079,6 +1081,9 @@ async function carregarMensagens() {
     }
 }
 } }
+window.forcarAtualizacao = function() {
+    window.location.reload();
+};
 </script>
     <!-- Botão Flutuante e Janela de Chat do Cliente -->
 <button onclick="toggleChat()" style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center;">
