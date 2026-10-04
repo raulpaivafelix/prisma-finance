@@ -1106,7 +1106,7 @@ setTimeout(() => {
             this.classList.add('active');
             
             const tabAlvo = this.getAttribute('data-tab');
-            document.querySelectorAll('main section, .tab-content').forEach(sec => {
+            document.querySelectorAll('.tab-content').forEach(sec => {
                 sec.style.display = 'none';
             });
             
