@@ -1020,16 +1020,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('.menu-item[data-tab]').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
+                
+                // Muda a cor do botão selecionado no menu lateral
                 document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
 
                 const tabAlvo = item.getAttribute('data-tab');
                 
-                document.querySelectorAll('.tab-content').forEach(sec => sec.style.display = 'none');
-
-                const seccaoMostrar = document.getElementById(tabAlvo);
-                if (seccaoMostrar) seccaoMostrar.style.display = 'block';
-
+                // MÁGICA: Em vez de apagar os ecrãs, injeta os novos dados na mesma estrutura!
                 if (typeof renderDashboard === 'function') renderDashboard(tabAlvo);
             });
         });
