@@ -135,9 +135,9 @@
     </div>
 
     <!-- Modal Lançamento Fiscal -->
-    <div id="modal-lancamento-fiscal" class="modal-overlay" style="display: none;">
+    <div id="modal-lancamento-fiscal" class="modal-overlay">
         <div class="modal-box" style="border-top: 5px solid var(--success);">
-            <button onclick="document.getElementById('modal-lancamento-fiscal').style.display='none'" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <button onclick="document.getElementById('modal-lancamento-fiscal').classList.remove('ativo')" style="float: right; background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
             <h2 style="margin-bottom: 20px;">Lançamento Fiscal</h2>
             
             <div style="margin-bottom: 15px;">
@@ -234,7 +234,7 @@
             <a class="menu-item active" data-tab="visao">📈 Visão Sistémica</a>
             <a class="menu-item" data-tab="carteira">👥 Carteira de Clientes</a>
             
-            <a class="menu-item" style="cursor: pointer; color: var(--primary); font-weight: 800;" onclick="document.getElementById('modal-lancamento-fiscal').style.display='flex'">➕ Novo Lançamento</a>
+            <a class="menu-item" style="cursor: pointer; color: var(--primary); font-weight: 800;" onclick="document.getElementById('modal-lancamento-fiscal').classList.add('ativo')">➕ Novo Lançamento</a>
             <span class="menu-section">Operação Interna</span>
             <a class="menu-item" data-tab="faturamento">💰 Faturamento Prisma</a>
             <a class="menu-item" data-tab="equipe">👔 Equipe de Analistas</a>
