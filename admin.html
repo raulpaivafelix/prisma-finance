@@ -278,6 +278,7 @@
                     <th style="padding: 12px 10px;">Data de Emissão</th>
                     <th style="padding: 12px 10px;">CNPJ do Cliente</th>
                     <th style="padding: 12px 10px;">Valor Lançado (R$)</th>
+                    <th style="padding: 12px 10px; text-align: right;">Ação</th>
                 </tr>
             </thead>
             <tbody id="tabela-historico-admin" style="font-size: 0.9rem;">
@@ -815,7 +816,7 @@
             const tbody = document.getElementById('tabela-historico-admin');
             if (!tbody) return;
             
-            tbody.innerHTML = '<tr><td colspan="3" style="padding: 15px; text-align: center; color: var(--text-muted);">A carregar dados da nuvem...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="padding: 15px; text-align: center; color: var(--text-muted);">A carregar dados da nuvem...</td></tr>';
             
             try {
                 const { data, error } = await window.prismaDB
@@ -828,7 +829,7 @@
                 tbody.innerHTML = '';
                 
                 if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="3" style="padding: 15px; text-align: center; color: var(--text-muted);">Nenhum lançamento encontrado.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" style="padding: 15px; text-align: center; color: var(--text-muted);">Nenhum lançamento encontrado.</td></tr>';
                     return;
                 }
 
@@ -842,14 +843,43 @@
                             <td style="padding: 12px 10px; color: var(--text-main);">${dataFormatada}</td>
                             <td style="padding: 12px 10px; color: var(--text-muted); font-family: monospace;">${nota.cliente_doc || 'N/A'}</td>
                             <td style="padding: 12px 10px; color: var(--success); font-weight: bold;">${valorFormatado}</td>
+                            <td style="padding: 12px 10px; text-align: right;">
+                                <button onclick="excluirLancamento('${nota.id}')" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.8rem;">Excluir</button>
+                            </td>
                         </tr>
                     `;
                 });
             } catch (err) {
                 console.error("Erro na auditoria:", err);
-                tbody.innerHTML = '<tr><td colspan="3" style="color: var(--danger); padding: 15px; text-align: center;">Erro ao carregar histórico.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" style="color: var(--danger); padding: 15px; text-align: center;">Erro ao carregar histórico.</td></tr>';
             }
         }
+
+        // Função para apagar o lançamento do Supabase
+        window.excluirLancamento = async (idLancamento) => {
+            // Pede confirmação para evitar cliques acidentais
+            if (!confirm('Tem a certeza que deseja excluir este lançamento?')) return;
+            
+            try {
+                // Apaga a linha da tabela documentos_fiscais com base no ID
+                const { error } = await window.prismaDB
+                    .from('documentos_fiscais')
+                    .delete()
+                    .eq('id', idLancamento);
+                    
+                if (error) throw error;
+                
+                // Exibe a mensagem verde de sucesso no canto
+                simularAcao('Lançamento excluído com sucesso!');
+                
+                // Recarrega a tabela imediatamente para o lançamento desaparecer
+                carregarHistoricoAdmin();
+                
+            } catch (err) {
+                console.error(err);
+                simularAcao('Erro ao excluir o lançamento.', true);
+            }
+        };
 
         // Garante que a lista carrega automaticamente mal o administrador entra na página
         document.addEventListener('DOMContentLoaded', carregarHistoricoAdmin);
