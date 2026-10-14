@@ -122,12 +122,16 @@
             <div style="margin-bottom: 15px;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Nome Completo</label><input type="text" id="prisma-analista-nome" placeholder="Ex: Ana Souza"></div>
             <div style="margin-bottom: 15px;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">E-mail Corporativo</label><input type="email" id="prisma-analista-email" placeholder="ana@prismafinance.com.br"></div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Cargo / Nível</label>
-                <select id="prisma-analista-cargo" style="background: var(--bg-surface);">
-                    <option value="Analista BPO Sênior">Analista BPO Sênior</option>
-                    <option value="Analista BPO Júnior">Analista BPO Júnior</option>
-                    <option value="Master">Master (Acesso Total)</option>
-                </select>
+                <label style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 5px; display: block;">Cargo / Nível</label>
+<select id="cargo-analista" style="width: 100%; padding: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; color: var(--text-main); margin-bottom: 15px;">
+    <option value="Estagiário BPO">Estagiário BPO</option>
+    <option value="Assistente Financeiro">Assistente Financeiro</option>
+    <option value="Analista BPO Júnior">Analista BPO Júnior</option>
+    <option value="Analista BPO Pleno">Analista BPO Pleno</option>
+    <option value="Analista BPO Sênior">Analista BPO Sênior</option>
+    <option value="Coordenador BPO">Coordenador BPO</option>
+    <option value="Master (Acesso Total)">Master (Acesso Total)</option>
+</select>
             </div>
             <div style="margin-bottom: 25px;"><label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Clientes Alocados</label><input type="text" id="prisma-analista-clientes" placeholder="Ex: Todos ou Carteira Sul"></div>
             <button id="btn-salvar-analista" onclick="salvarNovoAnalista()" style="background: var(--success); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: 600; cursor: pointer;">Cadastrar Colaborador</button>
