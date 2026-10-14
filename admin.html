@@ -926,6 +926,50 @@
                 if (sec) sec.style.display = 'block';
             });
         });
+        // --- CARREGAR EQUIPA DE ANALISTAS ---
+        async function carregarEquipaAdmin() {
+            const containerEquipa = document.getElementById('lista-equipa-prisma');
+            if (!containerEquipa) return;
+            
+            try {
+                // Ajuste o nome da tabela 'equipe_prisma' se for diferente na sua base de dados
+                const { data, error } = await window.prismaDB
+                    .from('equipe_prisma')
+                    .select('*')
+                    .order('nome', { ascending: true });
+                    
+                if (error) throw error;
+                
+                if (data.length === 0) {
+                    containerEquipa.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Nenhum analista registado no sistema.</p>';
+                    return;
+                }
+
+                containerEquipa.innerHTML = '<ul style="list-style: none; padding: 0; margin: 0;">';
+                
+                data.forEach(analista => {
+                    const cargo = analista.cargo || 'Analista';
+                    containerEquipa.innerHTML += `
+                        <li style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-body); padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 3px solid var(--success);">
+                            <div>
+                                <strong style="color: var(--text-main); display: block;">${analista.nome || 'Sem Nome'}</strong>
+                                <small style="color: var(--text-muted);">${cargo}</small>
+                            </div>
+                            <button onclick="simularAcao('A editar analista ${analista.id}')" style="background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 4px 8px; border-radius: 4px; cursor: pointer;">Editar</button>
+                        </li>
+                    `;
+                });
+                
+                containerEquipa.innerHTML += '</ul>';
+                
+            } catch (err) {
+                console.error("Erro ao carregar equipa:", err);
+                containerEquipa.innerHTML = '<p style="color: var(--danger); font-size: 0.9rem;">Erro ao carregar dados da equipa.</p>';
+            }
+        }
+
+        // Garante que a lista carrega quando abre a página
+        document.addEventListener('DOMContentLoaded', carregarEquipaAdmin);
     </script>
 </body>
 </html>
