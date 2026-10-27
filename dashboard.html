@@ -233,7 +233,16 @@
         var _url = 'https://ebomgngzpwaaghtcjllz.supabase.co';
         var _key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVib21nbmd6cHdhYWdodGNqbGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1NjU5MzMsImV4cCI6MjEwNjE0MTkzM30.0EBSn49Y0Bak3G6FlfVsGqXc3MxtJKdIzAutq0KnB-I';
         var prismaDB = window.supabase.createClient(_url, _key);
-
+// 1.5 BLOQUEIO DE SEGURANÇA PRISMA OS
+    async function verificarAcesso() {
+      const { data: { session }, error } = await prismaDB.auth.getSession();
+      
+      if (error || !session) {
+        alert("Sessão expirada ou acesso negado. Por favor, inicie sessão na Prisma OS.");
+        window.location.href = "index.html"; 
+      }
+    }
+    verificarAcesso();
         const formatoBRL = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
         
         // 2. FUNÇÕES DE UI (Notificações e PDF)
